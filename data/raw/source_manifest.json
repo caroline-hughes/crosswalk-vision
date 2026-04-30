@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-04-30T04:45:37+00:00",
+  "sources": {
+    "imagery": {
+      "name": "2024 NYS Orthoimagery",
+      "url": "https://gis.ny.gov/new-york-city-orthoimagery-downloads"
+    },
+    "lion": {
+      "name": "NYC LION Street Base Map",
+      "url": "https://catalog.data.gov/dataset/lion"
+    },
+    "service_requests_311": {
+      "name": "NYC 311 Pavement Marking Requests",
+      "url": "https://portal.311.nyc.gov/article/?kanumber=KA-01100"
+    },
+    "school_zones": {
+      "name": "NYC school-zone enrichment",
+      "url": "https://data.cityofnewyork.us/"
+    }
+  },
+  "note": "V1 uses fixture candidates locally. Replace manifests with live fetchers when the data connectors are ready."
+}

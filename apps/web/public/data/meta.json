@@ -1,0 +1,11 @@
+{
+  "build_timestamp": "2026-04-30T04:45:37+00:00",
+  "source_versions": {
+    "imagery": "NYS orthoimagery 2024",
+    "lion": "NYC LION current",
+    "service_requests_311": "NYC Open Data pavement-marking complaint snapshot",
+    "school_zones": "NYC school-zone snapshot"
+  },
+  "pilot_boundary": "Lower Manhattan south of Canal Street",
+  "total_records": 6
+}

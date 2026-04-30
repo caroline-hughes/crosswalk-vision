@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CrosswalkSnapshot",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "intersection_label",
+      "leg_label",
+      "lat",
+      "lon",
+      "year",
+      "severity_score",
+      "confidence_score",
+      "rank_score",
+      "reason_tags",
+      "school_zone",
+      "pavement_marking_311_count_since_2020",
+      "image_url",
+      "thumbnail_url",
+      "google_maps_url"
+    ],
+    "properties": {
+      "id": { "type": "string" },
+      "intersection_label": { "type": "string" },
+      "leg_label": { "type": "string" },
+      "lat": { "type": "number" },
+      "lon": { "type": "number" },
+      "year": { "const": 2024 },
+      "severity_score": { "type": "number" },
+      "confidence_score": { "type": "number" },
+      "rank_score": { "type": "number" },
+      "reason_tags": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "school_zone": { "type": "boolean" },
+      "pavement_marking_311_count_since_2020": { "type": "number" },
+      "image_url": { "type": "string" },
+      "thumbnail_url": { "type": "string" },
+      "google_maps_url": { "type": "string" }
+    }
+  }
+}

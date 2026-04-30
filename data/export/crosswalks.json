@@ -1,0 +1,127 @@
+[
+  {
+    "id": "lm-001",
+    "intersection_label": "Broadway & Warren St",
+    "leg_label": "north crossing",
+    "lat": 40.713137,
+    "lon": -74.009064,
+    "year": 2024,
+    "severity_score": 74,
+    "confidence_score": 0.92,
+    "rank_score": 68.08,
+    "reason_tags": [
+      "low contrast",
+      "broken stripes",
+      "partial paint loss",
+      "school zone",
+      "311 x4 since 2020"
+    ],
+    "school_zone": true,
+    "pavement_marking_311_count_since_2020": 4,
+    "image_url": "/images/lm-001.png",
+    "thumbnail_url": "/images/lm-001-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.713137,-74.009064"
+  },
+  {
+    "id": "lm-002",
+    "intersection_label": "Church St & Duane St",
+    "leg_label": "east crossing",
+    "lat": 40.715761,
+    "lon": -74.008641,
+    "year": 2024,
+    "severity_score": 60,
+    "confidence_score": 0.84,
+    "rank_score": 50.4,
+    "reason_tags": [
+      "low contrast",
+      "broken stripes",
+      "partial paint loss",
+      "311 x2 since 2020"
+    ],
+    "school_zone": false,
+    "pavement_marking_311_count_since_2020": 2,
+    "image_url": "/images/lm-002.png",
+    "thumbnail_url": "/images/lm-002-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.715761,-74.008641"
+  },
+  {
+    "id": "lm-003",
+    "intersection_label": "West Broadway & Leonard St",
+    "leg_label": "south crossing",
+    "lat": 40.716331,
+    "lon": -74.008921,
+    "year": 2024,
+    "severity_score": 52,
+    "confidence_score": 0.79,
+    "rank_score": 41.08,
+    "reason_tags": [
+      "broken stripes",
+      "partial paint loss"
+    ],
+    "school_zone": false,
+    "pavement_marking_311_count_since_2020": 0,
+    "image_url": "/images/lm-003.png",
+    "thumbnail_url": "/images/lm-003-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.716331,-74.008921"
+  },
+  {
+    "id": "lm-004",
+    "intersection_label": "Hudson St & Reade St",
+    "leg_label": "west crossing",
+    "lat": 40.716579,
+    "lon": -74.00993,
+    "year": 2024,
+    "severity_score": 45,
+    "confidence_score": 0.89,
+    "rank_score": 40.05,
+    "reason_tags": [
+      "low contrast",
+      "broken stripes",
+      "partial paint loss",
+      "school zone",
+      "311 x1 since 2020"
+    ],
+    "school_zone": true,
+    "pavement_marking_311_count_since_2020": 1,
+    "image_url": "/images/lm-004.png",
+    "thumbnail_url": "/images/lm-004-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.716579,-74.00993"
+  },
+  {
+    "id": "lm-005",
+    "intersection_label": "Fulton St & Nassau St",
+    "leg_label": "north crossing",
+    "lat": 40.709684,
+    "lon": -74.007423,
+    "year": 2024,
+    "severity_score": 38,
+    "confidence_score": 0.94,
+    "rank_score": 35.72,
+    "reason_tags": [
+      "low contrast",
+      "311 x3 since 2020"
+    ],
+    "school_zone": false,
+    "pavement_marking_311_count_since_2020": 3,
+    "image_url": "/images/lm-005.png",
+    "thumbnail_url": "/images/lm-005-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.709684,-74.007423"
+  },
+  {
+    "id": "lm-006",
+    "intersection_label": "Pearl St & Beekman St",
+    "leg_label": "east crossing",
+    "lat": 40.710958,
+    "lon": -74.005482,
+    "year": 2024,
+    "severity_score": 24,
+    "confidence_score": 0.95,
+    "rank_score": 22.8,
+    "reason_tags": [],
+    "school_zone": false,
+    "pavement_marking_311_count_since_2020": 0,
+    "image_url": "/images/lm-006.png",
+    "thumbnail_url": "/images/lm-006-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.710958,-74.005482"
+  }
+]

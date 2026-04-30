@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+.next/
+out/
+dist/
+data/raw/*.zip
+data/raw/*.csv
+data/raw/*.gpkg
+data/processed/*.duckdb

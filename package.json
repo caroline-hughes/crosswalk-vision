@@ -1,0 +1,21 @@
+{
+  "name": "crosswalks",
+  "private": true,
+  "engines": {
+    "node": "22.x"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "pipeline:build": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli build_all",
+    "pipeline:fetch": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli fetch_sources",
+    "pipeline:prepare": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli prepare_candidates",
+    "pipeline:enrich": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli enrich_candidates",
+    "pipeline:score": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli score_candidates",
+    "pipeline:export": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli export_snapshot",
+    "web:dev": "npm --workspace @crosswalks/web run dev",
+    "web:build": "npm --workspace @crosswalks/web run build"
+  }
+}
