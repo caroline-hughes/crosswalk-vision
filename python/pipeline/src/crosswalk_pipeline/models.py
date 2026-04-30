@@ -19,6 +19,7 @@ class CandidateRecord:
     school_zone: bool
     pavement_marking_311_count_since_2020: int
     heading_degrees: float
+    secondary_heading_degrees: float | None = None
 
     def to_dict(self) -> Dict[str, object]:
         return asdict(self)
@@ -38,6 +39,7 @@ class ExportRecord:
     reason_tags: List[str]
     school_zone: bool
     pavement_marking_311_count_since_2020: int
+    matched_311_complaints: List[Dict[str, str]]
     image_url: str
     thumbnail_url: str
     google_maps_url: str

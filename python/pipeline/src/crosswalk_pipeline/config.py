@@ -16,6 +16,11 @@ class PipelinePaths:
     web_data_dir: Path = ROOT / "apps" / "web" / "public" / "data"
     web_images_dir: Path = ROOT / "apps" / "web" / "public" / "images"
     fixtures_dir: Path = Path(__file__).resolve().parent / "fixtures"
+    lion_zip_path: Path = ROOT / "data" / "raw" / "nyclion.zip"
+    lion_unzipped_dir: Path = ROOT / "data" / "raw" / "nyclion_unzipped"
+    lion_gdb_path: Path = ROOT / "data" / "raw" / "nyclion_unzipped" / "lion" / "lion.gdb"
+    school_zones_csv_path: Path = ROOT / "data" / "raw" / "school_zones.csv"
+    processed_images_dir: Path = ROOT / "data" / "processed" / "images"
 
 
 PATHS = PipelinePaths()

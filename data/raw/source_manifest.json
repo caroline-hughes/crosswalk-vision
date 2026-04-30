@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-04-30T04:45:37+00:00",
+  "generated_at": "2026-04-30T17:45:35+00:00",
   "sources": {
     "imagery": {
       "name": "2024 NYS Orthoimagery",
-      "url": "https://gis.ny.gov/new-york-city-orthoimagery-downloads"
+      "url": "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer"
     },
     "lion": {
       "name": "NYC LION Street Base Map",
-      "url": "https://catalog.data.gov/dataset/lion"
+      "url": "https://data.cityofnewyork.us/api/views/2v4z-66xt/files/a3e46353-0b43-4b3b-a4fd-9bb042ccabb7?download=1"
     },
     "service_requests_311": {
       "name": "NYC 311 Pavement Marking Requests",
@@ -15,8 +15,14 @@
     },
     "school_zones": {
       "name": "NYC school-zone enrichment",
-      "url": "https://data.cityofnewyork.us/"
+      "url": "https://data.cityofnewyork.us/api/views/cmjf-yawu/rows.csv?accessType=DOWNLOAD"
     }
   },
-  "note": "V1 uses fixture candidates locally. Replace manifests with live fetchers when the data connectors are ready."
+  "source_versions": {
+    "imagery": "NYS 2024 orthos via ArcGIS MapServer",
+    "lion": "NYC LION 26a",
+    "service_requests_311": "NYC Open Data 311 pavement-marking complaints since 2020",
+    "school_zones": "School Zones 2024-2025 (Elementary School)"
+  },
+  "note": "Pipeline now downloads LION and school-zone sources locally and fetches imagery from the live 2024 NYS ArcGIS service."
 }

@@ -17,6 +17,7 @@
       "reason_tags",
       "school_zone",
       "pavement_marking_311_count_since_2020",
+      "matched_311_complaints",
       "image_url",
       "thumbnail_url",
       "google_maps_url"
@@ -37,6 +38,20 @@
       },
       "school_zone": { "type": "boolean" },
       "pavement_marking_311_count_since_2020": { "type": "number" },
+      "matched_311_complaints": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["unique_key", "created_date", "descriptor", "incident_address", "url"],
+          "properties": {
+            "unique_key": { "type": "string" },
+            "created_date": { "type": "string" },
+            "descriptor": { "type": "string" },
+            "incident_address": { "type": "string" },
+            "url": { "type": "string" }
+          }
+        }
+      },
       "image_url": { "type": "string" },
       "thumbnail_url": { "type": "string" },
       "google_maps_url": { "type": "string" }

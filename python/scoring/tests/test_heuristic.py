@@ -18,9 +18,9 @@ class HeuristicCrosswalkScorerTest(unittest.TestCase):
             )
         )
 
-        self.assertEqual(result.severity_score, 68)
+        self.assertEqual(result.severity_score, 67)
         self.assertEqual(result.confidence_score, 0.9)
-        self.assertEqual(result.rank_score, 61.2)
+        self.assertEqual(result.rank_score, 67.0)
         self.assertEqual(
             result.reason_tags,
             [

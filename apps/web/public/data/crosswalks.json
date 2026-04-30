@@ -1,127 +1,231 @@
 [
   {
-    "id": "lm-001",
-    "intersection_label": "Broadway & Warren St",
-    "leg_label": "north crossing",
-    "lat": 40.713137,
-    "lon": -74.009064,
+    "id": "lm-live-15134",
+    "intersection_label": "State Street & Bridge Street",
+    "leg_label": "",
+    "lat": 40.703598782240405,
+    "lon": -74.01439176807847,
     "year": 2024,
-    "severity_score": 74,
-    "confidence_score": 0.92,
-    "rank_score": 68.08,
+    "severity_score": 42,
+    "confidence_score": 0.69,
+    "rank_score": 42.0,
     "reason_tags": [
-      "low contrast",
       "broken stripes",
+      "partial paint loss",
+      "school zone"
+    ],
+    "school_zone": true,
+    "pavement_marking_311_count_since_2020": 0,
+    "matched_311_complaints": [],
+    "image_url": "/images/lm-live-15134.png",
+    "thumbnail_url": "/images/lm-live-15134-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.703598782240405,-74.01439176807847"
+  },
+  {
+    "id": "lm-live-12377",
+    "intersection_label": "Battery Place & 1 Place",
+    "leg_label": "",
+    "lat": 40.706174865783034,
+    "lon": -74.01793061207633,
+    "year": 2024,
+    "severity_score": 40,
+    "confidence_score": 0.99,
+    "rank_score": 40.0,
+    "reason_tags": [
       "partial paint loss",
       "school zone",
       "311 x4 since 2020"
     ],
     "school_zone": true,
     "pavement_marking_311_count_since_2020": 4,
-    "image_url": "/images/lm-001.png",
-    "thumbnail_url": "/images/lm-001-thumb.png",
-    "google_maps_url": "https://www.google.com/maps?q=40.713137,-74.009064"
-  },
-  {
-    "id": "lm-002",
-    "intersection_label": "Church St & Duane St",
-    "leg_label": "east crossing",
-    "lat": 40.715761,
-    "lon": -74.008641,
-    "year": 2024,
-    "severity_score": 60,
-    "confidence_score": 0.84,
-    "rank_score": 50.4,
-    "reason_tags": [
-      "low contrast",
-      "broken stripes",
-      "partial paint loss",
-      "311 x2 since 2020"
+    "matched_311_complaints": [
+      {
+        "unique_key": "60781043",
+        "created_date": "2024-04-05T15:46:51.000",
+        "descriptor": "Line/Marking - Faded",
+        "incident_address": "55 BATTERY PLACE",
+        "url": "https://data.cityofnewyork.us/resource/erm2-nwe9.json?$select=unique_key,created_date,closed_date,agency,agency_name,complaint_type,descriptor,descriptor_2,location_type,incident_address,status,resolution_description&$where=unique_key=%2760781043%27"
+      },
+      {
+        "unique_key": "60783405",
+        "created_date": "2024-04-05T11:54:07.000",
+        "descriptor": "Line/Marking - Faded",
+        "incident_address": "55 BATTERY PLACE",
+        "url": "https://data.cityofnewyork.us/resource/erm2-nwe9.json?$select=unique_key,created_date,closed_date,agency,agency_name,complaint_type,descriptor,descriptor_2,location_type,incident_address,status,resolution_description&$where=unique_key=%2760783405%27"
+      },
+      {
+        "unique_key": "60777350",
+        "created_date": "2024-04-04T10:39:35.000",
+        "descriptor": "Line/Marking - Faded",
+        "incident_address": "55 BATTERY PLACE",
+        "url": "https://data.cityofnewyork.us/resource/erm2-nwe9.json?$select=unique_key,created_date,closed_date,agency,agency_name,complaint_type,descriptor,descriptor_2,location_type,incident_address,status,resolution_description&$where=unique_key=%2760777350%27"
+      },
+      {
+        "unique_key": "48118932",
+        "created_date": "2020-11-10T08:59:24.000",
+        "descriptor": "Line/Marking - After Repaving",
+        "incident_address": "55 BATTERY PLACE",
+        "url": "https://data.cityofnewyork.us/resource/erm2-nwe9.json?$select=unique_key,created_date,closed_date,agency,agency_name,complaint_type,descriptor,descriptor_2,location_type,incident_address,status,resolution_description&$where=unique_key=%2748118932%27"
+      }
     ],
-    "school_zone": false,
-    "pavement_marking_311_count_since_2020": 2,
-    "image_url": "/images/lm-002.png",
-    "thumbnail_url": "/images/lm-002-thumb.png",
-    "google_maps_url": "https://www.google.com/maps?q=40.715761,-74.008641"
+    "image_url": "/images/lm-live-12377.png",
+    "thumbnail_url": "/images/lm-live-12377-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.706174865783034,-74.01793061207633"
   },
   {
-    "id": "lm-003",
-    "intersection_label": "West Broadway & Leonard St",
-    "leg_label": "south crossing",
-    "lat": 40.716331,
-    "lon": -74.008921,
+    "id": "lm-live-12380",
+    "intersection_label": "Battery Place & 2 Place",
+    "leg_label": "",
+    "lat": 40.706839867278305,
+    "lon": -74.01757436949147,
     "year": 2024,
-    "severity_score": 52,
-    "confidence_score": 0.79,
-    "rank_score": 41.08,
+    "severity_score": 35,
+    "confidence_score": 1.0,
+    "rank_score": 35.0,
     "reason_tags": [
       "broken stripes",
-      "partial paint loss"
+      "school zone",
+      "311 x3 since 2020"
     ],
-    "school_zone": false,
-    "pavement_marking_311_count_since_2020": 0,
-    "image_url": "/images/lm-003.png",
-    "thumbnail_url": "/images/lm-003-thumb.png",
-    "google_maps_url": "https://www.google.com/maps?q=40.716331,-74.008921"
+    "school_zone": true,
+    "pavement_marking_311_count_since_2020": 3,
+    "matched_311_complaints": [
+      {
+        "unique_key": "61794770",
+        "created_date": "2024-07-14T21:04:57.000",
+        "descriptor": "Line/Marking - Faded",
+        "incident_address": "2 PLACE",
+        "url": "https://data.cityofnewyork.us/resource/erm2-nwe9.json?$select=unique_key,created_date,closed_date,agency,agency_name,complaint_type,descriptor,descriptor_2,location_type,incident_address,status,resolution_description&$where=unique_key=%2761794770%27"
+      },
+      {
+        "unique_key": "61375782",
+        "created_date": "2024-06-04T09:27:21.000",
+        "descriptor": "Line/Marking - Faded",
+        "incident_address": "2 PLACE",
+        "url": "https://data.cityofnewyork.us/resource/erm2-nwe9.json?$select=unique_key,created_date,closed_date,agency,agency_name,complaint_type,descriptor,descriptor_2,location_type,incident_address,status,resolution_description&$where=unique_key=%2761375782%27"
+      },
+      {
+        "unique_key": "61354750",
+        "created_date": "2024-06-03T16:21:11.000",
+        "descriptor": "Line/Marking - Faded",
+        "incident_address": "2 PLACE",
+        "url": "https://data.cityofnewyork.us/resource/erm2-nwe9.json?$select=unique_key,created_date,closed_date,agency,agency_name,complaint_type,descriptor,descriptor_2,location_type,incident_address,status,resolution_description&$where=unique_key=%2761354750%27"
+      }
+    ],
+    "image_url": "/images/lm-live-12380.png",
+    "thumbnail_url": "/images/lm-live-12380-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.706839867278305,-74.01757436949147"
   },
   {
-    "id": "lm-004",
-    "intersection_label": "Hudson St & Reade St",
-    "leg_label": "west crossing",
-    "lat": 40.716579,
-    "lon": -74.00993,
+    "id": "lm-live-15267",
+    "intersection_label": "Church Street & Dey Street",
+    "leg_label": "",
+    "lat": 40.71101740728799,
+    "lon": -74.01080076668272,
     "year": 2024,
-    "severity_score": 45,
-    "confidence_score": 0.89,
-    "rank_score": 40.05,
+    "severity_score": 31,
+    "confidence_score": 1.0,
+    "rank_score": 31.0,
     "reason_tags": [
-      "low contrast",
       "broken stripes",
-      "partial paint loss",
       "school zone",
       "311 x1 since 2020"
     ],
     "school_zone": true,
     "pavement_marking_311_count_since_2020": 1,
-    "image_url": "/images/lm-004.png",
-    "thumbnail_url": "/images/lm-004-thumb.png",
-    "google_maps_url": "https://www.google.com/maps?q=40.716579,-74.00993"
+    "matched_311_complaints": [
+      {
+        "unique_key": "58923120",
+        "created_date": "2023-09-25T22:36:17.000",
+        "descriptor": "Line/Marking - Faded",
+        "incident_address": "70 CHURCH STREET",
+        "url": "https://data.cityofnewyork.us/resource/erm2-nwe9.json?$select=unique_key,created_date,closed_date,agency,agency_name,complaint_type,descriptor,descriptor_2,location_type,incident_address,status,resolution_description&$where=unique_key=%2758923120%27"
+      }
+    ],
+    "image_url": "/images/lm-live-15267.png",
+    "thumbnail_url": "/images/lm-live-15267-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.71101740728799,-74.01080076668272"
   },
   {
-    "id": "lm-005",
-    "intersection_label": "Fulton St & Nassau St",
-    "leg_label": "north crossing",
-    "lat": 40.709684,
-    "lon": -74.007423,
+    "id": "lm-live-15140",
+    "intersection_label": "State Street & Water Street",
+    "leg_label": "",
+    "lat": 40.702408625884054,
+    "lon": -74.01282671079045,
     "year": 2024,
-    "severity_score": 38,
-    "confidence_score": 0.94,
-    "rank_score": 35.72,
+    "severity_score": 30,
+    "confidence_score": 0.65,
+    "rank_score": 30.0,
+    "reason_tags": [
+      "partial paint loss",
+      "school zone"
+    ],
+    "school_zone": true,
+    "pavement_marking_311_count_since_2020": 0,
+    "matched_311_complaints": [],
+    "image_url": "/images/lm-live-15140.png",
+    "thumbnail_url": "/images/lm-live-15140-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.702408625884054,-74.01282671079045"
+  },
+  {
+    "id": "lm-live-15266",
+    "intersection_label": "Church Street & Cortlandt Street",
+    "leg_label": "",
+    "lat": 40.71036686412846,
+    "lon": -74.01123100614757,
+    "year": 2024,
+    "severity_score": 28,
+    "confidence_score": 1.0,
+    "rank_score": 28.0,
     "reason_tags": [
       "low contrast",
-      "311 x3 since 2020"
+      "school zone"
     ],
-    "school_zone": false,
-    "pavement_marking_311_count_since_2020": 3,
-    "image_url": "/images/lm-005.png",
-    "thumbnail_url": "/images/lm-005-thumb.png",
-    "google_maps_url": "https://www.google.com/maps?q=40.709684,-74.007423"
+    "school_zone": true,
+    "pavement_marking_311_count_since_2020": 0,
+    "matched_311_complaints": [],
+    "image_url": "/images/lm-live-15266.png",
+    "thumbnail_url": "/images/lm-live-15266-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.71036686412846,-74.01123100614757"
   },
   {
-    "id": "lm-006",
-    "intersection_label": "Pearl St & Beekman St",
-    "leg_label": "east crossing",
-    "lat": 40.710958,
-    "lon": -74.005482,
+    "id": "lm-live-12398",
+    "intersection_label": "South End Avenue & West Thames Street",
+    "leg_label": "",
+    "lat": 40.70845741025337,
+    "lon": -74.01739796543433,
     "year": 2024,
-    "severity_score": 24,
-    "confidence_score": 0.95,
-    "rank_score": 22.8,
-    "reason_tags": [],
-    "school_zone": false,
+    "severity_score": 20,
+    "confidence_score": 0.99,
+    "rank_score": 20.0,
+    "reason_tags": [
+      "school zone"
+    ],
+    "school_zone": true,
     "pavement_marking_311_count_since_2020": 0,
-    "image_url": "/images/lm-006.png",
-    "thumbnail_url": "/images/lm-006-thumb.png",
-    "google_maps_url": "https://www.google.com/maps?q=40.710958,-74.005482"
+    "matched_311_complaints": [],
+    "image_url": "/images/lm-live-12398.png",
+    "thumbnail_url": "/images/lm-live-12398-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.70845741025337,-74.01739796543433"
+  },
+  {
+    "id": "lm-live-15144",
+    "intersection_label": "Broad Street & Water Street",
+    "leg_label": "",
+    "lat": 40.70295884311554,
+    "lon": -74.0115056716634,
+    "year": 2024,
+    "severity_score": 17,
+    "confidence_score": 1.0,
+    "rank_score": 17.0,
+    "reason_tags": [
+      "school zone"
+    ],
+    "school_zone": true,
+    "pavement_marking_311_count_since_2020": 0,
+    "matched_311_complaints": [],
+    "image_url": "/images/lm-live-15144.png",
+    "thumbnail_url": "/images/lm-live-15144-thumb.png",
+    "google_maps_url": "https://www.google.com/maps?q=40.70295884311554,-74.0115056716634"
   }
 ]

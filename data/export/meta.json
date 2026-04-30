@@ -1,11 +1,11 @@
 {
-  "build_timestamp": "2026-04-30T04:45:37+00:00",
+  "build_timestamp": "2026-04-30T17:45:37+00:00",
   "source_versions": {
-    "imagery": "NYS orthoimagery 2024",
-    "lion": "NYC LION current",
-    "service_requests_311": "NYC Open Data pavement-marking complaint snapshot",
-    "school_zones": "NYC school-zone snapshot"
+    "imagery": "NYS 2024 orthos via ArcGIS MapServer",
+    "lion": "NYC LION 26a",
+    "service_requests_311": "NYC Open Data 311 pavement-marking complaints since 2020",
+    "school_zones": "School Zones 2024-2025 (Elementary School)"
   },
   "pilot_boundary": "Lower Manhattan south of Canal Street",
-  "total_records": 6
+  "total_records": 8
 }

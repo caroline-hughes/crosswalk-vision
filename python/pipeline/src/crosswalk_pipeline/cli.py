@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, List
@@ -10,22 +11,32 @@ from crosswalk_scoring import HeuristicCrosswalkScorer, ScoringInput
 
 from .artifact_store import LocalArtifactStore
 from .config import PATHS
-from .imagery import create_crosswalk_crop, create_thumbnail
 from .io_utils import read_json, write_json
+from .live_imagery import fetch_and_analyze_candidate_image
+from .live_sources import (
+    LOWER_MANHATTAN_LABEL,
+    LiveSourceVersions,
+    annotate_311_counts,
+    annotate_311_details,
+    annotate_school_zones,
+    build_live_candidates,
+    ensure_live_sources,
+)
 from .models import CandidateRecord, ExportRecord
 
 
 def fetch_sources() -> None:
+    versions = ensure_live_sources()
     manifest = {
         "generated_at": _utc_now(),
         "sources": {
             "imagery": {
                 "name": "2024 NYS Orthoimagery",
-                "url": "https://gis.ny.gov/new-york-city-orthoimagery-downloads"
+                "url": "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer"
             },
             "lion": {
                 "name": "NYC LION Street Base Map",
-                "url": "https://catalog.data.gov/dataset/lion"
+                "url": "https://data.cityofnewyork.us/api/views/2v4z-66xt/files/a3e46353-0b43-4b3b-a4fd-9bb042ccabb7?download=1"
             },
             "service_requests_311": {
                 "name": "NYC 311 Pavement Marking Requests",
@@ -33,28 +44,50 @@ def fetch_sources() -> None:
             },
             "school_zones": {
                 "name": "NYC school-zone enrichment",
-                "url": "https://data.cityofnewyork.us/"
+                "url": "https://data.cityofnewyork.us/api/views/cmjf-yawu/rows.csv?accessType=DOWNLOAD"
             }
         },
-        "note": "V1 uses fixture candidates locally. Replace manifests with live fetchers when the data connectors are ready."
+        "source_versions": {
+            "imagery": versions.imagery,
+            "lion": versions.lion,
+            "service_requests_311": versions.service_requests_311,
+            "school_zones": versions.school_zones,
+        },
+        "note": "Pipeline now downloads LION and school-zone sources locally and fetches imagery from the live 2024 NYS ArcGIS service."
     }
     write_json(PATHS.raw_dir / "source_manifest.json", manifest)
 
 
 def prepare_candidates() -> None:
-    fixture_path = PATHS.fixtures_dir / "lower_manhattan_candidates.json"
-    candidates = [_candidate_from_dict(item) for item in read_json(fixture_path)]
+    ensure_live_sources()
+    candidates = build_live_candidates()
     write_json(PATHS.processed_dir / "candidates.json", [candidate.to_dict() for candidate in candidates])
 
 
 def enrich_candidates() -> None:
     candidates = [_candidate_from_dict(item) for item in read_json(PATHS.processed_dir / "candidates.json")]
+    school_zone_lookup = annotate_school_zones(candidates)
+    complaint_detail_lookup = annotate_311_details(candidates)
+    complaint_count_lookup = annotate_311_counts(candidates)
     enriched = []
     for candidate in candidates:
+        try:
+            metrics = fetch_and_analyze_candidate_image(candidate)
+        except Exception:
+            continue
         enriched.append(
             {
                 **candidate.to_dict(),
-                "google_maps_url": f"https://www.google.com/maps?q={candidate.lat},{candidate.lon}"
+                "paint_missing_ratio": metrics.paint_missing_ratio,
+                "stripe_break_ratio": metrics.stripe_break_ratio,
+                "contrast_score": metrics.contrast_score,
+                "occlusion_penalty": metrics.occlusion_penalty,
+                "school_zone": school_zone_lookup.get(candidate.id, False),
+                "pavement_marking_311_count_since_2020": complaint_count_lookup.get(candidate.id, 0),
+                "matched_311_complaints": complaint_detail_lookup.get(candidate.id, []),
+                "google_maps_url": f"https://www.google.com/maps?q={candidate.lat},{candidate.lon}",
+                "processed_image_path": metrics.image_path,
+                "processed_thumbnail_path": metrics.thumbnail_path,
             }
         )
     write_json(PATHS.processed_dir / "enriched_candidates.json", enriched)
@@ -92,7 +125,14 @@ def score_candidates() -> None:
             }
         )
 
-    scored_records.sort(key=lambda record: record["rank_score"], reverse=True)
+    scored_records.sort(
+        key=lambda record: (
+            record["severity_score"],
+            record["pavement_marking_311_count_since_2020"],
+            record["confidence_score"],
+        ),
+        reverse=True,
+    )
     write_json(PATHS.processed_dir / "scored_candidates.json", scored_records)
 
 
@@ -101,10 +141,13 @@ def export_snapshot() -> None:
     store = LocalArtifactStore()
     export_records: List[ExportRecord] = []
 
+    _clear_directory(PATHS.export_dir / "images")
+    _clear_directory(PATHS.web_images_dir)
+
     for item in scored_records:
         candidate = _candidate_from_dict(item)
-        crop_bytes = create_crosswalk_crop(candidate)
-        thumb_bytes = create_thumbnail(candidate)
+        crop_bytes = Path(item["processed_image_path"]).read_bytes()
+        thumb_bytes = Path(item["processed_thumbnail_path"]).read_bytes()
         image_url = store.write_crop(candidate.id, crop_bytes)
         thumbnail_url = store.write_thumbnail(candidate.id, thumb_bytes)
         export_records.append(
@@ -121,6 +164,7 @@ def export_snapshot() -> None:
                 reason_tags=item["reason_tags"],
                 school_zone=candidate.school_zone,
                 pavement_marking_311_count_since_2020=candidate.pavement_marking_311_count_since_2020,
+                matched_311_complaints=item.get("matched_311_complaints", []),
                 image_url=image_url,
                 thumbnail_url=thumbnail_url,
                 google_maps_url=item["google_maps_url"],
@@ -131,12 +175,12 @@ def export_snapshot() -> None:
     meta_payload = {
         "build_timestamp": _utc_now(),
         "source_versions": {
-            "imagery": "NYS orthoimagery 2024",
-            "lion": "NYC LION current",
-            "service_requests_311": "NYC Open Data pavement-marking complaint snapshot",
-            "school_zones": "NYC school-zone snapshot"
+            "imagery": LiveSourceVersions.imagery,
+            "lion": LiveSourceVersions.lion,
+            "service_requests_311": LiveSourceVersions.service_requests_311,
+            "school_zones": LiveSourceVersions.school_zones,
         },
-        "pilot_boundary": "Lower Manhattan south of Canal Street",
+        "pilot_boundary": LOWER_MANHATTAN_LABEL,
         "total_records": len(crosswalk_payload)
     }
 
@@ -167,11 +211,21 @@ def _candidate_from_dict(item: dict) -> CandidateRecord:
         school_zone=bool(item["school_zone"]),
         pavement_marking_311_count_since_2020=int(item["pavement_marking_311_count_since_2020"]),
         heading_degrees=float(item["heading_degrees"]),
+        secondary_heading_degrees=(
+            float(item["secondary_heading_degrees"]) if item.get("secondary_heading_degrees") is not None else None
+        ),
     )
 
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def _clear_directory(path: Path) -> None:
+    path.mkdir(parents=True, exist_ok=True)
+    for child in path.iterdir():
+        if child.is_file():
+            child.unlink()
 
 
 def main() -> None:

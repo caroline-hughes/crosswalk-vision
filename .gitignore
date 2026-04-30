@@ -8,4 +8,5 @@ dist/
 data/raw/*.zip
 data/raw/*.csv
 data/raw/*.gpkg
+data/raw/nyclion_unzipped/lion/lion.gdb/
 data/processed/*.duckdb

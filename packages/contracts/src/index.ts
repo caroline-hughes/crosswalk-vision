@@ -5,6 +5,14 @@ export type ReasonTag =
   | "school zone"
   | `311 x${number} since 2020`;
 
+export interface Matched311Complaint {
+  unique_key: string;
+  created_date: string;
+  descriptor: string;
+  incident_address: string;
+  url: string;
+}
+
 export interface CrosswalkRecord {
   id: string;
   intersection_label: string;
@@ -18,6 +26,7 @@ export interface CrosswalkRecord {
   reason_tags: ReasonTag[];
   school_zone: boolean;
   pavement_marking_311_count_since_2020: number;
+  matched_311_complaints: Matched311Complaint[];
   image_url: string;
   thumbnail_url: string;
   google_maps_url: string;
@@ -92,6 +101,7 @@ function validateCrosswalkRecord(input: unknown, index: number): CrosswalkRecord
       value.pavement_marking_311_count_since_2020,
       "pavement_marking_311_count_since_2020"
     ),
+    matched_311_complaints: mustBeComplaintArray(value.matched_311_complaints, "matched_311_complaints"),
     image_url: mustBeString(value.image_url, "image_url"),
     thumbnail_url: mustBeString(value.thumbnail_url, "thumbnail_url"),
     google_maps_url: mustBeString(value.google_maps_url, "google_maps_url")
@@ -136,4 +146,24 @@ function mustBeYear(value: unknown): 2024 {
   }
 
   return 2024;
+}
+
+function mustBeComplaintArray(value: unknown, field: string): Matched311Complaint[] {
+  if (!Array.isArray(value)) {
+    throw new Error(`${field} must be an array.`);
+  }
+
+  return value.map((entry, index) => {
+    if (!entry || typeof entry !== "object") {
+      throw new Error(`${field}[${index}] must be an object.`);
+    }
+    const complaint = entry as Record<string, unknown>;
+    return {
+      unique_key: mustBeString(complaint.unique_key, `${field}[${index}].unique_key`),
+      created_date: mustBeString(complaint.created_date, `${field}[${index}].created_date`),
+      descriptor: mustBeString(complaint.descriptor, `${field}[${index}].descriptor`),
+      incident_address: mustBeString(complaint.incident_address, `${field}[${index}].incident_address`),
+      url: mustBeString(complaint.url, `${field}[${index}].url`)
+    };
+  });
 }
