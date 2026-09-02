@@ -73,7 +73,7 @@ export function CrosswalkCarousel({ records }: { records: CrosswalkRecord[] }) {
   }
 
   return (
-    <section className="carousel-shell" aria-label="Crosswalk rankings">
+    <section className="carousel-shell" aria-label="Inspection priority list">
       <button
         type="button"
         className="nav-button"

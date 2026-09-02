@@ -13,6 +13,8 @@
     "pipeline:fetch": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli fetch_sources",
     "pipeline:prepare": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli prepare_candidates",
     "pipeline:enrich": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli enrich_candidates",
+    "pipeline:train": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli train_ranker",
+    "pipeline:evaluate": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli evaluate",
     "pipeline:score": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli score_candidates",
     "pipeline:export": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli export_snapshot",
     "web:dev": "npm --workspace @crosswalks/web run dev",

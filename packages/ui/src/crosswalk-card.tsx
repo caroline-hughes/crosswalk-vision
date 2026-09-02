@@ -22,12 +22,18 @@ export function CrosswalkCard({ record }: { record: CrosswalkRecord }) {
         <div className="card-topline">
           <div className="card-title">
             <h2>{record.intersection_label}</h2>
+            {record.neighborhood ? <p>{record.neighborhood}</p> : null}
           </div>
-          <ScoreBadge score={record.severity_score} />
+          <ScoreBadge score={record.severity_score} label="Priority" />
         </div>
+
+        {record.priority_reason ? <p className="priority-reason">{record.priority_reason}</p> : null}
 
         <div className="card-meta">
           <p>Year {record.year}</p>
+          <p>Model {record.model_score.toFixed(2)}</p>
+          <p>Heuristic {Math.round(record.heuristic_score)}</p>
+          <p>Crashes {record.pedestrian_crash_count}</p>
           <p>311 Reports {record.pavement_marking_311_count_since_2020}</p>
         </div>
 

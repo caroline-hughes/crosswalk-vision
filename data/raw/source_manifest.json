@@ -1,5 +1,6 @@
 {
-  "generated_at": "2026-04-30T17:45:35+00:00",
+  "generated_at": "2026-09-02T19:57:39+00:00",
+  "pilot_boundary": "Lower Manhattan south of Canal Street",
   "sources": {
     "imagery": {
       "name": "2024 NYS Orthoimagery",
@@ -10,19 +11,32 @@
       "url": "https://data.cityofnewyork.us/api/views/2v4z-66xt/files/a3e46353-0b43-4b3b-a4fd-9bb042ccabb7?download=1"
     },
     "service_requests_311": {
-      "name": "NYC 311 Pavement Marking Requests",
-      "url": "https://portal.311.nyc.gov/article/?kanumber=KA-01100"
+      "name": "NYC 311 faded/after-repaving line markings (lane lines and crosswalks mixed)",
+      "url": "https://data.cityofnewyork.us/resource/erm2-nwe9.json",
+      "note": "Socrata default page is 100; fetch paginates with $limit/$offset/$order."
     },
     "school_zones": {
-      "name": "NYC school-zone enrichment",
-      "url": "https://data.cityofnewyork.us/api/views/cmjf-yawu/rows.csv?accessType=DOWNLOAD"
+      "name": "DOE school points (elementary / K-8) within 800 ft of the node",
+      "url": "https://data.cityofnewyork.us/resource/wg9x-4ke6.json",
+      "note": "Attendance-zone polygons cover the whole bbox, so the UI filter uses school proximity."
+    },
+    "vision_zero_crashes": {
+      "name": "NYPD Motor Vehicle Collisions \u2014 pedestrian injured or killed",
+      "url": "https://data.cityofnewyork.us/resource/h9gi-nx95.json",
+      "filter": "bbox Lower Manhattan; crash_date >= 2020-01-01; pedestrians injured or killed > 0"
+    },
+    "neighborhoods": {
+      "name": "NYC 2020 Neighborhood Tabulation Areas",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/NYC_Neighborhood_Tabulation_Areas_2020/FeatureServer/0"
     }
   },
   "source_versions": {
     "imagery": "NYS 2024 orthos via ArcGIS MapServer",
-    "lion": "NYC LION 26a",
-    "service_requests_311": "NYC Open Data 311 pavement-marking complaints since 2020",
-    "school_zones": "School Zones 2024-2025 (Elementary School)"
+    "lion": "fixture candidates (LION download failed)",
+    "service_requests_311": "NYC 311 faded/after-repaving line markings since 2020 (150 rows, SODA paginated)",
+    "school_zones": "DOE school points: elementary/K-8 within 800 ft (not attendance-zone polygons)",
+    "vision_zero_crashes": "NYPD Motor Vehicle Collisions pedestrian injured/killed since 2020 (h9gi-nx95)",
+    "neighborhoods": "NYC 2020 Neighborhood Tabulation Areas"
   },
-  "note": "Pipeline now downloads LION and school-zone sources locally and fetches imagery from the live 2024 NYS ArcGIS service."
+  "note": "Live NYC downloads fall back to committed fixtures when an endpoint fails. LION gdb is not required for tests; candidate generation uses expanded fixtures if the gdb is missing. Scoring is a sklearn logistic ranker; the pixel heuristic is the baseline, not a detector. 311 Line/Marking mixes lane lines with crosswalks. Candidates are intersection nodes, not crosswalk polygons."
 }

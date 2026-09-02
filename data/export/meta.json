@@ -1,11 +1,23 @@
 {
-  "build_timestamp": "2026-04-30T17:45:37+00:00",
+  "build_timestamp": "2026-09-02T19:57:53+00:00",
   "source_versions": {
     "imagery": "NYS 2024 orthos via ArcGIS MapServer",
-    "lion": "NYC LION 26a",
-    "service_requests_311": "NYC Open Data 311 pavement-marking complaints since 2020",
-    "school_zones": "School Zones 2024-2025 (Elementary School)"
+    "lion": "fixture candidates (LION download failed)",
+    "service_requests_311": "NYC 311 faded/after-repaving line markings since 2020 (150 rows, SODA paginated)",
+    "school_zones": "DOE school points: elementary/K-8 within 800 ft (not attendance-zone polygons)",
+    "vision_zero_crashes": "NYPD Motor Vehicle Collisions pedestrian injured/killed since 2020 (h9gi-nx95)",
+    "neighborhoods": "NYC 2020 Neighborhood Tabulation Areas"
   },
   "pilot_boundary": "Lower Manhattan south of Canal Street",
-  "total_records": 8
+  "total_records": 16,
+  "scoring_method": "sklearn logistic ranker (priority); heuristic paint/311 score is the baseline",
+  "label_definition": "pedestrian_crash_nearby",
+  "eval_split": "GroupKFold by neighborhood_id (train/test NTAs are disjoint)",
+  "eval_n": 42,
+  "eval_n_pos": 26,
+  "eval_learned_auc": 0.4807692307692308,
+  "eval_heuristic_auc": 0.40624999999999994,
+  "showcase_top_k": 16,
+  "product_claim": "City-actionable inspection list of Lower Manhattan intersection nodes (not crosswalk polygons) that look degraded or under-marked relative to Vision Zero crash and 311 complaint burden.",
+  "caveat": "Not a crosswalk detector and not a pretty-paint ranking. Candidates are LION/fixture intersection nodes; leg_label is the node, not a painted crossing. 311 Line/Marking complaints mix lane lines with crosswalks. Crash labels are noisy / weakly supervised. Metrics use a spatial (neighborhood) split so train and test NTAs are disjoint. Small n: treat AUC as directional, not a production SLA."
 }

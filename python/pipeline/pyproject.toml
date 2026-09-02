@@ -3,6 +3,16 @@ name = "crosswalk-pipeline"
 version = "0.1.0"
 description = "Local crosswalk pipeline and static export"
 requires-python = ">=3.9"
+dependencies = [
+  "geopandas",
+  "numpy",
+  "pandas",
+  "pillow",
+  "pyogrio",
+  "pyproj",
+  "requests",
+  "shapely",
+]
 
 [build-system]
 requires = ["setuptools>=68"]
