@@ -13,38 +13,60 @@ export function CrossingList({
   onSelect: (record: CrosswalkRecord) => void;
 }) {
   if (records.length === 0) {
-    return <div className="status-panel">No crossings match these filters.</div>;
+    return (
+      <div className="list-shell">
+        <div className="status-panel">No crossings match these filters.</div>
+      </div>
+    );
   }
+
+  const active = records.find((record) => record.id === activeId) ?? records[0];
 
   return (
     <div className="list-shell">
       <ol className="crossing-list">
-        {records.map((record, index) => (
-          <li key={record.id}>
-            <button
-              type="button"
-              className={`list-row ${activeId === record.id ? "is-active" : ""}`}
-              onClick={() => onSelect(record)}
-              onMouseEnter={() => onSelect(record)}
-            >
-              <span className="list-rank">{index + 1}</span>
-              <span className="list-main">
-                <strong>{record.intersection_label}</strong>
-                <em>
+        {records.map((record, index) => {
+          const isActive = record.id === active?.id;
+          return (
+            <li key={record.id}>
+              <article className={`list-card ${isActive ? "is-active" : ""}`}>
+                <button type="button" className="list-card-hit" onClick={() => onSelect(record)}>
+                  <span className="list-rank">{String(index + 1).padStart(3, "0")}</span>
+                  <h2>{record.intersection_label}</h2>
+                </button>
+                <p className="list-meta">
                   {record.borough} · {record.neighborhood}
-                </em>
-              </span>
-              <span className="list-score">
-                <b>{Math.round(record.model_score * 100)}</b>
-                <small>P(crash)</small>
-              </span>
-            </button>
-          </li>
-        ))}
+                </p>
+                <hr />
+                <dl className="list-stats">
+                  <div>
+                    <dt>P(crash)</dt>
+                    <dd>{Math.round(record.model_score * 100)}</dd>
+                  </div>
+                  <div>
+                    <dt>Heuristic</dt>
+                    <dd>{Math.round(record.heuristic_score)}</dd>
+                  </div>
+                  <div>
+                    <dt>311</dt>
+                    <dd>{record.pavement_marking_311_count_since_2020}</dd>
+                  </div>
+                </dl>
+                <p className="list-why">{record.priority_reason}</p>
+                <div className="list-actions">
+                  <button type="button" className="ghost-btn" onClick={() => onSelect(record)}>
+                    Inspect
+                  </button>
+                  <a className="ghost-btn" href={record.google_maps_url} target="_blank" rel="noreferrer">
+                    Maps
+                  </a>
+                </div>
+                {isActive ? <HoverCard record={record} /> : null}
+              </article>
+            </li>
+          );
+        })}
       </ol>
-      {records.find((record) => record.id === activeId) ? (
-        <HoverCard record={records.find((record) => record.id === activeId)!} />
-      ) : null}
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans, Syne } from "next/font/google";
+import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 
-const syne = Syne({
+const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap"
@@ -17,7 +17,7 @@ const plex = IBM_Plex_Sans({
 
 const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400", "600"],
+  weight: ["400", "500", "600"],
   variable: "--font-mono",
   display: "swap"
 });
@@ -38,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${syne.variable} ${plex.variable} ${plexMono.variable}`}>{children}</body>
+      <body className={`${fraunces.variable} ${plex.variable} ${plexMono.variable}`}>{children}</body>
     </html>
   );
 }

@@ -8,7 +8,7 @@ Live path: LION gdb when present (resolved from the NYC Open Data LION blob), el
 
 ## What this repo is
 
-- `apps/web`: static Next.js **map-first** site (Leaflet, dark tiles, custom hash icons, Map/List, hover popups)
+- `apps/web`: static Next.js **map-first** site (light OSM/Leaflet, paper editorial chrome, custom crosswalk markers, Map/List, model popups)
 - `packages/contracts`: snapshot types and schema
 - `packages/ui`: shared cards/badges (list still uses them)
 - `python/pipeline`: ETL, GIS joins, export

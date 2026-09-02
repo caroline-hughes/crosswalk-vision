@@ -59,47 +59,53 @@ export default function HomePage() {
   return (
     <main className="app-shell">
       <header className="chrome">
-        <div className="brand">
-          <p className="brand-kicker">NYC · five boroughs</p>
-          <h1>Crosswalk Vision</h1>
+        <div className="chrome-top">
+          <div className="brand">
+            <span className="mark" aria-hidden="true">
+              <span className="mark-bars" />
+            </span>
+            <div className="wordmark">
+              <p className="brand-kicker">NYC · five boroughs</p>
+              <h1>Crosswalk Vision</h1>
+            </div>
+          </div>
+          <div className="view-toggle" role="tablist" aria-label="Map or list">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === "map"}
+              className={view === "map" ? "cta is-active" : "ghost-btn"}
+              onClick={() => setView("map")}
+            >
+              Map
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === "list"}
+              className={view === "list" ? "cta is-active" : "ghost-btn"}
+              onClick={() => setView("list")}
+            >
+              List
+            </button>
+          </div>
         </div>
+        <FilterDock
+          filters={filters}
+          onChange={(next) => {
+            setFilters(next);
+            setPinned(null);
+          }}
+          minScore={Math.max(0, minScore)}
+          maxScore={maxScore || 1}
+        />
         <EvalStrip meta={meta} visible={filtered.length} nScored={records.length} />
-        <div className="view-toggle" role="tablist" aria-label="Map or list">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={view === "map"}
-            className={view === "map" ? "is-active" : ""}
-            onClick={() => setView("map")}
-          >
-            Map
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={view === "list"}
-            className={view === "list" ? "is-active" : ""}
-            onClick={() => setView("list")}
-          >
-            List
-          </button>
-        </div>
       </header>
 
-      <FilterDock
-        filters={filters}
-        onChange={(next) => {
-          setFilters(next);
-          setPinned(null);
-        }}
-        minScore={Math.max(0, minScore)}
-        maxScore={maxScore || 1}
-      />
-
-      {isLoading ? <div className="status-panel overlay">Loading ranked crossings…</div> : null}
-      {error ? <div className="status-panel overlay">{error}</div> : null}
-
       <div className="stage">
+        {isLoading ? <div className="status-panel overlay">Loading ranked crossings…</div> : null}
+        {error ? <div className="status-panel overlay">{error}</div> : null}
+
         {!isLoading && !error && view === "map" ? (
           <>
             <PriorityMap
@@ -113,7 +119,7 @@ export default function HomePage() {
               onSelect={(record) => setPinned(record)}
             />
             {active ? null : (
-              <p className="map-hint">Hover a hash — crossings the ranker put in need.</p>
+              <p className="map-hint">Hover a crossing the ranker put in need.</p>
             )}
           </>
         ) : null}
@@ -126,13 +132,6 @@ export default function HomePage() {
           />
         ) : null}
       </div>
-
-      {meta ? (
-        <footer className="chrome-foot">
-          <p>{meta.plot_rule || meta.product_claim}</p>
-          <p>{meta.caveat}</p>
-        </footer>
-      ) : null}
     </main>
   );
 }

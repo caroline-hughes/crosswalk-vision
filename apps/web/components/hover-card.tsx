@@ -16,6 +16,7 @@ export function HoverCard({
 
   return (
     <article className="hover-card" aria-label={`${record.intersection_label} model details`}>
+      <span className="tape" aria-hidden="true" />
       <header className="hover-card-head">
         <div>
           <p className="hover-kicker">
@@ -52,17 +53,20 @@ export function HoverCard({
       </dl>
 
       {record.top_features.length > 0 ? (
-        <ul className="feature-list" aria-label="Top model features">
-          {record.top_features.map((feature) => (
-            <li key={feature.feature}>
-              <span>{feature.label}</span>
-              <b className={feature.contribution >= 0 ? "up" : "down"}>
-                {feature.contribution >= 0 ? "+" : ""}
-                {feature.contribution.toFixed(2)}
-              </b>
-            </li>
-          ))}
-        </ul>
+        <>
+          <p className="why-label">Why the model flagged this</p>
+          <ul className="feature-list" aria-label="Top model features">
+            {record.top_features.map((feature) => (
+              <li key={feature.feature}>
+                <span>{feature.label}</span>
+                <b className={feature.contribution >= 0 ? "up" : "down"}>
+                  {feature.contribution >= 0 ? "+" : ""}
+                  {feature.contribution.toFixed(2)}
+                </b>
+              </li>
+            ))}
+          </ul>
+        </>
       ) : null}
 
       <div className="hover-311">

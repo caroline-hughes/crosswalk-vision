@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import type { CrosswalkRecord } from "@crosswalks/contracts";
-import { heatClass } from "../lib/filters";
 import "leaflet/dist/leaflet.css";
 
 function escapeHtml(value: string): string {
@@ -13,9 +12,8 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function iconHtml(record: CrosswalkRecord): string {
-  const heat = heatClass(record.model_score);
-  return `<span class="xing-mark xing-${heat}"><span class="xing-bars"></span></span>`;
+function iconHtml(): string {
+  return `<span class="xing-pin"><span class="xing-bars" aria-hidden="true"></span></span>`;
 }
 
 function popupHtml(record: CrosswalkRecord): string {
@@ -37,6 +35,7 @@ function popupHtml(record: CrosswalkRecord): string {
     .join("");
   return `
     <article class="hover-card leaflet-hover">
+      <span class="tape" aria-hidden="true"></span>
       <header class="hover-card-head">
         <div>
           <p class="hover-kicker">${escapeHtml(record.borough)} · ${escapeHtml(record.neighborhood || record.neighborhood_id)}</p>
@@ -53,7 +52,7 @@ function popupHtml(record: CrosswalkRecord): string {
         <div><dt>Crashes</dt><dd>${record.pedestrian_crash_count}</dd></div>
         <div><dt>311</dt><dd>${record.pavement_marking_311_count_since_2020}</dd></div>
       </dl>
-      ${features ? `<ul class="feature-list">${features}</ul>` : ""}
+      ${features ? `<p class="why-label">Why the model flagged this</p><ul class="feature-list">${features}</ul>` : ""}
       <div class="hover-311">
         <p>311 faded markings since 2020: ${record.pavement_marking_311_count_since_2020}. Mixed lane lines and crosswalks.</p>
         ${complaints}
@@ -63,11 +62,9 @@ function popupHtml(record: CrosswalkRecord): string {
   `;
 }
 
-const HEAT_FILL: Record<ReturnType<typeof heatClass>, string> = {
-  blaze: "#ff4d1a",
-  hot: "#ff7a3a",
-  warm: "#f0d15a",
-  cool: "#7ee0c8"
+type MarkerEntry = {
+  marker: import("leaflet").Marker;
+  record: CrosswalkRecord;
 };
 
 export function PriorityMap({
@@ -84,9 +81,7 @@ export function PriorityMap({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<import("leaflet").Map | null>(null);
   const layerRef = useRef<import("leaflet").LayerGroup | null>(null);
-  const markersRef = useRef<Map<string, { marker: import("leaflet").CircleMarker; record: CrosswalkRecord }>>(
-    new Map()
-  );
+  const markersRef = useRef<Map<string, MarkerEntry>>(new Map());
   const lastPopupId = useRef<string | null>(null);
   const hoverRef = useRef(onHover);
   const selectRef = useRef(onSelect);
@@ -112,9 +107,8 @@ export function PriorityMap({
         maxZoom: 18
       }).setView([40.7128, -74.006], 11);
 
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-        attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
-        subdomains: "abcd",
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
         maxZoom: 19
       }).addTo(map);
 
@@ -124,8 +118,8 @@ export function PriorityMap({
 
       const openNearest = (latlng: import("leaflet").LatLng, sticky: boolean) => {
         const origin = map.latLngToContainerPoint(latlng);
-        let best: { marker: import("leaflet").CircleMarker; record: CrosswalkRecord } | undefined;
-        let bestD = 22;
+        let best: MarkerEntry | undefined;
+        let bestD = 28;
         markersRef.current.forEach((entry) => {
           const point = map.latLngToContainerPoint(entry.marker.getLatLng());
           const distance = origin.distanceTo(point);
@@ -133,6 +127,10 @@ export function PriorityMap({
             bestD = distance;
             best = entry;
           }
+        });
+        markersRef.current.forEach((entry) => {
+          const el = entry.marker.getElement();
+          el?.classList.toggle("is-lifted", Boolean(best && entry.record.id === best.record.id));
         });
         if (!best) {
           return;
@@ -187,43 +185,38 @@ export function PriorityMap({
       markersRef.current.clear();
 
       records.forEach((record) => {
-        const fill = HEAT_FILL[heatClass(record.model_score)];
-        const marker = L.circleMarker([record.lat, record.lon], {
-          radius: 7,
-          color: "#090a0d",
-          weight: 1,
-          fillColor: fill,
-          fillOpacity: 0.95,
-          bubblingMouseEvents: false
-        });
         const icon = L.divIcon({
           className: "xing-icon",
-          html: iconHtml(record),
-          iconSize: [16, 16],
-          iconAnchor: [8, 8]
+          html: iconHtml(),
+          iconSize: [42, 42],
+          iconAnchor: [21, 21],
+          popupAnchor: [0, -24]
         });
-        const hash = L.marker([record.lat, record.lon], {
+        const marker = L.marker([record.lat, record.lon], {
           icon,
-          interactive: false,
-          keyboard: false
+          keyboard: true,
+          riseOnHover: true
         });
         marker.bindPopup(popupHtml(record), {
           className: "xing-popup",
           maxWidth: 340,
-          minWidth: 260,
+          minWidth: 280,
           closeButton: true,
-          autoPan: false,
+          autoPan: false
         });
         marker.on("mouseover", () => {
+          marker.getElement()?.classList.add("is-lifted");
           marker.openPopup();
           hoverRef.current(record);
+        });
+        marker.on("mouseout", () => {
+          marker.getElement()?.classList.remove("is-lifted");
         });
         marker.on("click", () => {
           marker.openPopup();
           selectRef.current(record);
         });
         marker.addTo(layer);
-        hash.addTo(layer);
         markersRef.current.set(record.id, { marker, record });
       });
 
