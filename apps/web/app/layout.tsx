@@ -25,7 +25,10 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Crosswalk Vision — NYC inspection priority map",
   description:
-    "Citywide NYC map of pedestrian crossing nodes ranked by a learned tabular model versus a paint/311 heuristic. Spatial NTA evaluation, weak crash labels, not a detector."
+    "Citywide NYC map of pedestrian crossing nodes ranked by a learned tabular model versus a paint/311 heuristic. Spatial NTA evaluation, weak crash labels, not a detector.",
+  icons: {
+    icon: "/favicon.svg"
+  }
 };
 
 export default function RootLayout({

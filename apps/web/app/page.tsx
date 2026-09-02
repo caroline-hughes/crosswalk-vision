@@ -6,7 +6,6 @@ import { staticSnapshotSource } from "../lib/snapshot-source";
 import { applyFilters, DEFAULT_FILTERS, type MapFilters } from "../lib/filters";
 import { EvalStrip } from "../components/eval-strip";
 import { FilterDock } from "../components/filter-dock";
-import { HoverCard } from "../components/hover-card";
 import { CrossingList } from "../components/crossing-list";
 import { PriorityMap } from "../components/priority-map";
 
@@ -100,41 +99,33 @@ export default function HomePage() {
       {isLoading ? <div className="status-panel overlay">Loading ranked crossings…</div> : null}
       {error ? <div className="status-panel overlay">{error}</div> : null}
 
-      {!isLoading && !error && view === "map" ? (
-        <>
-          <PriorityMap
+      <div className="stage">
+        {!isLoading && !error && view === "map" ? (
+          <>
+            <PriorityMap
+              records={filtered}
+              activeId={active?.id ?? null}
+              onHover={(record) => {
+                if (record) {
+                  setHovered(record);
+                }
+              }}
+              onSelect={(record) => setPinned(record)}
+            />
+            {active ? null : (
+              <p className="map-hint">Hover a hash — crossings the ranker put in need.</p>
+            )}
+          </>
+        ) : null}
+
+        {!isLoading && !error && view === "list" ? (
+          <CrossingList
             records={filtered}
-            activeId={active?.id ?? null}
-            onHover={(record) => {
-              if (record) {
-                setHovered(record);
-              }
-            }}
+            activeId={active?.id ?? filtered[0]?.id ?? null}
             onSelect={(record) => setPinned(record)}
           />
-          {active ? (
-            <div className="popup-dock">
-              <HoverCard
-                record={active}
-                onClose={() => {
-                  setPinned(null);
-                  setHovered(null);
-                }}
-              />
-            </div>
-          ) : (
-            <p className="map-hint">Hover a hash — crossings the ranker put in need.</p>
-          )}
-        </>
-      ) : null}
-
-      {!isLoading && !error && view === "list" ? (
-        <CrossingList
-          records={filtered}
-          activeId={active?.id ?? filtered[0]?.id ?? null}
-          onSelect={(record) => setPinned(record)}
-        />
-      ) : null}
+        ) : null}
+      </div>
 
       {meta ? (
         <footer className="chrome-foot">

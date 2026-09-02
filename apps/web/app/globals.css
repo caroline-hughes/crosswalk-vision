@@ -113,7 +113,7 @@ select {
 .filter-dock {
   position: absolute;
   z-index: 21;
-  top: 70px;
+  top: 86px;
   left: 14px;
   display: flex;
   flex-wrap: wrap;
@@ -164,9 +164,15 @@ select {
   border-color: var(--stripe);
 }
 
+.stage {
+  position: relative;
+  min-height: 0;
+  z-index: 1;
+}
+
 .priority-map {
   position: absolute;
-  inset: 52px 0 72px;
+  inset: 0;
   z-index: 1;
   background: #0b0c10;
 }
@@ -176,6 +182,63 @@ select {
   width: 100%;
   background: #0b0c10;
   font-family: inherit;
+  z-index: 1;
+}
+
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.xing-icon {
+  pointer-events: auto !important;
+}
+
+.leaflet-control-zoom a {
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  background: #16181f !important;
+  color: #f6f1e6 !important;
+  border: 1px solid rgba(255, 244, 220, 0.2) !important;
+  font-size: 18px !important;
+}
+
+.leaflet-bar {
+  border: 0 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.xing-popup .leaflet-popup-content-wrapper,
+.xing-popup .leaflet-popup-tip {
+  background: rgba(10, 11, 14, 0.96);
+  color: var(--text);
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+.xing-popup .leaflet-popup-content {
+  margin: 0;
+  width: 320px !important;
+}
+
+.xing-popup .leaflet-popup-close-button {
+  color: var(--text) !important;
+}
+
+.hover-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(10, 11, 14, 0.94);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+}
+
+.leaflet-hover {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 12px;
 }
 
 .xing-icon {
@@ -227,7 +290,7 @@ select {
   position: absolute;
   z-index: 22;
   right: 16px;
-  top: 86px;
+  top: 16px;
   width: min(360px, calc(100vw - 32px));
   pointer-events: auto;
 }
@@ -236,7 +299,7 @@ select {
   position: absolute;
   z-index: 22;
   right: 16px;
-  top: 86px;
+  top: 16px;
   margin: 0;
   color: var(--muted);
   font-size: 13px;
@@ -310,6 +373,7 @@ select {
   margin: 0;
   font-size: 13px;
   line-height: 1.4;
+  color: #f3eee3;
 }
 
 .hover-stats {
@@ -383,12 +447,12 @@ select {
 
 .list-shell {
   position: absolute;
-  inset: 52px 0 72px;
+  inset: 0;
   z-index: 2;
   display: grid;
   grid-template-columns: minmax(280px, 1fr) minmax(280px, 380px);
   gap: 12px;
-  padding: 72px 16px 16px;
+  padding: 76px 16px 16px;
   overflow: hidden;
   background: var(--page-bg);
 }
@@ -413,9 +477,15 @@ select {
   border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--panel);
-  color: inherit;
+  color: var(--text);
   text-align: left;
   cursor: pointer;
+}
+
+.list-main em {
+  font-style: normal;
+  color: #c9c3b4;
+  font-size: 12px;
 }
 
 .list-row.is-active,
@@ -431,12 +501,6 @@ select {
 .list-main {
   display: grid;
   gap: 2px;
-}
-
-.list-main em {
-  font-style: normal;
-  color: var(--muted);
-  font-size: 12px;
 }
 
 .list-score {
@@ -457,7 +521,7 @@ select {
 }
 
 .chrome-foot {
-  z-index: 20;
+  z-index: 5;
   padding: 8px 14px 10px;
   border-top: 1px solid var(--line);
   background: var(--chrome);
@@ -642,10 +706,10 @@ select {
     right: 14px;
     width: auto;
     top: auto;
-    bottom: 88px;
+    bottom: 16px;
   }
 
   .priority-map {
-    inset: 52px 0 110px;
+    inset: 0;
   }
 }
