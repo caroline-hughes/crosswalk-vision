@@ -20,6 +20,7 @@ class PipelinePaths:
     lion_unzipped_dir: Path = ROOT / "data" / "raw" / "nyclion_unzipped"
     lion_gdb_path: Path = ROOT / "data" / "raw" / "nyclion_unzipped" / "lion" / "lion.gdb"
     school_zones_csv_path: Path = ROOT / "data" / "raw" / "school_zones.csv"
+    school_locations_path: Path = ROOT / "data" / "raw" / "school_locations.json"
     processed_images_dir: Path = ROOT / "data" / "processed" / "images"
     crashes_path: Path = ROOT / "data" / "raw" / "pedestrian_crashes.json"
     nta_geojson_path: Path = ROOT / "data" / "raw" / "nta_lower_manhattan.geojson"

@@ -87,6 +87,32 @@ def assign_neighborhoods(
     return assigned
 
 
+def points_within_radius(
+    candidates: Sequence[Mapping[str, object]],
+    points: Sequence[Mapping[str, object]],
+    *,
+    radius_ft: float,
+    lat_field: str = "latitude",
+    lon_field: str = "longitude",
+) -> Dict[str, bool]:
+    flagged = {str(candidate["id"]): False for candidate in candidates}
+    point_xy: list[tuple[float, float]] = []
+    for point in points:
+        lat = _as_float(point.get(lat_field))
+        lon = _as_float(point.get(lon_field))
+        if lat is None or lon is None:
+            continue
+        point_xy.append(_to_2263(lon, lat))
+    if not point_xy:
+        return flagged
+    for candidate in candidates:
+        candidate_x, candidate_y = _to_2263(float(candidate["lon"]), float(candidate["lat"]))
+        flagged[str(candidate["id"])] = any(
+            math.hypot(candidate_x - px, candidate_y - py) <= radius_ft for px, py in point_xy
+        )
+    return flagged
+
+
 def crash_counts_from_join(matched: Mapping[str, Sequence[Mapping[str, object]]]) -> Dict[str, int]:
     return {candidate_id: len(events) for candidate_id, events in matched.items()}
 

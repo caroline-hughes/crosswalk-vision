@@ -2,7 +2,12 @@ import json
 import unittest
 from pathlib import Path
 
-from crosswalk_pipeline.gis_join import assign_neighborhoods, crash_counts_from_join, join_events_to_candidates
+from crosswalk_pipeline.gis_join import (
+    assign_neighborhoods,
+    crash_counts_from_join,
+    join_events_to_candidates,
+    points_within_radius,
+)
 
 TINY_NTA = {
     "type": "FeatureCollection",
@@ -69,6 +74,16 @@ class FeatureJoinTest(unittest.TestCase):
         self.assertEqual(assigned["tribeca"]["neighborhood_id"], "MN0102")
         self.assertEqual(assigned["fidi"]["neighborhood_name"], "Financial District-Battery Park City")
 
+    def test_school_proximity_flag_varies(self) -> None:
+        candidates = [
+            {"id": "beside_school", "lat": 40.7128, "lon": -74.0162},
+            {"id": "far_from_school", "lat": 40.7024, "lon": -74.0128},
+        ]
+        schools = [{"latitude": 40.7128, "longitude": -74.0162, "location_name": "P.S. 89"}]
+        flagged = points_within_radius(candidates, schools, radius_ft=800.0)
+        self.assertTrue(flagged["beside_school"])
+        self.assertFalse(flagged["far_from_school"])
+
 
 class SnapshotContractTest(unittest.TestCase):
     def test_export_snapshot_contains_required_fields(self) -> None:
@@ -100,6 +115,20 @@ class SnapshotContractTest(unittest.TestCase):
         self.assertEqual(meta["total_records"], len(records))
         self.assertIn("caveat", meta)
         self.assertIn("scoring_method", meta)
+        school_flags = {record["school_zone"] for record in records}
+        self.assertEqual(school_flags, {True, False}, "Near-school filter must not be a no-op")
+        self.assertTrue(all(record["leg_label"] for record in records))
+
+
+class Committed311Test(unittest.TestCase):
+    def test_committed_311_is_not_the_socrata_default_page(self) -> None:
+        root = Path(__file__).resolve().parents[3]
+        rows = json.loads((root / "data" / "raw" / "pavement_marking_311.json").read_text())
+        self.assertGreater(
+            len(rows),
+            100,
+            "HEAD's 311 dump was the Socrata default page of 100; paginate before committing",
+        )
 
 
 if __name__ == "__main__":

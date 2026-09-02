@@ -1,0 +1,164 @@
+[
+  {
+    "system_code": "01M020",
+    "location_name": "P.S. 020 Anna Silver",
+    "location_category_description": "Elementary",
+    "grades_text": "PK,0K,01,02,03,04,05,SE",
+    "latitude": 40.721305,
+    "longitude": -73.986312,
+    "nta_name": "Chinatown"
+  },
+  {
+    "system_code": "01M063",
+    "location_name": "The STAR Academy - P.S.63",
+    "location_category_description": "Elementary",
+    "grades_text": "PK,0K,01,02,03,04,05,SE",
+    "latitude": 40.72444,
+    "longitude": -73.986214,
+    "nta_name": "East Village"
+  },
+  {
+    "system_code": "01M184",
+    "location_name": "P.S. 184m Shuang Wen",
+    "location_category_description": "K-8",
+    "grades_text": "PK,0K,01,02,03,04,05,06,07,08,SE",
+    "latitude": 40.711125,
+    "longitude": -73.985438,
+    "nta_name": "Lower East Side"
+  },
+  {
+    "system_code": "01M363",
+    "location_name": "Neighborhood School",
+    "location_category_description": "Elementary",
+    "grades_text": "PK,0K,01,02,03,04,05,SE",
+    "latitude": 40.72444,
+    "longitude": -73.986214,
+    "nta_name": "East Village"
+  },
+  {
+    "system_code": "02M001",
+    "location_name": "P.S. 001 Alfred E. Smith",
+    "location_category_description": "Elementary",
+    "grades_text": "PK,0K,01,02,03,04,05,SE",
+    "latitude": 40.71255,
+    "longitude": -73.997478,
+    "nta_name": "Chinatown"
+  },
+  {
+    "system_code": "02M002",
+    "location_name": "P.S. 002 Meyer London",
+    "location_category_description": "Elementary",
+    "grades_text": "PK,0K,01,02,03,04,05,SE",
+    "latitude": 40.712907,
+    "longitude": -73.991523,
+    "nta_name": "Lower East Side"
+  },
+  {
+    "system_code": "02M042",
+    "location_name": "P.S. 042 Benjamin Altman",
+    "location_category_description": "Elementary",
+    "grades_text": "PK,0K,01,02,03,04,05,SE",
+    "latitude": 40.716126,
+    "longitude": -73.990826,
+    "nta_name": "Chinatown"
+  },
+  {
+    "system_code": "02M089",
+    "location_name": "P.S. 89",
+    "location_category_description": "Elementary",
+    "grades_text": "PK,0K,01,02,03,04,05,06,SE",
+    "latitude": 40.71701,
+    "longitude": -74.013967,
+    "nta_name": "Battery Park City-Lower Manhattan"
+  },
+  {
+    "system_code": "02M124",
+    "location_name": "P.S. 124 Yung Wing",
+    "location_category_description": "Elementary",
+    "grades_text": "PK,0K,01,02,03,04,05,SE",
+    "latitude": 40.715097,
+    "longitude": -73.996017,
+    "nta_name": "Chinatown"
+  },
+  {
+    "system_code": "02M126",
+    "location_name": "P.S. 126 Jacob August Riis",
+    "location_category_description": "K-8",
+    "grades_text": "PK,0K,01,02,03,04,05,06,07,08,SE",
+    "latitude": 40.710651,
+    "longitude": -73.99742,
+    "nta_name": "Chinatown"
+  },
+  {
+    "system_code": "02M130",
+    "location_name": "P.S. 130 Hernando De Soto",
+    "location_category_description": "Elementary",
+    "grades_text": "PK,0K,01,02,03,04,05,SE",
+    "latitude": 40.71866,
+    "longitude": -73.998326,
+    "nta_name": "SoHo-TriBeCa-Civic Center-Little Italy"
+  },
+  {
+    "system_code": "02M150",
+    "location_name": "P.S. 150",
+    "location_category_description": "Elementary",
+    "grades_text": "PK,0K,01,02,03,04,05",
+    "latitude": 40.71953,
+    "longitude": -74.01088,
+    "nta_name": "SoHo-TriBeCa-Civic Center-Little Italy"
+  },
+  {
+    "system_code": "02M234",
+    "location_name": "P.S. 234 Independence School",
+    "location_category_description": "Elementary",
+    "grades_text": "0K,01,02,03,04,05,SE",
+    "latitude": 40.71953,
+    "longitude": -74.01088,
+    "nta_name": "SoHo-TriBeCa-Civic Center-Little Italy"
+  },
+  {
+    "system_code": "02M276",
+    "location_name": "Battery Park City School",
+    "location_category_description": "K-8",
+    "grades_text": "PK,0K,01,02,03,04,05,06,07,08,SE",
+    "latitude": 40.706384,
+    "longitude": -74.017456,
+    "nta_name": "Battery Park City-Lower Manhattan"
+  },
+  {
+    "system_code": "02M343",
+    "location_name": "The Peck Slip School",
+    "location_category_description": "Elementary",
+    "grades_text": "PK,0K,01,02,03,04,05,SE",
+    "latitude": 40.708774,
+    "longitude": -74.002407,
+    "nta_name": "Battery Park City-Lower Manhattan"
+  },
+  {
+    "system_code": "02M397",
+    "location_name": "Spruce Street School",
+    "location_category_description": "K-8",
+    "grades_text": "PK,0K,01,02,03,04,05,06,07,08,SE",
+    "latitude": 40.711321,
+    "longitude": -74.005473,
+    "nta_name": "Battery Park City-Lower Manhattan"
+  },
+  {
+    "system_code": "13K008",
+    "location_name": "P.S. 008 Robert Fulton",
+    "location_category_description": "K-8",
+    "grades_text": "0K,01,02,03,04,05,08,SE",
+    "latitude": 40.700709,
+    "longitude": -73.992841,
+    "nta_name": "Brooklyn Heights-Cobble Hill"
+  },
+  {
+    "system_code": "84M080",
+    "location_name": "Manhattan Charter School II",
+    "location_category_description": "Elementary",
+    "grades_text": "0K,01,02,03,04,05",
+    "latitude": 40.713362,
+    "longitude": -73.986051,
+    "nta_name": "Lower East Side"
+  }
+]

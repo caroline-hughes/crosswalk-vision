@@ -68,7 +68,8 @@ def candidate_from_dict(item: dict) -> CandidateRecord:
     return CandidateRecord(
         id=str(item["id"]),
         intersection_label=str(item["intersection_label"]),
-        leg_label=str(item.get("leg_label") or ""),
+        # Live candidates are LION/fixture intersection nodes, not crosswalk polygons.
+        leg_label=str(item.get("leg_label") or "intersection node"),
         lat=float(item["lat"]),
         lon=float(item["lon"]),
         year=int(item.get("year") or 2024),

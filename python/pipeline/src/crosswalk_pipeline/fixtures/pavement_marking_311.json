@@ -1,100 +1,1352 @@
-[{"unique_key":"68579668","created_date":"2026-04-06T10:28:01.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.706176681102555","longitude":"-74.01435140225782","incident_address":"35 GREENWICH STREET"}
-,{"unique_key":"67438515","created_date":"2026-01-09T15:50:23.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70884545881225","longitude":"-74.00250320982184","incident_address":"PEARL STREET"}
-,{"unique_key":"68670523","created_date":"2026-04-14T23:56:26.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.70804401326656","longitude":"-73.99934354652733","incident_address":"BROOKLYN BRIDGE"}
-,{"unique_key":"68648794","created_date":"2026-04-13T13:18:47.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71728801879805","longitude":"-73.99097070915543","incident_address":"314 GRAND STREET"}
-,{"unique_key":"48045369","created_date":"2020-11-02T11:53:06.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.708133391918146","longitude":"-74.01662416555241","incident_address":"BATTERY PLACE"}
-,{"unique_key":"48118932","created_date":"2020-11-10T08:59:24.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.7064396941162","longitude":"-74.0178175941308","incident_address":"55 BATTERY PLACE"}
-,{"unique_key":"48152388","created_date":"2020-11-14T11:47:08.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71446673172652","longitude":"-74.00250342093301","incident_address":"60 CENTRE STREET"}
-,{"unique_key":"48283961","created_date":"2020-11-30T07:31:01.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.70509570972053","longitude":"-74.00993653480657","incident_address":"10 WILLIAM STREET"}
-,{"unique_key":"48296314","created_date":"2020-12-01T06:25:06.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70509570972053","longitude":"-74.00993653480657","incident_address":"10 WILLIAM STREET"}
-,{"unique_key":"48302555","created_date":"2020-12-02T11:28:46.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.71244088930319","longitude":"-73.99263425045741","incident_address":"154 MADISON STREET"}
-,{"unique_key":"49645132","created_date":"2021-01-28T11:12:05.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.7064431073358","longitude":"-74.01278971494163","incident_address":"47 BROADWAY"}
-,{"unique_key":"49754680","created_date":"2021-02-10T11:22:31.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70604508207161","longitude":"-74.01309621479948","incident_address":"32 BROADWAY"}
-,{"unique_key":"49757398","created_date":"2021-02-10T11:27:47.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70627017391471","longitude":"-74.01290870587448","incident_address":"42 BROADWAY"}
-,{"unique_key":"49773863","created_date":"2021-02-12T10:54:52.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.72027741057768","longitude":"-74.00112194782362","incident_address":"432 BROADWAY"}
-,{"unique_key":"49867305","created_date":"2021-02-25T12:35:24.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.706459295819975","longitude":"-74.01510167781731","incident_address":"MORRIS STREET"}
-,{"unique_key":"50085082","created_date":"2021-03-22T11:21:17.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70804401326656","longitude":"-73.99934354652733","incident_address":"BROOKLYN BRIDGE"}
-,{"unique_key":"50181756","created_date":"2021-04-03T19:52:03.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.7154466230939","longitude":"-74.00189021881013","incident_address":"80 CENTRE STREET"}
-,{"unique_key":"50375079","created_date":"2021-04-25T21:12:59.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70662938664601","longitude":"-74.01573290822748","incident_address":"18 MORRIS STREET"}
-,{"unique_key":"50407955","created_date":"2021-04-28T05:04:57.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70804401326656","longitude":"-73.99934354652733","incident_address":"BROOKLYN BRIDGE"}
-,{"unique_key":"50581254","created_date":"2021-05-16T14:34:07.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.717076856804155","longitude":"-74.00624797530234","incident_address":"CHURCH STREET"}
-,{"unique_key":"51503213","created_date":"2021-08-12T11:48:02.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70699166769252","longitude":"-74.01593497622972","incident_address":"38 WEST STREET"}
-,{"unique_key":"52209128","created_date":"2021-10-16T18:01:29.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70804401326656","longitude":"-73.99934354652733","incident_address":"BROOKLYN BRIDGE"}
-,{"unique_key":"52801856","created_date":"2021-12-14T08:34:05.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.707840590569326","longitude":"-74.0084761590963","incident_address":"10 LIBERTY STREET"}
-,{"unique_key":"52806445","created_date":"2021-12-15T12:43:51.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70804401326656","longitude":"-73.99934354652733","incident_address":"BROOKLYN BRIDGE"}
-,{"unique_key":"52853838","created_date":"2021-12-20T20:26:43.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.7069898032393","longitude":"-74.00715955789771","incident_address":"90 MAIDEN LANE"}
-,{"unique_key":"53393677","created_date":"2022-02-16T11:06:00.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.70804401326656","longitude":"-73.99934354652733","incident_address":"BROOKLYN BRIDGE"}
-,{"unique_key":"53423436","created_date":"2022-02-20T12:37:58.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.71045116864657","longitude":"-74.00091978945389","incident_address":"364 PEARL STREET"}
-,{"unique_key":"53514780","created_date":"2022-03-03T16:16:18.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.71075309422537","longitude":"-74.00067451532144","incident_address":"374 PEARL STREET"}
-,{"unique_key":"53601926","created_date":"2022-03-09T09:52:40.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.71448844524339","longitude":"-73.99208933155437","incident_address":"2 ORCHARD STREET"}
-,{"unique_key":"53696821","created_date":"2022-03-20T16:45:50.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70927358551472","longitude":"-73.99561394424457","incident_address":"203 SOUTH STREET"}
-,{"unique_key":"53982952","created_date":"2022-04-22T12:41:15.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71244088930319","longitude":"-73.99263425045741","incident_address":"154 MADISON STREET"}
-,{"unique_key":"54085101","created_date":"2022-05-04T15:20:34.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.711032144629414","longitude":"-74.01453280010382","incident_address":"WEST STREET"}
-,{"unique_key":"54437182","created_date":"2022-06-09T16:36:35.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.708674299591976","longitude":"-74.01525727724825","incident_address":"62 WEST STREET"}
-,{"unique_key":"54802462","created_date":"2022-07-15T14:28:41.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.718144572527","longitude":"-73.99382768071642","incident_address":"CHRYSTIE STREET"}
-,{"unique_key":"55330382","created_date":"2022-09-07T14:43:01.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71524899740592","longitude":"-74.00205975522978","incident_address":"75 CENTRE STREET"}
-,{"unique_key":"55329209","created_date":"2022-09-07T08:56:19.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71307783649058","longitude":"-74.00410494763602","incident_address":"11 CENTRE STREET"}
-,{"unique_key":"55547096","created_date":"2022-09-28T09:30:31.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.71867996467829","longitude":"-73.99942280595106","incident_address":"CENTRE STREET"}
-,{"unique_key":"55560373","created_date":"2022-09-29T15:02:36.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71929720847382","longitude":"-74.00869767338959","incident_address":"FRANKLIN STREET"}
-,{"unique_key":"55605007","created_date":"2022-10-04T11:10:48.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.713840898991656","longitude":"-74.00353866408764","incident_address":"4 LAFAYETTE STREET"}
-,{"unique_key":"55604994","created_date":"2022-10-04T11:07:10.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.71389579554134","longitude":"-74.00349538055559","incident_address":"1 LAFAYETTE STREET"}
-,{"unique_key":"55609315","created_date":"2022-10-04T11:02:59.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.71802945199001","longitude":"-74.00118323625163","incident_address":"92 WALKER STREET"}
-,{"unique_key":"55915164","created_date":"2022-11-06T21:49:09.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.709772504157115","longitude":"-74.01280117469875","incident_address":"141 GREENWICH STREET"}
-,{"unique_key":"55991957","created_date":"2022-11-15T17:53:37.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.709772504157115","longitude":"-74.01280117469875","incident_address":"141 GREENWICH STREET"}
-,{"unique_key":"56106615","created_date":"2022-11-28T15:26:28.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.715654193028705","longitude":"-74.01552942244543","incident_address":"175 NORTH END AVENUE"}
-,{"unique_key":"56112651","created_date":"2022-11-29T13:10:53.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.71634869057347","longitude":"-74.01497766174779","incident_address":"275 NORTH END AVENUE"}
-,{"unique_key":"56465020","created_date":"2023-01-07T04:52:53.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70878409584793","longitude":"-74.01521401925132","incident_address":"66 WEST STREET"}
-,{"unique_key":"56672657","created_date":"2023-01-31T13:53:46.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.717076856804155","longitude":"-74.00624797530234","incident_address":"CHURCH STREET"}
-,{"unique_key":"56796627","created_date":"2023-02-13T15:22:51.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70802727280567","longitude":"-74.00793875677199","incident_address":"84 WILLIAM STREET"}
-,{"unique_key":"57448147","created_date":"2023-04-28T12:30:44.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71173825384143","longitude":"-74.00698692775009","incident_address":"BEEKMAN STREET"}
-,{"unique_key":"57792282","created_date":"2023-06-03T17:48:08.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70649252028309","longitude":"-74.01272480196262","incident_address":"52 BROADWAY"}
-,{"unique_key":"57887906","created_date":"2023-06-13T11:46:40.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71017669044868","longitude":"-74.00113620582324","incident_address":"AVENUE OF THE FINEST"}
-,{"unique_key":"57891997","created_date":"2023-06-13T11:41:36.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71190573818784","longitude":"-74.0060346719121","incident_address":"PARK ROW"}
-,{"unique_key":"59864981","created_date":"2023-12-28T13:54:40.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71017669044868","longitude":"-74.00113620582324","incident_address":"PEARL STREET"}
-,{"unique_key":"60777350","created_date":"2024-04-04T10:39:35.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.7064396941162","longitude":"-74.0178175941308","incident_address":"55 BATTERY PLACE"}
-,{"unique_key":"60783405","created_date":"2024-04-05T11:54:07.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.7064396941162","longitude":"-74.0178175941308","incident_address":"55 BATTERY PLACE"}
-,{"unique_key":"60781043","created_date":"2024-04-05T15:46:51.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.7064396941162","longitude":"-74.0178175941308","incident_address":"55 BATTERY PLACE"}
-,{"unique_key":"60808803","created_date":"2024-04-08T22:28:03.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71537513747187","longitude":"-73.99437624433922","incident_address":"27 FORSYTH STREET"}
-,{"unique_key":"60968109","created_date":"2024-04-24T12:55:51.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.708049081037906","longitude":"-74.00987565795964","incident_address":"24 NASSAU STREET"}
-,{"unique_key":"61012891","created_date":"2024-04-29T13:39:54.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.714732829078415","longitude":"-73.9937125646836","incident_address":"12 ELDRIDGE STREET"}
-,{"unique_key":"61040258","created_date":"2024-05-02T10:28:43.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.71920381197606","longitude":"-73.990364391092","incident_address":"ALLEN STREET"}
-,{"unique_key":"61110664","created_date":"2024-05-09T08:36:49.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70884545881225","longitude":"-74.00250320982184","incident_address":"PEARL STREET"}
-,{"unique_key":"61375782","created_date":"2024-06-04T09:27:21.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70684046680014","longitude":"-74.01757604416724","incident_address":"2 PLACE"}
-,{"unique_key":"61328217","created_date":"2024-05-31T09:58:09.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71241071921758","longitude":"-73.9929913590197","incident_address":"148A MADISON STREET"}
-,{"unique_key":"61347996","created_date":"2024-06-02T10:50:22.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70960001383794","longitude":"-73.99194202586268","incident_address":"MANHATTAN BRIDGE"}
-,{"unique_key":"61354750","created_date":"2024-06-03T16:21:11.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70684046680014","longitude":"-74.01757604416724","incident_address":"2 PLACE"}
-,{"unique_key":"61744902","created_date":"2024-07-08T08:58:04.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.711032144629414","longitude":"-74.01453280010382","incident_address":"WEST STREET"}
-,{"unique_key":"61794770","created_date":"2024-07-14T21:04:57.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70684046680014","longitude":"-74.01757604416724","incident_address":"2 PLACE"}
-,{"unique_key":"61975758","created_date":"2024-07-31T09:21:25.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.709045510372775","longitude":"-74.00889111057465","incident_address":"MAIDEN LANE"}
-,{"unique_key":"62840117","created_date":"2024-10-22T09:26:21.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.72042534102089","longitude":"-73.99180002229218","incident_address":"150 FORSYTH STREET"}
-,{"unique_key":"63026218","created_date":"2024-11-08T14:42:22.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70256516924503","longitude":"-73.99174451368775","incident_address":"FRONT STREET"}
-,{"unique_key":"63158836","created_date":"2024-11-20T13:45:05.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.711032144629414","longitude":"-74.01453280010382","incident_address":"WEST STREET"}
-,{"unique_key":"63895201","created_date":"2025-01-26T22:02:29.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.70473070205213","longitude":"-74.00938826078944","incident_address":"QUEEN ELIZABETH II SEPT   11 GDN"}
-,{"unique_key":"64145283","created_date":"2025-02-21T11:28:03.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.7199341755651","longitude":"-73.99420991323339","incident_address":"160 BOWERY"}
-,{"unique_key":"64356159","created_date":"2025-03-14T14:58:53.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71904771006535","longitude":"-73.99647909687339","incident_address":"GRAND STREET"}
-,{"unique_key":"64981935","created_date":"2025-05-17T12:21:28.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.7062324276722","longitude":"-74.00315954733293","incident_address":"FULTON STREET"}
-,{"unique_key":"65189381","created_date":"2025-06-06T18:44:35.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.702073820544","longitude":"-73.99126129492844","incident_address":"17 YORK STREET"}
-,{"unique_key":"65259019","created_date":"2025-06-13T18:52:38.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.7067072916307","longitude":"-74.00233000241616","incident_address":"BEEKMAN STREET"}
-,{"unique_key":"65261641","created_date":"2025-06-13T15:17:31.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.713845614338496","longitude":"-74.01381197329519","incident_address":"200 WEST STREET"}
-,{"unique_key":"65257814","created_date":"2025-06-13T18:50:35.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70884545881225","longitude":"-74.00250320982184","incident_address":"PEARL STREET"}
-,{"unique_key":"65735059","created_date":"2025-08-02T20:27:36.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.71620390796411","longitude":"-73.99190515418172","incident_address":"ALLEN STREET"}
-,{"unique_key":"66265555","created_date":"2025-09-24T23:59:18.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70960001383794","longitude":"-73.99194202586268","incident_address":"MANHATTAN BRIDGE"}
-,{"unique_key":"45546661","created_date":"2020-02-04T13:48:38.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70692853512699","longitude":"-74.01595660209964","incident_address":"37 WEST STREET"}
-,{"unique_key":"45541450","created_date":"2020-02-04T14:03:45.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.7109086619213","longitude":"-74.01428028022256","incident_address":"199 LIBERTY STREET"}
-,{"unique_key":"45827922","created_date":"2020-03-07T07:16:23.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.705938441807234","longitude":"-74.00884020133827","incident_address":"1 HANOVER STREET"}
-,{"unique_key":"46317712","created_date":"2020-05-27T15:23:30.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.71845752356146","longitude":"-73.99480887834468","incident_address":"BOWERY"}
-,{"unique_key":"46854810","created_date":"2020-07-14T11:39:49.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.70804401326656","longitude":"-73.99934354652733","incident_address":"BROOKLYN BRIDGE"}
-,{"unique_key":"47393329","created_date":"2020-08-28T19:03:59.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71416480144484","longitude":"-74.00278837984924","incident_address":"46 CENTRE STREET"}
-,{"unique_key":"47418887","created_date":"2020-08-31T20:43:19.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70612153670444","longitude":"-74.01622691767447","incident_address":"18 WEST STREET"}
-,{"unique_key":"54147173","created_date":"2022-05-12T12:58:41.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.70665133388467","longitude":"-74.01581226326947","incident_address":"20 MORRIS STREET"}
-,{"unique_key":"54153360","created_date":"2022-05-12T16:15:35.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.70952343044316","longitude":"-74.00166641887616","incident_address":"DOVER STREET"}
-,{"unique_key":"54191925","created_date":"2022-05-16T12:16:58.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71767155948809","longitude":"-74.01576798143834","incident_address":"RIVER TERRACE"}
-,{"unique_key":"58415371","created_date":"2023-08-04T11:00:44.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71443378821759","longitude":"-73.99721882336392","incident_address":"7 BOWERY"}
-,{"unique_key":"58568335","created_date":"2023-08-20T10:46:15.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.714683557535004","longitude":"-73.99706009409556","incident_address":"20 BOWERY"}
-,{"unique_key":"58712082","created_date":"2023-09-04T23:42:10.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71410100427898","longitude":"-74.01270821842058","incident_address":"100 BARCLAY STREET"}
-,{"unique_key":"58770361","created_date":"2023-09-10T23:44:06.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.708004540682225","longitude":"-74.01553124722169","incident_address":"50 WEST STREET"}
-,{"unique_key":"58923120","created_date":"2023-09-25T22:36:17.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71200700219275","longitude":"-74.01018284800591","incident_address":"70 CHURCH STREET"}
-,{"unique_key":"58985143","created_date":"2023-10-01T22:42:03.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71376622714622","longitude":"-74.01192539286502","incident_address":"101 BARCLAY STREET"}
-,{"unique_key":"59162771","created_date":"2023-10-19T18:46:14.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.709045510372775","longitude":"-74.00889111057465","incident_address":"MAIDEN LANE"}
-,{"unique_key":"59164085","created_date":"2023-10-19T18:02:16.000","complaint_type":"Street Condition","descriptor":"Line/Marking - Faded","latitude":"40.71406544075601","longitude":"-74.01158636836887","incident_address":"245 GREENWICH STREET"}
-,{"unique_key":"59237191","created_date":"2023-10-26T17:02:57.000","complaint_type":"Street Condition","descriptor":"Line/Marking - After Repaving","latitude":"40.70931207988215","longitude":"-74.00191168658885","incident_address":"336 PEARL STREET"}]
+[
+  {
+    "unique_key": "45541450",
+    "created_date": "2020-02-04T14:03:45.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.7109086619213",
+    "longitude": "-74.01428028022256",
+    "incident_address": "199 LIBERTY STREET"
+  },
+  {
+    "unique_key": "45546661",
+    "created_date": "2020-02-04T13:48:38.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70692853512699",
+    "longitude": "-74.01595660209964",
+    "incident_address": "37 WEST STREET"
+  },
+  {
+    "unique_key": "45653542",
+    "created_date": "2020-02-19T10:04:04.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70017157343727",
+    "longitude": "-73.98975404344353",
+    "incident_address": "125 CADMAN PLAZA EAST"
+  },
+  {
+    "unique_key": "45827922",
+    "created_date": "2020-03-07T07:16:23.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.705938441807234",
+    "longitude": "-74.00884020133827",
+    "incident_address": "1 HANOVER STREET"
+  },
+  {
+    "unique_key": "46317712",
+    "created_date": "2020-05-27T15:23:30.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71845752356146",
+    "longitude": "-73.99480887834468",
+    "incident_address": "BOWERY"
+  },
+  {
+    "unique_key": "46854810",
+    "created_date": "2020-07-14T11:39:49.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70804401326656",
+    "longitude": "-73.99934354652733",
+    "incident_address": "BROOKLYN BRIDGE"
+  },
+  {
+    "unique_key": "47393329",
+    "created_date": "2020-08-28T19:03:59.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71416480144484",
+    "longitude": "-74.00278837984924",
+    "incident_address": "46 CENTRE STREET"
+  },
+  {
+    "unique_key": "47418887",
+    "created_date": "2020-08-31T20:43:19.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70612153670444",
+    "longitude": "-74.01622691767447",
+    "incident_address": "18 WEST STREET"
+  },
+  {
+    "unique_key": "48045369",
+    "created_date": "2020-11-02T11:53:06.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.708133391918146",
+    "longitude": "-74.01662416555241",
+    "incident_address": "BATTERY PLACE"
+  },
+  {
+    "unique_key": "48118932",
+    "created_date": "2020-11-10T08:59:24.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.7064396941162",
+    "longitude": "-74.0178175941308",
+    "incident_address": "55 BATTERY PLACE"
+  },
+  {
+    "unique_key": "48152388",
+    "created_date": "2020-11-14T11:47:08.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71446673172652",
+    "longitude": "-74.00250342093301",
+    "incident_address": "60 CENTRE STREET"
+  },
+  {
+    "unique_key": "48283961",
+    "created_date": "2020-11-30T07:31:01.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70509570972053",
+    "longitude": "-74.00993653480657",
+    "incident_address": "10 WILLIAM STREET"
+  },
+  {
+    "unique_key": "48296314",
+    "created_date": "2020-12-01T06:25:06.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70509570972053",
+    "longitude": "-74.00993653480657",
+    "incident_address": "10 WILLIAM STREET"
+  },
+  {
+    "unique_key": "48302555",
+    "created_date": "2020-12-02T11:28:46.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71244088930319",
+    "longitude": "-73.99263425045741",
+    "incident_address": "154 MADISON STREET"
+  },
+  {
+    "unique_key": "48561990",
+    "created_date": "2021-01-04T09:49:48.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.72198191081811",
+    "longitude": "-73.99970417339394",
+    "incident_address": "489 BROADWAY"
+  },
+  {
+    "unique_key": "48567914",
+    "created_date": "2021-01-04T09:54:27.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.7209883072898",
+    "longitude": "-74.00054835333839",
+    "incident_address": "463 BROADWAY"
+  },
+  {
+    "unique_key": "49645132",
+    "created_date": "2021-01-28T11:12:05.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.7064431073358",
+    "longitude": "-74.01278971494163",
+    "incident_address": "47 BROADWAY"
+  },
+  {
+    "unique_key": "49754680",
+    "created_date": "2021-02-10T11:22:31.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70604508207161",
+    "longitude": "-74.01309621479948",
+    "incident_address": "32 BROADWAY"
+  },
+  {
+    "unique_key": "49757398",
+    "created_date": "2021-02-10T11:27:47.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70627017391471",
+    "longitude": "-74.01290870587448",
+    "incident_address": "42 BROADWAY"
+  },
+  {
+    "unique_key": "49773863",
+    "created_date": "2021-02-12T10:54:52.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.72027741057768",
+    "longitude": "-74.00112194782362",
+    "incident_address": "432 BROADWAY"
+  },
+  {
+    "unique_key": "49775799",
+    "created_date": "2021-02-12T10:51:06.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.72274769468882",
+    "longitude": "-73.9990331409584",
+    "incident_address": "524 BROADWAY"
+  },
+  {
+    "unique_key": "49867305",
+    "created_date": "2021-02-25T12:35:24.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.706459295819975",
+    "longitude": "-74.01510167781731",
+    "incident_address": "MORRIS STREET"
+  },
+  {
+    "unique_key": "49977926",
+    "created_date": "2021-03-10T19:09:02.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71363711389729",
+    "longitude": "-73.98706100987009",
+    "incident_address": "CLINTON STREET"
+  },
+  {
+    "unique_key": "50048852",
+    "created_date": "2021-03-18T12:00:18.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.69923815304643",
+    "longitude": "-73.98771295836717",
+    "incident_address": "80 HIGH STREET"
+  },
+  {
+    "unique_key": "50085082",
+    "created_date": "2021-03-22T11:21:17.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70804401326656",
+    "longitude": "-73.99934354652733",
+    "incident_address": "BROOKLYN BRIDGE"
+  },
+  {
+    "unique_key": "50181756",
+    "created_date": "2021-04-03T19:52:03.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.7154466230939",
+    "longitude": "-74.00189021881013",
+    "incident_address": "80 CENTRE STREET"
+  },
+  {
+    "unique_key": "50375079",
+    "created_date": "2021-04-25T21:12:59.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70662938664601",
+    "longitude": "-74.01573290822748",
+    "incident_address": "18 MORRIS STREET"
+  },
+  {
+    "unique_key": "50407955",
+    "created_date": "2021-04-28T05:04:57.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70804401326656",
+    "longitude": "-73.99934354652733",
+    "incident_address": "BROOKLYN BRIDGE"
+  },
+  {
+    "unique_key": "50535157",
+    "created_date": "2021-05-11T19:19:52.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71455812288278",
+    "longitude": "-74.02123221319597",
+    "incident_address": "HUDSON RIVER"
+  },
+  {
+    "unique_key": "50581254",
+    "created_date": "2021-05-16T14:34:07.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.717076856804155",
+    "longitude": "-74.00624797530234",
+    "incident_address": "CHURCH STREET"
+  },
+  {
+    "unique_key": "51326352",
+    "created_date": "2021-07-24T15:45:15.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70957485899967",
+    "longitude": "-73.98700047990276",
+    "incident_address": "PIER   36"
+  },
+  {
+    "unique_key": "51503213",
+    "created_date": "2021-08-12T11:48:02.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70699166769252",
+    "longitude": "-74.01593497622972",
+    "incident_address": "38 WEST STREET"
+  },
+  {
+    "unique_key": "51631902",
+    "created_date": "2021-08-24T17:11:03.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.722709256615495",
+    "longitude": "-73.99810957520295",
+    "incident_address": "80 SPRING STREET"
+  },
+  {
+    "unique_key": "52209128",
+    "created_date": "2021-10-16T18:01:29.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70804401326656",
+    "longitude": "-73.99934354652733",
+    "incident_address": "BROOKLYN BRIDGE"
+  },
+  {
+    "unique_key": "52801856",
+    "created_date": "2021-12-14T08:34:05.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.707840590569326",
+    "longitude": "-74.0084761590963",
+    "incident_address": "10 LIBERTY STREET"
+  },
+  {
+    "unique_key": "52806445",
+    "created_date": "2021-12-15T12:43:51.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70804401326656",
+    "longitude": "-73.99934354652733",
+    "incident_address": "BROOKLYN BRIDGE"
+  },
+  {
+    "unique_key": "52853838",
+    "created_date": "2021-12-20T20:26:43.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.7069898032393",
+    "longitude": "-74.00715955789771",
+    "incident_address": "90 MAIDEN LANE"
+  },
+  {
+    "unique_key": "53293131",
+    "created_date": "2022-02-07T16:32:27.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.722538978948755",
+    "longitude": "-74.0052166932705",
+    "incident_address": "72 6 AVENUE"
+  },
+  {
+    "unique_key": "53393677",
+    "created_date": "2022-02-16T11:06:00.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70804401326656",
+    "longitude": "-73.99934354652733",
+    "incident_address": "BROOKLYN BRIDGE"
+  },
+  {
+    "unique_key": "53423436",
+    "created_date": "2022-02-20T12:37:58.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71045116864657",
+    "longitude": "-74.00091978945389",
+    "incident_address": "364 PEARL STREET"
+  },
+  {
+    "unique_key": "53514780",
+    "created_date": "2022-03-03T16:16:18.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71075309422537",
+    "longitude": "-74.00067451532144",
+    "incident_address": "374 PEARL STREET"
+  },
+  {
+    "unique_key": "53601926",
+    "created_date": "2022-03-09T09:52:40.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71448844524339",
+    "longitude": "-73.99208933155437",
+    "incident_address": "2 ORCHARD STREET"
+  },
+  {
+    "unique_key": "53696821",
+    "created_date": "2022-03-20T16:45:50.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70927358551472",
+    "longitude": "-73.99561394424457",
+    "incident_address": "203 SOUTH STREET"
+  },
+  {
+    "unique_key": "53982952",
+    "created_date": "2022-04-22T12:41:15.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71244088930319",
+    "longitude": "-73.99263425045741",
+    "incident_address": "154 MADISON STREET"
+  },
+  {
+    "unique_key": "54085101",
+    "created_date": "2022-05-04T15:20:34.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.711032144629414",
+    "longitude": "-74.01453280010382",
+    "incident_address": "WEST STREET"
+  },
+  {
+    "unique_key": "54147173",
+    "created_date": "2022-05-12T12:58:41.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70665133388467",
+    "longitude": "-74.01581226326947",
+    "incident_address": "20 MORRIS STREET"
+  },
+  {
+    "unique_key": "54153360",
+    "created_date": "2022-05-12T16:15:35.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70952343044316",
+    "longitude": "-74.00166641887616",
+    "incident_address": "DOVER STREET"
+  },
+  {
+    "unique_key": "54191925",
+    "created_date": "2022-05-16T12:16:58.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71767155948809",
+    "longitude": "-74.01576798143834",
+    "incident_address": "RIVER TERRACE"
+  },
+  {
+    "unique_key": "54437182",
+    "created_date": "2022-06-09T16:36:35.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.708674299591976",
+    "longitude": "-74.01525727724825",
+    "incident_address": "62 WEST STREET"
+  },
+  {
+    "unique_key": "54755085",
+    "created_date": "2022-07-11T12:17:35.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.7006626898424",
+    "longitude": "-73.98774154772173",
+    "incident_address": "PEARL STREET"
+  },
+  {
+    "unique_key": "54757517",
+    "created_date": "2022-07-11T12:11:18.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70159051178995",
+    "longitude": "-73.9886285854847",
+    "incident_address": "ADAMS STREET"
+  },
+  {
+    "unique_key": "54802462",
+    "created_date": "2022-07-15T14:28:41.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.718144572527",
+    "longitude": "-73.99382768071642",
+    "incident_address": "CHRYSTIE STREET"
+  },
+  {
+    "unique_key": "55196854",
+    "created_date": "2022-08-24T16:37:34.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.72278607402857",
+    "longitude": "-74.00343812387118",
+    "incident_address": "350 WEST BROADWAY"
+  },
+  {
+    "unique_key": "55329209",
+    "created_date": "2022-09-07T08:56:19.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71307783649058",
+    "longitude": "-74.00410494763602",
+    "incident_address": "11 CENTRE STREET"
+  },
+  {
+    "unique_key": "55330382",
+    "created_date": "2022-09-07T14:43:01.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71524899740592",
+    "longitude": "-74.00205975522978",
+    "incident_address": "75 CENTRE STREET"
+  },
+  {
+    "unique_key": "55547096",
+    "created_date": "2022-09-28T09:30:31.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71867996467829",
+    "longitude": "-73.99942280595106",
+    "incident_address": "CENTRE STREET"
+  },
+  {
+    "unique_key": "55560373",
+    "created_date": "2022-09-29T15:02:36.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71929720847382",
+    "longitude": "-74.00869767338959",
+    "incident_address": "FRANKLIN STREET"
+  },
+  {
+    "unique_key": "55604994",
+    "created_date": "2022-10-04T11:07:10.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71389579554134",
+    "longitude": "-74.00349538055559",
+    "incident_address": "1 LAFAYETTE STREET"
+  },
+  {
+    "unique_key": "55605007",
+    "created_date": "2022-10-04T11:10:48.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.713840898991656",
+    "longitude": "-74.00353866408764",
+    "incident_address": "4 LAFAYETTE STREET"
+  },
+  {
+    "unique_key": "55609315",
+    "created_date": "2022-10-04T11:02:59.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71802945199001",
+    "longitude": "-74.00118323625163",
+    "incident_address": "92 WALKER STREET"
+  },
+  {
+    "unique_key": "55668712",
+    "created_date": "2022-10-11T23:18:37.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.701016761580625",
+    "longitude": "-73.98771263055977",
+    "incident_address": "121 PEARL STREET"
+  },
+  {
+    "unique_key": "55745864",
+    "created_date": "2022-10-19T10:51:28.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70009451283362",
+    "longitude": "-73.98764427785147",
+    "incident_address": "73 SANDS STREET"
+  },
+  {
+    "unique_key": "55767134",
+    "created_date": "2022-10-21T09:55:20.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.72089770738181",
+    "longitude": "-73.99764064081694",
+    "incident_address": "2 CLEVELAND PLACE"
+  },
+  {
+    "unique_key": "55915164",
+    "created_date": "2022-11-06T21:49:09.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.709772504157115",
+    "longitude": "-74.01280117469875",
+    "incident_address": "141 GREENWICH STREET"
+  },
+  {
+    "unique_key": "55991957",
+    "created_date": "2022-11-15T17:53:37.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.709772504157115",
+    "longitude": "-74.01280117469875",
+    "incident_address": "141 GREENWICH STREET"
+  },
+  {
+    "unique_key": "56106615",
+    "created_date": "2022-11-28T15:26:28.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.715654193028705",
+    "longitude": "-74.01552942244543",
+    "incident_address": "175 NORTH END AVENUE"
+  },
+  {
+    "unique_key": "56112651",
+    "created_date": "2022-11-29T13:10:53.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71634869057347",
+    "longitude": "-74.01497766174779",
+    "incident_address": "275 NORTH END AVENUE"
+  },
+  {
+    "unique_key": "56465020",
+    "created_date": "2023-01-07T04:52:53.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70878409584793",
+    "longitude": "-74.01521401925132",
+    "incident_address": "66 WEST STREET"
+  },
+  {
+    "unique_key": "56672657",
+    "created_date": "2023-01-31T13:53:46.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.717076856804155",
+    "longitude": "-74.00624797530234",
+    "incident_address": "CHURCH STREET"
+  },
+  {
+    "unique_key": "56691310",
+    "created_date": "2023-02-02T10:32:47.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.721871824462426",
+    "longitude": "-74.00826148548596",
+    "incident_address": "163 HUDSON STREET"
+  },
+  {
+    "unique_key": "56796627",
+    "created_date": "2023-02-13T15:22:51.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70802727280567",
+    "longitude": "-74.00793875677199",
+    "incident_address": "84 WILLIAM STREET"
+  },
+  {
+    "unique_key": "57448147",
+    "created_date": "2023-04-28T12:30:44.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71173825384143",
+    "longitude": "-74.00698692775009",
+    "incident_address": "BEEKMAN STREET"
+  },
+  {
+    "unique_key": "57792282",
+    "created_date": "2023-06-03T17:48:08.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70649252028309",
+    "longitude": "-74.01272480196262",
+    "incident_address": "52 BROADWAY"
+  },
+  {
+    "unique_key": "57887906",
+    "created_date": "2023-06-13T11:46:40.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71017669044868",
+    "longitude": "-74.00113620582324",
+    "incident_address": "AVENUE OF THE FINEST"
+  },
+  {
+    "unique_key": "57891997",
+    "created_date": "2023-06-13T11:41:36.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71190573818784",
+    "longitude": "-74.0060346719121",
+    "incident_address": "PARK ROW"
+  },
+  {
+    "unique_key": "58415371",
+    "created_date": "2023-08-04T11:00:44.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71443378821759",
+    "longitude": "-73.99721882336392",
+    "incident_address": "7 BOWERY"
+  },
+  {
+    "unique_key": "58568335",
+    "created_date": "2023-08-20T10:46:15.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.714683557535004",
+    "longitude": "-73.99706009409556",
+    "incident_address": "20 BOWERY"
+  },
+  {
+    "unique_key": "58712082",
+    "created_date": "2023-09-04T23:42:10.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71410100427898",
+    "longitude": "-74.01270821842058",
+    "incident_address": "100 BARCLAY STREET"
+  },
+  {
+    "unique_key": "58770361",
+    "created_date": "2023-09-10T23:44:06.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.708004540682225",
+    "longitude": "-74.01553124722169",
+    "incident_address": "50 WEST STREET"
+  },
+  {
+    "unique_key": "58923120",
+    "created_date": "2023-09-25T22:36:17.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71200700219275",
+    "longitude": "-74.01018284800591",
+    "incident_address": "70 CHURCH STREET"
+  },
+  {
+    "unique_key": "58985143",
+    "created_date": "2023-10-01T22:42:03.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71376622714622",
+    "longitude": "-74.01192539286502",
+    "incident_address": "101 BARCLAY STREET"
+  },
+  {
+    "unique_key": "59162771",
+    "created_date": "2023-10-19T18:46:14.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.709045510372775",
+    "longitude": "-74.00889111057465",
+    "incident_address": "MAIDEN LANE"
+  },
+  {
+    "unique_key": "59164085",
+    "created_date": "2023-10-19T18:02:16.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71406544075601",
+    "longitude": "-74.01158636836887",
+    "incident_address": "245 GREENWICH STREET"
+  },
+  {
+    "unique_key": "59229302",
+    "created_date": "2023-10-25T13:56:09.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71455812288278",
+    "longitude": "-74.02123221319597",
+    "incident_address": "HUDSON RIVER"
+  },
+  {
+    "unique_key": "59237191",
+    "created_date": "2023-10-26T17:02:57.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70931207988215",
+    "longitude": "-74.00191168658885",
+    "incident_address": "336 PEARL STREET"
+  },
+  {
+    "unique_key": "59248241",
+    "created_date": "2023-10-27T18:06:13.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.72149607215987",
+    "longitude": "-74.00196615030492",
+    "incident_address": "93 GRAND STREET"
+  },
+  {
+    "unique_key": "59394423",
+    "created_date": "2023-11-10T11:13:39.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.717155894779616",
+    "longitude": "-73.98703868247951",
+    "incident_address": "BROOME STREET"
+  },
+  {
+    "unique_key": "59864981",
+    "created_date": "2023-12-28T13:54:40.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71017669044868",
+    "longitude": "-74.00113620582324",
+    "incident_address": "PEARL STREET"
+  },
+  {
+    "unique_key": "60194967",
+    "created_date": "2024-01-31T14:03:47.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.717155894779616",
+    "longitude": "-73.98703868247951",
+    "incident_address": "BROOME STREET"
+  },
+  {
+    "unique_key": "60613848",
+    "created_date": "2024-03-18T11:10:06.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.69918650094258",
+    "longitude": "-73.99398090503492",
+    "incident_address": "HICKS STREET"
+  },
+  {
+    "unique_key": "60614752",
+    "created_date": "2024-03-18T09:35:00.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.69918650094258",
+    "longitude": "-73.99398090503492",
+    "incident_address": "HICKS STREET"
+  },
+  {
+    "unique_key": "60619069",
+    "created_date": "2024-03-18T09:36:33.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.69918650094258",
+    "longitude": "-73.99398090503492",
+    "incident_address": "HICKS STREET"
+  },
+  {
+    "unique_key": "60777350",
+    "created_date": "2024-04-04T10:39:35.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.7064396941162",
+    "longitude": "-74.0178175941308",
+    "incident_address": "55 BATTERY PLACE"
+  },
+  {
+    "unique_key": "60781043",
+    "created_date": "2024-04-05T15:46:51.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.7064396941162",
+    "longitude": "-74.0178175941308",
+    "incident_address": "55 BATTERY PLACE"
+  },
+  {
+    "unique_key": "60783405",
+    "created_date": "2024-04-05T11:54:07.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.7064396941162",
+    "longitude": "-74.0178175941308",
+    "incident_address": "55 BATTERY PLACE"
+  },
+  {
+    "unique_key": "60808803",
+    "created_date": "2024-04-08T22:28:03.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71537513747187",
+    "longitude": "-73.99437624433922",
+    "incident_address": "27 FORSYTH STREET"
+  },
+  {
+    "unique_key": "60861838",
+    "created_date": "2024-04-14T22:27:01.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71455812288278",
+    "longitude": "-74.02123221319597",
+    "incident_address": "HUDSON RIVER"
+  },
+  {
+    "unique_key": "60968109",
+    "created_date": "2024-04-24T12:55:51.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.708049081037906",
+    "longitude": "-74.00987565795964",
+    "incident_address": "24 NASSAU STREET"
+  },
+  {
+    "unique_key": "61012891",
+    "created_date": "2024-04-29T13:39:54.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.714732829078415",
+    "longitude": "-73.9937125646836",
+    "incident_address": "12 ELDRIDGE STREET"
+  },
+  {
+    "unique_key": "61040258",
+    "created_date": "2024-05-02T10:28:43.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71920381197606",
+    "longitude": "-73.990364391092",
+    "incident_address": "ALLEN STREET"
+  },
+  {
+    "unique_key": "61110664",
+    "created_date": "2024-05-09T08:36:49.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70884545881225",
+    "longitude": "-74.00250320982184",
+    "incident_address": "PEARL STREET"
+  },
+  {
+    "unique_key": "61328217",
+    "created_date": "2024-05-31T09:58:09.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71241071921758",
+    "longitude": "-73.9929913590197",
+    "incident_address": "148A MADISON STREET"
+  },
+  {
+    "unique_key": "61347996",
+    "created_date": "2024-06-02T10:50:22.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70960001383794",
+    "longitude": "-73.99194202586268",
+    "incident_address": "MANHATTAN BRIDGE"
+  },
+  {
+    "unique_key": "61354750",
+    "created_date": "2024-06-03T16:21:11.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70684046680014",
+    "longitude": "-74.01757604416724",
+    "incident_address": "2 PLACE"
+  },
+  {
+    "unique_key": "61375782",
+    "created_date": "2024-06-04T09:27:21.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70684046680014",
+    "longitude": "-74.01757604416724",
+    "incident_address": "2 PLACE"
+  },
+  {
+    "unique_key": "61744902",
+    "created_date": "2024-07-08T08:58:04.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.711032144629414",
+    "longitude": "-74.01453280010382",
+    "incident_address": "WEST STREET"
+  },
+  {
+    "unique_key": "61783597",
+    "created_date": "2024-07-12T12:38:16.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.7225170676568",
+    "longitude": "-74.00405502165069",
+    "incident_address": "45 GRAND STREET"
+  },
+  {
+    "unique_key": "61794770",
+    "created_date": "2024-07-14T21:04:57.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70684046680014",
+    "longitude": "-74.01757604416724",
+    "incident_address": "2 PLACE"
+  },
+  {
+    "unique_key": "61975758",
+    "created_date": "2024-07-31T09:21:25.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.709045510372775",
+    "longitude": "-74.00889111057465",
+    "incident_address": "MAIDEN LANE"
+  },
+  {
+    "unique_key": "62121732",
+    "created_date": "2024-08-14T16:42:49.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.722640106151296",
+    "longitude": "-73.98877651630326",
+    "incident_address": "205 ALLEN STREET"
+  },
+  {
+    "unique_key": "62125625",
+    "created_date": "2024-08-14T11:01:17.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.722640106151296",
+    "longitude": "-73.98877651630326",
+    "incident_address": "205 ALLEN STREET"
+  },
+  {
+    "unique_key": "62840117",
+    "created_date": "2024-10-22T09:26:21.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.72042534102089",
+    "longitude": "-73.99180002229218",
+    "incident_address": "150 FORSYTH STREET"
+  },
+  {
+    "unique_key": "63026218",
+    "created_date": "2024-11-08T14:42:22.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70256516924503",
+    "longitude": "-73.99174451368775",
+    "incident_address": "FRONT STREET"
+  },
+  {
+    "unique_key": "63158836",
+    "created_date": "2024-11-20T13:45:05.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.711032144629414",
+    "longitude": "-74.01453280010382",
+    "incident_address": "WEST STREET"
+  },
+  {
+    "unique_key": "63895201",
+    "created_date": "2025-01-26T22:02:29.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70473070205213",
+    "longitude": "-74.00938826078944",
+    "incident_address": "QUEEN ELIZABETH II SEPT   11 GDN"
+  },
+  {
+    "unique_key": "64145283",
+    "created_date": "2025-02-21T11:28:03.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.7199341755651",
+    "longitude": "-73.99420991323339",
+    "incident_address": "160 BOWERY"
+  },
+  {
+    "unique_key": "64356159",
+    "created_date": "2025-03-14T14:58:53.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71904771006535",
+    "longitude": "-73.99647909687339",
+    "incident_address": "GRAND STREET"
+  },
+  {
+    "unique_key": "64981935",
+    "created_date": "2025-05-17T12:21:28.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.7062324276722",
+    "longitude": "-74.00315954733293",
+    "incident_address": "FULTON STREET"
+  },
+  {
+    "unique_key": "65189381",
+    "created_date": "2025-06-06T18:44:35.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.702073820544",
+    "longitude": "-73.99126129492844",
+    "incident_address": "17 YORK STREET"
+  },
+  {
+    "unique_key": "65257814",
+    "created_date": "2025-06-13T18:50:35.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70884545881225",
+    "longitude": "-74.00250320982184",
+    "incident_address": "PEARL STREET"
+  },
+  {
+    "unique_key": "65259019",
+    "created_date": "2025-06-13T18:52:38.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.7067072916307",
+    "longitude": "-74.00233000241616",
+    "incident_address": "BEEKMAN STREET"
+  },
+  {
+    "unique_key": "65261641",
+    "created_date": "2025-06-13T15:17:31.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.713845614338496",
+    "longitude": "-74.01381197329519",
+    "incident_address": "200 WEST STREET"
+  },
+  {
+    "unique_key": "65374813",
+    "created_date": "2025-06-25T09:20:59.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.72092758768251",
+    "longitude": "-73.9912011014733",
+    "incident_address": "41 RIVINGTON STREET"
+  },
+  {
+    "unique_key": "65735059",
+    "created_date": "2025-08-02T20:27:36.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71620390796411",
+    "longitude": "-73.99190515418172",
+    "incident_address": "ALLEN STREET"
+  },
+  {
+    "unique_key": "65833628",
+    "created_date": "2025-08-12T23:47:58.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.700651701913785",
+    "longitude": "-73.9876586005342",
+    "incident_address": "74 PROSPECT STREET"
+  },
+  {
+    "unique_key": "65977006",
+    "created_date": "2025-08-28T10:30:43.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.7006626898424",
+    "longitude": "-73.98774154772173",
+    "incident_address": "PEARL STREET"
+  },
+  {
+    "unique_key": "65987470",
+    "created_date": "2025-08-29T09:54:00.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71855584723336",
+    "longitude": "-73.98820001110087",
+    "incident_address": "DELANCEY STREET"
+  },
+  {
+    "unique_key": "66265555",
+    "created_date": "2025-09-24T23:59:18.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70960001383794",
+    "longitude": "-73.99194202586268",
+    "incident_address": "MANHATTAN BRIDGE"
+  },
+  {
+    "unique_key": "67438515",
+    "created_date": "2026-01-09T15:50:23.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70884545881225",
+    "longitude": "-74.00250320982184",
+    "incident_address": "PEARL STREET"
+  },
+  {
+    "unique_key": "68297287",
+    "created_date": "2026-03-11T08:00:49.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.72238532906574",
+    "longitude": "-74.00376640056474",
+    "incident_address": "GRAND STREET"
+  },
+  {
+    "unique_key": "68320388",
+    "created_date": "2026-03-13T10:00:44.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.69809949967424",
+    "longitude": "-73.99270796189893",
+    "incident_address": "HENRY STREET"
+  },
+  {
+    "unique_key": "68385747",
+    "created_date": "2026-03-19T15:26:04.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.7006626898424",
+    "longitude": "-73.98774154772173",
+    "incident_address": "PEARL STREET"
+  },
+  {
+    "unique_key": "68579668",
+    "created_date": "2026-04-06T10:28:01.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.706176681102555",
+    "longitude": "-74.01435140225782",
+    "incident_address": "35 GREENWICH STREET"
+  },
+  {
+    "unique_key": "68648794",
+    "created_date": "2026-04-13T13:18:47.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71728801879805",
+    "longitude": "-73.99097070915543",
+    "incident_address": "314 GRAND STREET"
+  },
+  {
+    "unique_key": "68670523",
+    "created_date": "2026-04-14T23:56:26.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70804401326656",
+    "longitude": "-73.99934354652733",
+    "incident_address": "BROOKLYN BRIDGE"
+  },
+  {
+    "unique_key": "69014342",
+    "created_date": "2026-05-16T20:15:32.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70211202931321",
+    "longitude": "-74.01124888021852",
+    "incident_address": "125 BROAD STREET"
+  },
+  {
+    "unique_key": "69030128",
+    "created_date": "2026-05-17T20:37:22.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71198262574742",
+    "longitude": "-74.00534211560644",
+    "incident_address": "49 PARK ROW"
+  },
+  {
+    "unique_key": "69126692",
+    "created_date": "2026-05-26T17:06:53.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.718347718594366",
+    "longitude": "-73.99449503919693",
+    "incident_address": "241 GRAND STREET"
+  },
+  {
+    "unique_key": "69205121",
+    "created_date": "2026-06-01T08:10:48.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70617085122013",
+    "longitude": "-74.01686172400147",
+    "incident_address": "30 LITTLE WEST STREET"
+  },
+  {
+    "unique_key": "69226914",
+    "created_date": "2026-06-03T20:14:13.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70118698949231",
+    "longitude": "-74.01178609505524",
+    "incident_address": "BATTERY MARITIME BUILDING"
+  },
+  {
+    "unique_key": "69390729",
+    "created_date": "2026-06-17T07:29:56.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71620390796411",
+    "longitude": "-73.99190515418172",
+    "incident_address": "ALLEN STREET"
+  },
+  {
+    "unique_key": "69426080",
+    "created_date": "2026-06-20T20:06:30.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70838975461549",
+    "longitude": "-74.0048152194061",
+    "incident_address": "CLIFF STREET"
+  },
+  {
+    "unique_key": "69662142",
+    "created_date": "2026-07-09T14:54:03.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71325594707911",
+    "longitude": "-74.00925599630611",
+    "incident_address": "CHURCH STREET"
+  },
+  {
+    "unique_key": "69729333",
+    "created_date": "2026-07-15T15:58:19.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.71838340945398",
+    "longitude": "-74.00531376907264",
+    "incident_address": "1 SIXTH AVENUE"
+  },
+  {
+    "unique_key": "69899873",
+    "created_date": "2026-07-30T17:10:49.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70804401326656",
+    "longitude": "-73.99934354652733",
+    "incident_address": "BROOKLYN BRIDGE"
+  },
+  {
+    "unique_key": "69948897",
+    "created_date": "2026-08-04T13:02:54.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70304473297138",
+    "longitude": "-74.01566714314411",
+    "incident_address": "THE BATTERY"
+  },
+  {
+    "unique_key": "70042978",
+    "created_date": "2026-08-12T10:18:26.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.71486748470107",
+    "longitude": "-74.00146815338009",
+    "incident_address": "165 WORTH STREET"
+  },
+  {
+    "unique_key": "70118296",
+    "created_date": "2026-08-19T12:10:29.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.7064837732671",
+    "longitude": "-74.0167319582512",
+    "incident_address": "2 PLACE"
+  },
+  {
+    "unique_key": "70119733",
+    "created_date": "2026-08-19T14:51:34.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - Faded",
+    "latitude": "40.70304473297138",
+    "longitude": "-74.01566714314411",
+    "incident_address": "THE BATTERY"
+  },
+  {
+    "unique_key": "70196355",
+    "created_date": "2026-08-26T10:10:50.000",
+    "complaint_type": "Street Condition",
+    "descriptor": "Line/Marking - After Repaving",
+    "latitude": "40.70304473297138",
+    "longitude": "-74.01566714314411",
+    "incident_address": "THE BATTERY"
+  }
+]

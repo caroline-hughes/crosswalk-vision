@@ -51,12 +51,14 @@ def fetch_sources() -> None:
                 "url": "https://data.cityofnewyork.us/api/views/2v4z-66xt/files/a3e46353-0b43-4b3b-a4fd-9bb042ccabb7?download=1",
             },
             "service_requests_311": {
-                "name": "NYC 311 faded pavement-marking complaints",
+                "name": "NYC 311 faded/after-repaving line markings (lane lines and crosswalks mixed)",
                 "url": "https://data.cityofnewyork.us/resource/erm2-nwe9.json",
+                "note": "Socrata default page is 100; fetch paginates with $limit/$offset/$order.",
             },
             "school_zones": {
-                "name": "NYC school-zone polygons",
-                "url": "https://data.cityofnewyork.us/api/views/cmjf-yawu/rows.csv?accessType=DOWNLOAD",
+                "name": "DOE school points (elementary / K-8) within 800 ft of the node",
+                "url": "https://data.cityofnewyork.us/resource/wg9x-4ke6.json",
+                "note": "Attendance-zone polygons cover the whole bbox, so the UI filter uses school proximity.",
             },
             "vision_zero_crashes": {
                 "name": "NYPD Motor Vehicle Collisions — pedestrian injured or killed",
@@ -80,7 +82,8 @@ def fetch_sources() -> None:
             "Live NYC downloads fall back to committed fixtures when an endpoint fails. "
             "LION gdb is not required for tests; candidate generation uses expanded fixtures "
             "if the gdb is missing. Scoring is a sklearn logistic ranker; the pixel heuristic "
-            "is the baseline, not a detector."
+            "is the baseline, not a detector. 311 Line/Marking mixes lane lines with crosswalks. "
+            "Candidates are intersection nodes, not crosswalk polygons."
         ),
     }
     write_json(PATHS.raw_dir / "source_manifest.json", manifest)
@@ -328,13 +331,16 @@ def export_snapshot() -> None:
         "eval_heuristic_auc": heuristic_auc,
         "showcase_top_k": SHOWCASE_TOP_K,
         "product_claim": (
-            "City-actionable inspection list of Lower Manhattan pedestrian crossings that look "
-            "degraded or under-marked relative to Vision Zero crash and 311 complaint burden."
+            "City-actionable inspection list of Lower Manhattan intersection nodes "
+            "(not crosswalk polygons) that look degraded or under-marked relative to "
+            "Vision Zero crash and 311 complaint burden."
         ),
         "caveat": (
-            "Not a crosswalk detector and not a pretty-paint ranking. Crash labels are noisy / "
-            "weakly supervised. Metrics use a spatial (neighborhood) split so train and test NTAs "
-            "are disjoint. Small n: treat AUC as directional, not a production SLA."
+            "Not a crosswalk detector and not a pretty-paint ranking. Candidates are LION/"
+            "fixture intersection nodes; leg_label is the node, not a painted crossing. "
+            "311 Line/Marking complaints mix lane lines with crosswalks. Crash labels are "
+            "noisy / weakly supervised. Metrics use a spatial (neighborhood) split so train "
+            "and test NTAs are disjoint. Small n: treat AUC as directional, not a production SLA."
         ),
     }
 

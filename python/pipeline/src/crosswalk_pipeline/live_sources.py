@@ -12,18 +12,20 @@ from typing import Dict, Iterable, List, Tuple
 import pandas as pd
 import requests
 from pyproj import Transformer
-from shapely import wkt as shapely_wkt
 from shapely.geometry import Point
 
 from .config import PATHS
-from .gis_join import assign_neighborhoods, crash_counts_from_join, join_events_to_candidates, load_json_records
+from .gis_join import assign_neighborhoods, crash_counts_from_join, join_events_to_candidates, load_json_records, points_within_radius
+from .io_utils import write_json
 from .models import CandidateRecord, candidate_from_dict
+from .soda import fetch_soda_records
 
 LION_DOWNLOAD_URL = (
     "https://data.cityofnewyork.us/api/views/2v4z-66xt/files/"
     "a3e46353-0b43-4b3b-a4fd-9bb042ccabb7?download=1"
 )
 SCHOOL_ZONES_CSV_URL = "https://data.cityofnewyork.us/api/views/cmjf-yawu/rows.csv?accessType=DOWNLOAD"
+SCHOOL_LOCATIONS_URL = "https://data.cityofnewyork.us/resource/wg9x-4ke6.json"
 PEDESTRIAN_CRASH_URL = (
     "https://data.cityofnewyork.us/resource/h9gi-nx95.json"
     "?$select=collision_id,crash_date,latitude,longitude,on_street_name,off_street_name,"
@@ -43,17 +45,15 @@ NTA_GEOJSON_URL = (
     "&geometryType=esriGeometryEnvelope&inSR=4326"
     "&spatialRel=esriSpatialRelIntersects&outSR=4326&f=geojson"
 )
-PAVEMENT_311_URL = (
-    "https://data.cityofnewyork.us/resource/erm2-nwe9.json"
-    "?%24select=unique_key,created_date,complaint_type,descriptor,latitude,longitude,incident_address"
-    "&%24where=complaint_type=%27Street%20Condition%27"
-    "%20AND%20descriptor%20in(%27Line/Marking%20-%20Faded%27,%27Line/Marking%20-%20After%20Repaving%27)"
-    "%20AND%20created_date%20%3E=%20%272020-01-01T00:00:00%27"
-    "%20AND%20latitude%20is%20not%20null%20AND%20longitude%20is%20not%20null"
-    "%20AND%20latitude%20between%2040.7000%20and%2040.7205"
-    "%20AND%20longitude%20between%20-74.02%20and%20-73.99"
-    "&%24limit=50000"
+# Socrata default page is 100. Never treat a 100-row dump as complete.
+PAVEMENT_311_RESOURCE = "https://data.cityofnewyork.us/resource/erm2-nwe9.json"
+PAVEMENT_311_SELECT = "unique_key,created_date,complaint_type,descriptor,latitude,longitude,incident_address"
+PAVEMENT_311_WHERE = (
+    "complaint_type='Street Condition' AND descriptor in('Line/Marking - Faded','Line/Marking - After Repaving') "
+    "AND created_date >= '2020-01-01T00:00:00' AND latitude is not null AND longitude is not null "
+    "AND latitude >= 40.6980 AND latitude <= 40.7230 AND longitude >= -74.022 AND longitude <= -73.987"
 )
+PAVEMENT_311_ORDER = "unique_key"
 
 LOWER_MANHATTAN_BOUNDS = {
     "min_lon": -74.02,
@@ -65,6 +65,8 @@ LOWER_MANHATTAN_BOUNDS = {
 LOWER_MANHATTAN_LABEL = "Lower Manhattan south of Canal Street"
 MAX_INTERSECTIONS = 60
 SHOWCASE_TOP_K = 16
+SCHOOL_PROXIMITY_FT = 800.0
+SCHOOL_LOCATION_CATEGORIES = {"Elementary", "K-8", "Early Childhood"}
 
 _TRANSFORM_4326_TO_2263 = Transformer.from_crs(4326, 2263, always_xy=True)
 
@@ -73,7 +75,7 @@ _TRANSFORM_4326_TO_2263 = Transformer.from_crs(4326, 2263, always_xy=True)
 class LiveSourceVersions:
     lion: str = "NYC LION 26a"
     imagery: str = "NYS 2024 orthos via ArcGIS MapServer"
-    school_zones: str = "School Zones 2024-2025 (Elementary School)"
+    school_zones: str = "DOE school points: elementary/K-8 within 800 ft (not attendance-zone polygons)"
     service_requests_311: str = "NYC Open Data 311 pavement-marking complaints since 2020"
     vision_zero_crashes: str = (
         "NYPD Motor Vehicle Collisions pedestrian injured/killed since 2020 (h9gi-nx95)"
@@ -96,19 +98,33 @@ def ensure_live_sources() -> LiveSourceVersions:
         with zipfile.ZipFile(PATHS.lion_zip_path, "r") as archive:
             archive.extractall(PATHS.lion_unzipped_dir)
 
-    if not PATHS.school_zones_csv_path.exists():
+    if not PATHS.school_locations_path.exists():
         try:
-            _download_file(SCHOOL_ZONES_CSV_URL, PATHS.school_zones_csv_path)
+            _fetch_school_locations(PATHS.school_locations_path)
         except Exception:
-            versions.school_zones = "unavailable (download failed; school_zone=false)"
+            fixture = PATHS.fixtures_dir / "school_locations.json"
+            if fixture.exists():
+                shutil.copyfile(fixture, PATHS.school_locations_path)
+                versions.school_zones = "fixture DOE elementary/K-8 points (800 ft)"
+            else:
+                versions.school_zones = "unavailable (download failed; school_zone=false)"
 
     pavement_311_path = PATHS.raw_dir / "pavement_marking_311.json"
-    if not _download_json_with_fallback(
-        PAVEMENT_311_URL,
-        pavement_311_path,
-        PATHS.fixtures_dir / "pavement_marking_311.json",
-        PATHS.raw_dir / "pavement_marking_311.json",
-    ):
+    try:
+        complaints = fetch_soda_records(
+            PAVEMENT_311_RESOURCE,
+            select=PAVEMENT_311_SELECT,
+            where=PAVEMENT_311_WHERE,
+            order=PAVEMENT_311_ORDER,
+        )
+        write_json(pavement_311_path, complaints)
+        versions.service_requests_311 = (
+            f"NYC 311 faded/after-repaving line markings since 2020 ({len(complaints)} rows, SODA paginated)"
+        )
+    except Exception:
+        fixture = PATHS.fixtures_dir / "pavement_marking_311.json"
+        if fixture.exists() and (not pavement_311_path.exists() or pavement_311_path.stat().st_size == 0):
+            shutil.copyfile(fixture, pavement_311_path)
         versions.service_requests_311 = "fixture 311 pavement-marking complaints"
 
     if not _download_json_with_fallback(
@@ -200,7 +216,7 @@ def _build_lion_candidates() -> List[CandidateRecord]:
             CandidateRecord(
                 id=f"lm-live-{node_id}",
                 intersection_label=intersection_label,
-                leg_label="",
+                leg_label="intersection node",
                 lat=lat,
                 lon=lon,
                 year=2024,
@@ -227,27 +243,28 @@ def _load_fixture_candidates() -> List[CandidateRecord]:
 
 
 def annotate_school_zones(candidates: List[CandidateRecord]) -> Dict[str, bool]:
-    result = {candidate.id: False for candidate in candidates}
-    if not PATHS.school_zones_csv_path.exists():
-        return result
+    """True if the node is within 800 ft of an elementary/K-8 school.
 
-    school_zones = pd.read_csv(PATHS.school_zones_csv_path)
-    if "BORO" in school_zones.columns:
-        school_zones = school_zones[school_zones["BORO"] == "M"].copy()
-    if school_zones.empty or "the_geom" not in school_zones.columns:
-        return result
+    Attendance-zone polygons cover essentially the entire Lower Manhattan bbox, so a
+    polygon join makes the School Zone filter a no-op. Proximity to a school building
+    is the civic feature that actually varies.
+    """
+    path = PATHS.school_locations_path
+    if not path.exists():
+        fallback = PATHS.fixtures_dir / "school_locations.json"
+        path = fallback if fallback.exists() else path
+    if not path.exists():
+        return {candidate.id: False for candidate in candidates}
 
-    geometries = []
-    for value in school_zones["the_geom"].tolist():
-        try:
-            geometries.append(shapely_wkt.loads(str(value)))
-        except Exception:
-            continue
-
-    for candidate in candidates:
-        point = Point(candidate.lon, candidate.lat)
-        result[candidate.id] = any(geom.contains(point) or geom.intersects(point) for geom in geometries)
-    return result
+    schools = json.loads(path.read_text(encoding="utf-8"))
+    flagged = points_within_radius(
+        [candidate.to_dict() for candidate in candidates],
+        schools,
+        radius_ft=SCHOOL_PROXIMITY_FT,
+        lat_field="latitude",
+        lon_field="longitude",
+    )
+    return flagged
 
 
 def annotate_311_counts(candidates: List[CandidateRecord]) -> Dict[str, int]:
@@ -346,6 +363,50 @@ def annotate_neighborhoods(candidates: List[CandidateRecord]) -> Dict[str, Dict[
             for candidate in candidates
         }
     return assign_neighborhoods([candidate.to_dict() for candidate in candidates], nta_path)
+
+
+def _fetch_school_locations(destination: Path) -> None:
+    records = fetch_soda_records(
+        SCHOOL_LOCATIONS_URL,
+        select=(
+            "fiscal_year,system_code,location_name,location_category_description,"
+            "grades_text,status_descriptions,latitude,longitude,nta_name"
+        ),
+        where="system_code is not null",
+        order="system_code",
+    )
+    years = sorted({str(row.get("fiscal_year") or "") for row in records if row.get("fiscal_year")})
+    latest = years[-1] if years else ""
+    filtered = []
+    for row in records:
+        if latest and str(row.get("fiscal_year") or "") != latest:
+            continue
+        if str(row.get("status_descriptions") or "").lower() != "open":
+            continue
+        if str(row.get("location_category_description") or "") not in SCHOOL_LOCATION_CATEGORIES:
+            continue
+        try:
+            lat = float(row["latitude"])
+            lon = float(row["longitude"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if not (40.695 <= lat <= 40.725 and -74.025 <= lon <= -73.985):
+            continue
+        filtered.append(
+            {
+                "system_code": row.get("system_code"),
+                "location_name": row.get("location_name"),
+                "location_category_description": row.get("location_category_description"),
+                "grades_text": row.get("grades_text"),
+                "latitude": lat,
+                "longitude": lon,
+                "nta_name": row.get("nta_name"),
+            }
+        )
+    write_json(destination, filtered)
+    fixture = PATHS.fixtures_dir / "school_locations.json"
+    if fixture.resolve() != destination.resolve():
+        write_json(fixture, filtered)
 
 
 def _download_file(url: str, destination: Path) -> None:

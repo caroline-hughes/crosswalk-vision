@@ -16,9 +16,9 @@
       "n": 42,
       "n_pos": 26,
       "positive_rate": 0.6190476190476191,
-      "roc_auc": 0.5096153846153846,
-      "average_precision": 0.6750848641919259,
-      "brier": 0.3482280767114268,
+      "roc_auc": 0.4807692307692308,
+      "average_precision": 0.6613777922669315,
+      "brier": 0.3597367393498825,
       "precision_at_5": 0.8,
       "precision_at_10": 0.7
     },
@@ -41,9 +41,9 @@
         "n": 25,
         "n_pos": 16,
         "positive_rate": 0.64,
-        "roc_auc": 0.47222222222222227,
-        "average_precision": 0.6828623298785838,
-        "brier": 0.40964394403874343,
+        "roc_auc": 0.4583333333333333,
+        "average_precision": 0.6783178037347929,
+        "brier": 0.41459571163181297,
         "precision_at_5": 0.8,
         "precision_at_10": 0.6
       },
@@ -65,10 +65,10 @@
         "n": 13,
         "n_pos": 7,
         "positive_rate": 0.5384615384615384,
-        "roc_auc": 0.7857142857142857,
-        "average_precision": 0.8612768184196755,
-        "brier": 0.2213591342875059,
-        "precision_at_5": 0.8,
+        "roc_auc": 0.8809523809523809,
+        "average_precision": 0.9404761904761902,
+        "brier": 0.20896145503505087,
+        "precision_at_5": 1.0,
         "precision_at_10": 0.6
       },
       "heuristic": {
@@ -91,7 +91,7 @@
         "positive_rate": 0.0,
         "roc_auc": null,
         "average_precision": null,
-        "brier": 0.539130005897305,
+        "brier": 0.48977387189165045,
         "note": "undefined: only one class present",
         "precision_at_5": 0.0,
         "precision_at_10": 0.0
@@ -116,7 +116,7 @@
         "positive_rate": 1.0,
         "roc_auc": null,
         "average_precision": null,
-        "brier": 0.322560623092153,
+        "brier": 0.5125924915174762,
         "note": "undefined: only one class present",
         "precision_at_5": 1.0,
         "precision_at_10": 1.0
@@ -133,5 +133,5 @@
       }
     }
   ],
-  "generated_at": "2026-09-02T19:41:24+00:00"
+  "generated_at": "2026-09-02T19:57:51+00:00"
 }

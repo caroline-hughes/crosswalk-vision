@@ -68,9 +68,10 @@ export default function HomePage() {
           <h1>Inspection priority list</h1>
           <p className="lede">
             Pedestrian crossings ranked for a DOT planner: inspect or repaint these first. The list
-            joins LION intersection geometry, 2024 NYS ortho crops, 311 faded-marking complaints,
-            school zones, and Vision Zero pedestrian crashes. A learned ranker scores inspection
-            priority; the paint/contrast heuristic is the baseline, not a detector.
+            joins LION intersection nodes (not painted crosswalk polygons), 2024 NYS ortho crops,
+            311 faded-marking complaints (lane lines mixed with crosswalks), proximity to
+            elementary/K-8 schools, and Vision Zero pedestrian crashes. A learned ranker scores
+            inspection priority; the paint/contrast heuristic is the baseline, not a detector.
           </p>
         </div>
         <FilterBar

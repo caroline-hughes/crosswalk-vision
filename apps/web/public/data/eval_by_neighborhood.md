@@ -11,14 +11,14 @@ Pedestrian-crash coordinates are noisy and weakly supervised: a nearby crash doe
 
 | scorer | n | positives | ROC-AUC | average precision | precision@5 | precision@10 | Brier |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| learned | 42 | 26 | 0.510 | 0.675 | 0.800 | 0.700 | 0.348 |
+| learned | 42 | 26 | 0.481 | 0.661 | 0.800 | 0.700 | 0.360 |
 | heuristic baseline | 42 | 26 | 0.406 | 0.606 | 0.600 | 0.500 | n/a |
 
 ## By neighborhood (test fold for that NTA)
 
 | NTA | name | n | positives | learned AUC | heuristic AUC | learned P@5 | heuristic P@5 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| MN0101 | Financial District-Battery Park City | 25 | 16 | 0.472 | 0.559 | 0.800 | 0.800 |
-| MN0102 | Tribeca-Civic Center | 13 | 7 | 0.786 | 0.250 | 0.800 | 0.200 |
+| MN0101 | Financial District-Battery Park City | 25 | 16 | 0.458 | 0.559 | 0.800 | 0.800 |
+| MN0102 | Tribeca-Civic Center | 13 | 7 | 0.881 | 0.250 | 1.000 | 0.200 |
 | MN0191 | The Battery-Governors Island-Ellis Island-Liberty Island | 1 | 0 | n/a | n/a | 0.000 | 0.000 |
 | MN0301 | Chinatown-Two Bridges | 3 | 3 | n/a | n/a | 1.000 | 1.000 |
