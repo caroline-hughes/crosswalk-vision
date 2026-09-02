@@ -1,0 +1,137 @@
+{
+  "label_definition": "pedestrian_crash_nearby",
+  "include_311_feature": true,
+  "n": 42,
+  "n_pos": 26,
+  "neighborhoods": [
+    "MN0101",
+    "MN0102",
+    "MN0191",
+    "MN0301"
+  ],
+  "split": "GroupKFold by neighborhood_id (train/test NTAs are disjoint)",
+  "caveat": "Pedestrian-crash coordinates are noisy and weakly supervised: a nearby crash does not prove the crossing paint caused it, and many crossings have no crash because of exposure, not because markings are fine. Metrics are reported only when both classes are present; otherwise they are null.",
+  "overall": {
+    "learned": {
+      "n": 42,
+      "n_pos": 26,
+      "positive_rate": 0.6190476190476191,
+      "roc_auc": 0.5096153846153846,
+      "average_precision": 0.6750848641919259,
+      "brier": 0.3482280767114268,
+      "precision_at_5": 0.8,
+      "precision_at_10": 0.7
+    },
+    "heuristic": {
+      "n": 42,
+      "n_pos": 26,
+      "positive_rate": 0.6190476190476191,
+      "roc_auc": 0.40624999999999994,
+      "average_precision": 0.6058971987214233,
+      "precision_at_5": 0.6,
+      "precision_at_10": 0.5,
+      "note": "heuristic scores are not probabilities; Brier is omitted"
+    }
+  },
+  "by_neighborhood": [
+    {
+      "neighborhood_id": "MN0101",
+      "neighborhood_name": "Financial District-Battery Park City",
+      "learned": {
+        "n": 25,
+        "n_pos": 16,
+        "positive_rate": 0.64,
+        "roc_auc": 0.47222222222222227,
+        "average_precision": 0.6828623298785838,
+        "brier": 0.40964394403874343,
+        "precision_at_5": 0.8,
+        "precision_at_10": 0.6
+      },
+      "heuristic": {
+        "n": 25,
+        "n_pos": 16,
+        "positive_rate": 0.64,
+        "roc_auc": 0.5590277777777777,
+        "average_precision": 0.7188305322128852,
+        "precision_at_5": 0.8,
+        "precision_at_10": 0.7,
+        "note": "heuristic scores are not probabilities; Brier is omitted"
+      }
+    },
+    {
+      "neighborhood_id": "MN0102",
+      "neighborhood_name": "Tribeca-Civic Center",
+      "learned": {
+        "n": 13,
+        "n_pos": 7,
+        "positive_rate": 0.5384615384615384,
+        "roc_auc": 0.7857142857142857,
+        "average_precision": 0.8612768184196755,
+        "brier": 0.2213591342875059,
+        "precision_at_5": 0.8,
+        "precision_at_10": 0.6
+      },
+      "heuristic": {
+        "n": 13,
+        "n_pos": 7,
+        "positive_rate": 0.5384615384615384,
+        "roc_auc": 0.25,
+        "average_precision": 0.4332413618127903,
+        "precision_at_5": 0.2,
+        "precision_at_10": 0.4,
+        "note": "heuristic scores are not probabilities; Brier is omitted"
+      }
+    },
+    {
+      "neighborhood_id": "MN0191",
+      "neighborhood_name": "The Battery-Governors Island-Ellis Island-Liberty Island",
+      "learned": {
+        "n": 1,
+        "n_pos": 0,
+        "positive_rate": 0.0,
+        "roc_auc": null,
+        "average_precision": null,
+        "brier": 0.539130005897305,
+        "note": "undefined: only one class present",
+        "precision_at_5": 0.0,
+        "precision_at_10": 0.0
+      },
+      "heuristic": {
+        "n": 1,
+        "n_pos": 0,
+        "positive_rate": 0.0,
+        "roc_auc": null,
+        "average_precision": null,
+        "note": "undefined: only one class present; heuristic scores are not probabilities; Brier is omitted",
+        "precision_at_5": 0.0,
+        "precision_at_10": 0.0
+      }
+    },
+    {
+      "neighborhood_id": "MN0301",
+      "neighborhood_name": "Chinatown-Two Bridges",
+      "learned": {
+        "n": 3,
+        "n_pos": 3,
+        "positive_rate": 1.0,
+        "roc_auc": null,
+        "average_precision": null,
+        "brier": 0.322560623092153,
+        "note": "undefined: only one class present",
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0
+      },
+      "heuristic": {
+        "n": 3,
+        "n_pos": 3,
+        "positive_rate": 1.0,
+        "roc_auc": null,
+        "average_precision": null,
+        "note": "undefined: only one class present; heuristic scores are not probabilities; Brier is omitted",
+        "precision_at_5": 1.0,
+        "precision_at_10": 1.0
+      }
+    }
+  ],
+  "generated_at": "2026-09-02T19:41:24+00:00"
+}

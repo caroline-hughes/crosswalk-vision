@@ -1,0 +1,25 @@
+{
+  "trained_at": "2026-09-02T19:41:23+00:00",
+  "label_definition": "pedestrian_crash_nearby",
+  "include_311_feature": true,
+  "n": 42,
+  "n_pos": 26,
+  "feature_names": [
+    "paint_missing_ratio",
+    "stripe_break_ratio",
+    "contrast_score",
+    "occlusion_penalty",
+    "school_zone",
+    "street_width_ft",
+    "approach_street_count",
+    "heading_spread",
+    "pavement_marking_311_count_since_2020"
+  ],
+  "neighborhoods": [
+    "MN0101",
+    "MN0102",
+    "MN0191",
+    "MN0301"
+  ],
+  "artifact": "/workspace/python/scoring/artifacts/priority_ranker.joblib"
+}

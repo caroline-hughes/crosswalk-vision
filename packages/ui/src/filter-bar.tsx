@@ -3,7 +3,8 @@
 const FILTERS = [
   { id: "all", label: "All" },
   { id: "school-zone", label: "School Zone" },
-  { id: "reported", label: "311 Reported" }
+  { id: "reported", label: "311 Reported" },
+  { id: "crash", label: "Crash nearby" }
 ] as const;
 
 export function FilterBar({

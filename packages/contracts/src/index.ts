@@ -3,7 +3,8 @@ export type ReasonTag =
   | "broken stripes"
   | "partial paint loss"
   | "school zone"
-  | `311 x${number} since 2020`;
+  | `311 x${number} since 2020`
+  | string;
 
 export interface Matched311Complaint {
   unique_key: string;
@@ -30,6 +31,12 @@ export interface CrosswalkRecord {
   image_url: string;
   thumbnail_url: string;
   google_maps_url: string;
+  model_score: number;
+  heuristic_score: number;
+  neighborhood: string;
+  neighborhood_id: string;
+  priority_reason: string;
+  pedestrian_crash_count: number;
 }
 
 export interface CrosswalkMeta {
@@ -39,9 +46,21 @@ export interface CrosswalkMeta {
     lion: string;
     service_requests_311: string;
     school_zones: string;
+    vision_zero_crashes: string;
+    neighborhoods: string;
   };
   pilot_boundary: string;
   total_records: number;
+  scoring_method: string;
+  label_definition: string;
+  eval_split?: string;
+  eval_n?: number | null;
+  eval_n_pos?: number | null;
+  eval_learned_auc?: number | null;
+  eval_heuristic_auc?: number | null;
+  showcase_top_k?: number;
+  product_claim: string;
+  caveat: string;
 }
 
 export function validateCrosswalkRecords(input: unknown): CrosswalkRecord[] {
@@ -58,23 +77,30 @@ export function validateCrosswalkMeta(input: unknown): CrosswalkMeta {
   }
 
   const value = input as Record<string, unknown>;
+  const versions = (value.source_versions as Record<string, unknown>) || {};
 
   return {
     build_timestamp: mustBeString(value.build_timestamp, "build_timestamp"),
     source_versions: {
-      imagery: mustBeString((value.source_versions as Record<string, unknown>)?.imagery, "source_versions.imagery"),
-      lion: mustBeString((value.source_versions as Record<string, unknown>)?.lion, "source_versions.lion"),
-      service_requests_311: mustBeString(
-        (value.source_versions as Record<string, unknown>)?.service_requests_311,
-        "source_versions.service_requests_311"
-      ),
-      school_zones: mustBeString(
-        (value.source_versions as Record<string, unknown>)?.school_zones,
-        "source_versions.school_zones"
-      )
+      imagery: mustBeString(versions.imagery, "source_versions.imagery"),
+      lion: mustBeString(versions.lion, "source_versions.lion"),
+      service_requests_311: mustBeString(versions.service_requests_311, "source_versions.service_requests_311"),
+      school_zones: mustBeString(versions.school_zones, "source_versions.school_zones"),
+      vision_zero_crashes: mustBeString(versions.vision_zero_crashes, "source_versions.vision_zero_crashes"),
+      neighborhoods: mustBeString(versions.neighborhoods, "source_versions.neighborhoods")
     },
     pilot_boundary: mustBeString(value.pilot_boundary, "pilot_boundary"),
-    total_records: mustBeNumber(value.total_records, "total_records")
+    total_records: mustBeNumber(value.total_records, "total_records"),
+    scoring_method: mustBeString(value.scoring_method, "scoring_method"),
+    label_definition: mustBeString(value.label_definition, "label_definition"),
+    eval_split: optionalString(value.eval_split),
+    eval_n: optionalNumber(value.eval_n),
+    eval_n_pos: optionalNumber(value.eval_n_pos),
+    eval_learned_auc: optionalNumber(value.eval_learned_auc),
+    eval_heuristic_auc: optionalNumber(value.eval_heuristic_auc),
+    showcase_top_k: optionalNumber(value.showcase_top_k),
+    product_claim: mustBeString(value.product_claim, "product_claim"),
+    caveat: mustBeString(value.caveat, "caveat")
   };
 }
 
@@ -104,7 +130,13 @@ function validateCrosswalkRecord(input: unknown, index: number): CrosswalkRecord
     matched_311_complaints: mustBeComplaintArray(value.matched_311_complaints, "matched_311_complaints"),
     image_url: mustBeString(value.image_url, "image_url"),
     thumbnail_url: mustBeString(value.thumbnail_url, "thumbnail_url"),
-    google_maps_url: mustBeString(value.google_maps_url, "google_maps_url")
+    google_maps_url: mustBeString(value.google_maps_url, "google_maps_url"),
+    model_score: mustBeNumber(value.model_score, "model_score"),
+    heuristic_score: mustBeNumber(value.heuristic_score, "heuristic_score"),
+    neighborhood: mustBeString(value.neighborhood, "neighborhood"),
+    neighborhood_id: mustBeString(value.neighborhood_id, "neighborhood_id"),
+    priority_reason: mustBeString(value.priority_reason, "priority_reason"),
+    pedestrian_crash_count: mustBeNumber(value.pedestrian_crash_count, "pedestrian_crash_count")
   };
 }
 
@@ -122,6 +154,20 @@ function mustBeNumber(value: unknown, field: string): number {
   }
 
   return value;
+}
+
+function optionalNumber(value: unknown): number | undefined {
+  if (value === undefined || value === null) {
+    return undefined;
+  }
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return undefined;
+  }
+  return value;
+}
+
+function optionalString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
 }
 
 function mustBeBoolean(value: unknown, field: string): boolean {

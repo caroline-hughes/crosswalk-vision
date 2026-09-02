@@ -21,6 +21,11 @@ class PipelinePaths:
     lion_gdb_path: Path = ROOT / "data" / "raw" / "nyclion_unzipped" / "lion" / "lion.gdb"
     school_zones_csv_path: Path = ROOT / "data" / "raw" / "school_zones.csv"
     processed_images_dir: Path = ROOT / "data" / "processed" / "images"
+    crashes_path: Path = ROOT / "data" / "raw" / "pedestrian_crashes.json"
+    nta_geojson_path: Path = ROOT / "data" / "raw" / "nta_lower_manhattan.geojson"
+    model_artifact_path: Path = ROOT / "python" / "scoring" / "artifacts" / "priority_ranker.joblib"
+    eval_json_path: Path = ROOT / "data" / "export" / "eval_by_neighborhood.json"
+    eval_markdown_path: Path = ROOT / "data" / "export" / "eval_by_neighborhood.md"
 
 
 PATHS = PipelinePaths()

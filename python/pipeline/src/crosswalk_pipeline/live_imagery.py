@@ -71,7 +71,7 @@ def _fetch_crop(candidate: CandidateRecord) -> Image.Image:
             "transparent": "false",
             "f": "image",
         },
-        timeout=120,
+        timeout=30,
     )
     response.raise_for_status()
     return Image.open(io.BytesIO(response.content)).convert("RGB")

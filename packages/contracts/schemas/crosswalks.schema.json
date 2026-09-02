@@ -20,7 +20,13 @@
       "matched_311_complaints",
       "image_url",
       "thumbnail_url",
-      "google_maps_url"
+      "google_maps_url",
+      "model_score",
+      "heuristic_score",
+      "neighborhood",
+      "neighborhood_id",
+      "priority_reason",
+      "pedestrian_crash_count"
     ],
     "properties": {
       "id": { "type": "string" },
@@ -54,7 +60,13 @@
       },
       "image_url": { "type": "string" },
       "thumbnail_url": { "type": "string" },
-      "google_maps_url": { "type": "string" }
+      "google_maps_url": { "type": "string" },
+      "model_score": { "type": "number" },
+      "heuristic_score": { "type": "number" },
+      "neighborhood": { "type": "string" },
+      "neighborhood_id": { "type": "string" },
+      "priority_reason": { "type": "string" },
+      "pedestrian_crash_count": { "type": "number" }
     }
   }
 }

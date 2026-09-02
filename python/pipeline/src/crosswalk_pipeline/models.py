@@ -20,6 +20,11 @@ class CandidateRecord:
     pavement_marking_311_count_since_2020: int
     heading_degrees: float
     secondary_heading_degrees: float | None = None
+    street_width_ft: float = 0.0
+    approach_street_count: int = 2
+    neighborhood_id: str = ""
+    neighborhood_name: str = ""
+    pedestrian_crash_count: int = 0
 
     def to_dict(self) -> Dict[str, object]:
         return asdict(self)
@@ -43,6 +48,41 @@ class ExportRecord:
     image_url: str
     thumbnail_url: str
     google_maps_url: str
+    model_score: float = 0.0
+    heuristic_score: float = 0.0
+    neighborhood: str = ""
+    neighborhood_id: str = ""
+    priority_reason: str = ""
+    pedestrian_crash_count: int = 0
 
     def to_dict(self) -> Dict[str, object]:
         return asdict(self)
+
+
+def candidate_from_dict(item: dict) -> CandidateRecord:
+    secondary = item.get("secondary_heading_degrees")
+    paint = item.get("paint_missing_ratio")
+    stripe = item.get("stripe_break_ratio")
+    contrast = item.get("contrast_score")
+    occlusion = item.get("occlusion_penalty")
+    return CandidateRecord(
+        id=str(item["id"]),
+        intersection_label=str(item["intersection_label"]),
+        leg_label=str(item.get("leg_label") or ""),
+        lat=float(item["lat"]),
+        lon=float(item["lon"]),
+        year=int(item.get("year") or 2024),
+        paint_missing_ratio=float(paint) if paint is not None else 0.0,
+        stripe_break_ratio=float(stripe) if stripe is not None else 0.0,
+        contrast_score=float(contrast) if contrast is not None else 0.0,
+        occlusion_penalty=float(occlusion) if occlusion is not None else 0.0,
+        school_zone=bool(item.get("school_zone")),
+        pavement_marking_311_count_since_2020=int(item.get("pavement_marking_311_count_since_2020") or 0),
+        heading_degrees=float(item.get("heading_degrees") or 90.0),
+        secondary_heading_degrees=float(secondary) if secondary is not None else None,
+        street_width_ft=float(item.get("street_width_ft") or 0.0),
+        approach_street_count=int(item.get("approach_street_count") or 2),
+        neighborhood_id=str(item.get("neighborhood_id") or ""),
+        neighborhood_name=str(item.get("neighborhood_name") or ""),
+        pedestrian_crash_count=int(item.get("pedestrian_crash_count") or 0),
+    )
