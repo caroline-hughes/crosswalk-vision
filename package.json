@@ -19,5 +19,11 @@
     "pipeline:export": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli export_snapshot",
     "web:dev": "npm --workspace @crosswalks/web run dev",
     "web:build": "npm --workspace @crosswalks/web run build"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.22"
   }
 }

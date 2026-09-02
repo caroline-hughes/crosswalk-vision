@@ -26,7 +26,9 @@
       "neighborhood",
       "neighborhood_id",
       "priority_reason",
-      "pedestrian_crash_count"
+      "pedestrian_crash_count",
+      "borough",
+      "top_features"
     ],
     "properties": {
       "id": { "type": "string" },
@@ -66,7 +68,20 @@
       "neighborhood": { "type": "string" },
       "neighborhood_id": { "type": "string" },
       "priority_reason": { "type": "string" },
-      "pedestrian_crash_count": { "type": "number" }
+      "pedestrian_crash_count": { "type": "number" },
+      "borough": { "type": "string" },
+      "top_features": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "feature": { "type": "string" },
+            "label": { "type": "string" },
+            "contribution": { "type": "number" },
+            "direction": { "type": "string" }
+          }
+        }
+      }
     }
   }
 }

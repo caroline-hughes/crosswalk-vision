@@ -11,7 +11,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-from .features import feature_names, rows_to_matrix
+from .features import FEATURE_LABELS, feature_names, rows_to_matrix
 
 DEFAULT_MODEL_PATH = Path(__file__).resolve().parents[2] / "artifacts" / "priority_ranker.joblib"
 
@@ -29,6 +29,7 @@ def _build_pipeline() -> Pipeline:
 @dataclass
 class LearnedPriorityScorer:
     include_311: bool = True
+    include_image: bool = True
     pipeline: Pipeline | None = None
     feature_names_: list[str] | None = None
     label_definition: str = "pedestrian_crash_nearby"
@@ -37,12 +38,16 @@ class LearnedPriorityScorer:
         if self.pipeline is None:
             self.pipeline = _build_pipeline()
         if self.feature_names_ is None:
-            self.feature_names_ = feature_names(include_311=self.include_311)
+            self.feature_names_ = feature_names(
+                include_311=self.include_311, include_image=self.include_image
+            )
 
     def fit(self, rows: Sequence[Mapping[str, object]]) -> "LearnedPriorityScorer":
         if not rows:
             raise ValueError("cannot train a ranker on zero rows")
-        X = rows_to_matrix(rows, include_311=self.include_311)
+        X = rows_to_matrix(
+            rows, include_311=self.include_311, include_image=self.include_image
+        )
         y = np.array([int(row.get("label") or 0) for row in rows], dtype=int)
         if np.unique(y).size < 2:
             # Constant-label folds still need a defined scorer; emit the constant.
@@ -50,7 +55,9 @@ class LearnedPriorityScorer:
         else:
             self.pipeline = _build_pipeline()
             self.pipeline.fit(X, y)
-        self.feature_names_ = feature_names(include_311=self.include_311)
+        self.feature_names_ = feature_names(
+            include_311=self.include_311, include_image=self.include_image
+        )
         return self
 
     def predict_scores(self, rows: Sequence[Mapping[str, object]]) -> np.ndarray:
@@ -58,8 +65,47 @@ class LearnedPriorityScorer:
             return np.zeros(0, dtype=float)
         if self.pipeline is None:
             raise ValueError("scorer has no fitted pipeline")
-        X = rows_to_matrix(rows, include_311=self.include_311)
+        X = rows_to_matrix(
+            rows, include_311=self.include_311, include_image=self.include_image
+        )
         return _positive_class_scores(self.pipeline, X)
+
+    def explain_rows(
+        self, rows: Sequence[Mapping[str, object]], *, top_k: int = 3
+    ) -> list[list[dict]]:
+        """Top logistic contributions after scaling (signed: + raises P(crash nearby))."""
+        empty: list[list[dict]] = [[] for _ in rows]
+        if not rows or self.pipeline is None or not self.feature_names_:
+            return empty
+        named_steps = getattr(self.pipeline, "named_steps", None) or {}
+        clf = named_steps.get("clf")
+        if clf is None or not hasattr(clf, "coef_"):
+            return empty
+        X = rows_to_matrix(
+            rows, include_311=self.include_311, include_image=self.include_image
+        )
+        transformed = self.pipeline[:-1].transform(X)
+        coef = np.asarray(clf.coef_[0], dtype=float)
+        contributions = np.asarray(transformed, dtype=float) * coef
+        names = list(self.feature_names_)
+        explained: list[list[dict]] = []
+        k = max(1, min(int(top_k), len(names)))
+        for row_contrib in contributions:
+            order = np.argsort(-np.abs(row_contrib))
+            feats: list[dict] = []
+            for idx in order[:k]:
+                value = float(row_contrib[idx])
+                name = names[idx]
+                feats.append(
+                    {
+                        "feature": name,
+                        "label": FEATURE_LABELS.get(name, name),
+                        "contribution": round(value, 4),
+                        "direction": "raises priority" if value >= 0 else "lowers priority",
+                    }
+                )
+            explained.append(feats)
+        return explained
 
     def save(self, path: Path | None = None) -> Path:
         destination = Path(path) if path is not None else DEFAULT_MODEL_PATH
@@ -67,6 +113,7 @@ class LearnedPriorityScorer:
         joblib.dump(
             {
                 "include_311": self.include_311,
+                "include_image": self.include_image,
                 "label_definition": self.label_definition,
                 "feature_names": self.feature_names_,
                 "pipeline": self.pipeline,
@@ -81,6 +128,7 @@ class LearnedPriorityScorer:
         payload = joblib.load(source)
         return cls(
             include_311=bool(payload.get("include_311", True)),
+            include_image=bool(payload.get("include_image", True)),
             pipeline=payload["pipeline"],
             feature_names_=list(payload.get("feature_names") or []),
             label_definition=str(payload.get("label_definition") or "pedestrian_crash_nearby"),

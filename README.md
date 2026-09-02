@@ -1,28 +1,28 @@
 # Crosswalk Vision
 
-City-actionable **inspection priority list** for pedestrian crossings in a Lower Manhattan pilot — not a pretty-paint ranking and not a crosswalk detector.
+Citywide **inspection-priority map** for pedestrian crossings in New York City (all five boroughs) — a learned tabular ranker versus a paint/311 heuristic, not a pretty-paint ranking and not a crosswalk detector.
 
-The product claim: join **LION intersection nodes** (not painted crosswalk polygons), 2024 NYS ortho imagery, and open NYC GIS (311 faded markings, elementary/K-8 school proximity, Vision Zero pedestrian crashes) into a ranked list a DOT planner can use to decide **which crossings to inspect or repaint first**.
+The product claim: join **LION intersection nodes** (not painted crosswalk polygons) with open NYC GIS (311 faded markings, elementary/K-8 school proximity, Vision Zero pedestrian crashes, 2020 NTAs) into a map a DOT planner can use to decide **which crossings to inspect or repaint first**.
 
-Live path: LION gdb when present, else a committed Lower Manhattan intersection fixture; NYS 2024 orthos; paginated 311; DOE school points; NYPD pedestrian crashes. The old fixture-candidate + `imagery.py` synthetic PNG renderer is unused by `cli.py`.
+Live path: LION gdb when present (resolved from the NYC Open Data LION blob), else a committed multi-borough fixture; paginated 311; DOE school points; NYPD pedestrian crashes; citywide NTAs. **2024 NYS ortho crops are not fetched citywide** — that would explode time and disk at tens of thousands of nodes. Ranking is GIS-only (street width, heading spread, school proximity, 311). Lower Manhattan leftover ortho files under `data/processed/images/` are unused by the map.
 
 ## What this repo is
 
-- `apps/web`: static Next.js showcase of the top inspection candidates (carousel contract in `packages/contracts`)
+- `apps/web`: static Next.js **map-first** site (Leaflet, dark tiles, custom hash icons, Map/List, hover popups)
 - `packages/contracts`: snapshot types and schema
-- `packages/ui`: carousel, cards, filters
+- `packages/ui`: shared cards/badges (list still uses them)
 - `python/pipeline`: ETL, GIS joins, export
 - `python/scoring`: **heuristic baseline** plus a CPU sklearn logistic **priority ranker**
 
 There is no trained detector in this tree. The sister repo `crosswalk-detection-model` is empty and out of scope. License: MIT (`LICENSE`).
 
-## Pilot boundary
+## Geography
 
-Lower Manhattan south of Canal Street (`lon` −74.02 to −73.99, `lat` 40.7000 to 40.7205). The bbox was **not** widened.
+New York City, five boroughs. Candidates are **intersection nodes**, not crosswalk polygons. Live `leg_label` is `intersection node`.
 
-Candidates are **intersection nodes**, not crosswalk polygons. Live `leg_label` is `intersection node`.
+The map does **not** plot every scored node. The shipped snapshot scores **56,366** LION intersection nodes citywide and plots **2,000** “in need” crossings (95th percentile of model score, cap 2,000, with a per-borough floor). Filters: borough, near school, has 311, min model score. Counts live in `data/export/meta.json` (`n_scored` vs `n_plotted`).
 
-Crash-only labels were feasible here (dozens of nodes with ≥1 pedestrian-injured/killed crash within 150 ft since 2020), so the model does **not** fall back to a crash-OR-311 composite target. If crash positives ever drop below 8, the pipeline switches to that composite and **drops 311 counts from the feature set** to avoid leaking the label.
+Crash-only labels are used when there are enough crash-positive nodes; the model does **not** fall back to a crash-OR-311 composite target in that case. If crash positives ever drop below 8, the pipeline switches to that composite and **drops 311 counts from the feature set** to avoid leaking the label.
 
 ## Sources
 
@@ -30,12 +30,12 @@ Documented in `data/raw/source_manifest.json`:
 
 | layer | source |
 | --- | --- |
-| Intersection geometry | NYC LION street base map (live gdb when present; otherwise `expanded_candidates.json`) |
-| Imagery | 2024 NYS orthoimagery ArcGIS MapServer |
-| 311 | NYC Open Data Street Condition / `Line/Marking - Faded` and `After Repaving` since 2020. **Socrata’s default page is 100**; fetch paginates with `$limit` / `$offset` / `$order`. These descriptors mix **lane lines with crosswalks**. |
-| Schools | DOE school locations (`wg9x-4ke6`), elementary / K-8 / early childhood within **800 ft**. Attendance-zone polygons cover the whole bbox, so a polygon join made the School Zone filter a no-op. |
-| Crashes | NYPD Motor Vehicle Collisions (`h9gi-nx95`), pedestrian injured or killed, same bbox, since 2020 |
-| Neighborhoods | NYC 2020 Neighborhood Tabulation Areas (NTAs) |
+| Intersection geometry | NYC LION street base map (live gdb when present; otherwise `citywide_candidates.json`) |
+| Imagery | **Not used citywide.** 2024 NYS orthoimagery remains documented as leftover from the Lower Manhattan pilot. |
+| 311 | NYC Open Data Street Condition / `Line/Marking - Faded` and `After Repaving` since 2020, **citywide**. **Socrata’s default page is 100**; fetch paginates with `$limit` / `$offset` / `$order`. These descriptors mix **lane lines with crosswalks**. |
+| Schools | DOE school locations (`wg9x-4ke6`), elementary / K-8 / early childhood within **800 ft**, citywide. |
+| Crashes | NYPD Motor Vehicle Collisions (`h9gi-nx95`), pedestrian injured or killed, citywide NYC bbox, since 2020 |
+| Neighborhoods | NYC 2020 Neighborhood Tabulation Areas (all boroughs) |
 
 Live NYC downloads fall back to committed fixtures when an endpoint fails. Tests never need the full LION gdb. Do not commit the LION zip/gdb (already gitignored). Python third-party deps are declared in `python/requirements.txt` and the package `pyproject.toml` files (`geopandas`, `pandas`, `requests`, `pyproj`, `pyogrio`, `shapely`, `numpy`, `Pillow`, `scikit-learn`, `joblib`).
 
@@ -43,22 +43,23 @@ Live NYC downloads fall back to committed fixtures when an endpoint fails. Tests
 
 Tabular sklearn `Pipeline`: median impute → standard scale → `LogisticRegression(class_weight="balanced")`. Artifact: `python/scoring/artifacts/priority_ranker.joblib`.
 
-Features:
+Citywide features (GIS-only):
 
-- image heuristic metrics (`paint_missing_ratio`, `stripe_break_ratio`, `contrast_score`, `occlusion_penalty`)
 - `street_width_ft`, `approach_street_count`, heading spread between the two legs
 - near elementary/K-8 school (800 ft)
 - 311 faded-marking count (only when the label is crash-only)
 
-The label for this pilot is `pedestrian_crash_nearby` (nearest node within 150 ft, NY State Plane feet). Crash coordinates are noisy and weakly supervised: a nearby crash does not prove the markings caused it.
+Image heuristic metrics (`paint_missing_ratio`, `stripe_break_ratio`, `contrast_score`, `occlusion_penalty`) stay in the scoring library for the leftover Lower Manhattan path. They are **dropped** when every training row has missing ortho metrics so citywide impute does not collapse.
 
-The hand-rolled pixel heuristic remains the **baseline**. The learned score is `P(crash nearby)`; the UI badge is that probability × 100.
+The label is `pedestrian_crash_nearby` (nearest node within 150 ft, NY State Plane feet). Crash coordinates are noisy and weakly supervised: a nearby crash does not prove the markings caused it.
+
+The hand-rolled pixel/311 heuristic remains the **baseline**. The learned score is `P(crash nearby)`; the map badge is that probability × 100. Hover popups show the top logistic contributions (“why the model flagged this”) plus 311 descriptors/dates.
 
 ## Spatial evaluation
 
 `python -m crosswalk_pipeline.cli evaluate` writes `data/export/eval_by_neighborhood.json` and `.md`.
 
-Split: **GroupKFold by NTA**. Train and test neighborhoods are disjoint. Treat AUC as directional, not a production SLA. Precision@k is the metric that matches an inspection list. Numbers in the export table are regenerated on `evaluate`; do not invent them.
+Split: **GroupKFold by NTA**. Train and test neighborhoods are disjoint. Citywide NTA tables are huge, so the markdown keeps **borough rolls** plus a sample of the largest NTAs with n≥25. Treat AUC as directional, not a production SLA. Precision@k is the metric that matches an inspection list. Numbers in the export table are regenerated on `evaluate`; do not invent them.
 
 ## Pipeline commands
 
@@ -69,9 +70,9 @@ PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.
 
 Stages: `fetch_sources`, `prepare_candidates`, `enrich_candidates`, `train_ranker`, `evaluate`, `score_candidates`, `export_snapshot`.
 
-Training/eval uses the expanded candidate set (up to 60 LION nodes when the gdb is present). Showcase export is top **16**. Leftover `data/processed/images/lm-live-*-1.png` / `*-2.png` files are unused orientation experiments; export/web only ship the showcase.
+`export_snapshot` writes plottable `crosswalks.json` and `crossings.geojson` into `data/export/` and `apps/web/public/data/`. Intermediate scored dumps stay local (`data/processed/scored_candidates.json` is gitignored).
 
-Tests (no GPU, no LION gdb):
+Tests (no GPU, no LION gdb required):
 
 ```bash
 PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m unittest discover -s python/scoring/tests

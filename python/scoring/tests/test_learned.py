@@ -85,6 +85,53 @@ class LearnedScorerTest(unittest.TestCase):
         self.assertFalse(include_311)
         self.assertEqual(sum(row["label"] for row in labeled), 3)
 
+    def test_gis_only_feature_vector_drops_image_columns(self) -> None:
+        row = {
+            "school_zone": True,
+            "street_width_ft": 60,
+            "approach_street_count": 3,
+            "heading_degrees": 10,
+            "secondary_heading_degrees": 100,
+            "pavement_marking_311_count_since_2020": 4,
+            "image_metrics_missing": True,
+        }
+        vector = row_to_vector(row, include_311=True, include_image=False)
+        self.assertEqual(vector.shape, (5,))
+
+    def test_gis_only_ranker_explains_top_features(self) -> None:
+        rows = []
+        ntas = ["MN0101", "BK0101", "QN0101", "BX0101", "SI0101"]
+        for i in range(20):
+            rows.append(
+                {
+                    "id": f"nyc-{i}",
+                    "neighborhood_id": ntas[i % 5],
+                    "neighborhood_name": ntas[i % 5],
+                    "borough": "Manhattan",
+                    "pedestrian_crash_count": 1 if i % 2 == 0 else 0,
+                    "pavement_marking_311_count_since_2020": 3 if i % 2 == 0 else 0,
+                    "school_zone": i % 3 == 0,
+                    "street_width_ft": 30 + i,
+                    "approach_street_count": 2 + (i % 2),
+                    "heading_degrees": 0,
+                    "secondary_heading_degrees": 90,
+                    "image_metrics_missing": True,
+                    "label": 1 if i % 2 == 0 else 0,
+                }
+            )
+        from crosswalk_scoring import rows_have_image_metrics
+
+        self.assertFalse(rows_have_image_metrics(rows))
+        scorer = LearnedPriorityScorer(include_311=True, include_image=False)
+        scorer.fit(rows)
+        scores = scorer.predict_scores(rows)
+        self.assertEqual(len(scores), 20)
+        self.assertTrue(np.all(np.isfinite(scores)))
+        explained = scorer.explain_rows(rows[:1], top_k=3)[0]
+        self.assertEqual(len(explained), 3)
+        self.assertIn("label", explained[0])
+        self.assertIn("contribution", explained[0])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List
@@ -13,7 +12,8 @@ from crosswalk_scoring import (
     LearnedPriorityScorer,
     ScoringInput,
     attach_labels,
-    build_priority_reason,
+    borough_from_nta,
+    build_model_reason,
     evaluate_spatial_cv,
     fit_production_scorer,
 )
@@ -21,10 +21,11 @@ from crosswalk_scoring import (
 from .artifact_store import LocalArtifactStore
 from .config import PATHS
 from .io_utils import read_json, write_json
-from .live_imagery import fetch_and_analyze_candidate_image
 from .live_sources import (
-    LOWER_MANHATTAN_LABEL,
-    SHOWCASE_TOP_K,
+    NYC_LABEL,
+    PLOT_MAX,
+    PLOT_PERCENTILE,
+    RECENT_311_CAP,
     LiveSourceVersions,
     annotate_311_details,
     annotate_crashes,
@@ -32,6 +33,7 @@ from .live_sources import (
     annotate_school_zones,
     build_live_candidates,
     ensure_live_sources,
+    select_plottable,
 )
 from .models import CandidateRecord, ExportRecord, candidate_from_dict
 
@@ -40,33 +42,38 @@ def fetch_sources() -> None:
     versions = ensure_live_sources()
     manifest = {
         "generated_at": _utc_now(),
-        "pilot_boundary": LOWER_MANHATTAN_LABEL,
+        "geography": NYC_LABEL,
+        "pilot_boundary": NYC_LABEL,
         "sources": {
             "imagery": {
-                "name": "2024 NYS Orthoimagery",
+                "name": "2024 NYS Orthoimagery (not fetched citywide)",
                 "url": "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer",
+                "note": (
+                    "Do not download a 2024 ortho crop for every NYC intersection. "
+                    "Citywide ranking is GIS-only. Lower Manhattan leftover crops in "
+                    "data/processed/images are unused by the map."
+                ),
             },
             "lion": {
-                "name": "NYC LION Street Base Map",
-                "url": "https://data.cityofnewyork.us/api/views/2v4z-66xt/files/a3e46353-0b43-4b3b-a4fd-9bb042ccabb7?download=1",
+                "name": "NYC LION Street Base Map (intersection nodes, five boroughs)",
+                "url": "https://data.cityofnewyork.us/City-Government/LION/2v4z-66xt",
             },
             "service_requests_311": {
                 "name": "NYC 311 faded/after-repaving line markings (lane lines and crosswalks mixed)",
                 "url": "https://data.cityofnewyork.us/resource/erm2-nwe9.json",
-                "note": "Socrata default page is 100; fetch paginates with $limit/$offset/$order.",
+                "note": "Socrata default page is 100; fetch paginates with $limit/$offset/$order. Citywide.",
             },
             "school_zones": {
                 "name": "DOE school points (elementary / K-8) within 800 ft of the node",
                 "url": "https://data.cityofnewyork.us/resource/wg9x-4ke6.json",
-                "note": "Attendance-zone polygons cover the whole bbox, so the UI filter uses school proximity.",
             },
             "vision_zero_crashes": {
                 "name": "NYPD Motor Vehicle Collisions — pedestrian injured or killed",
                 "url": "https://data.cityofnewyork.us/resource/h9gi-nx95.json",
-                "filter": "bbox Lower Manhattan; crash_date >= 2020-01-01; pedestrians injured or killed > 0",
+                "filter": "citywide NYC bbox; crash_date >= 2020-01-01; pedestrians injured or killed > 0",
             },
             "neighborhoods": {
-                "name": "NYC 2020 Neighborhood Tabulation Areas",
+                "name": "NYC 2020 Neighborhood Tabulation Areas (all boroughs)",
                 "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/NYC_Neighborhood_Tabulation_Areas_2020/FeatureServer/0",
             },
         },
@@ -80,10 +87,10 @@ def fetch_sources() -> None:
         },
         "note": (
             "Live NYC downloads fall back to committed fixtures when an endpoint fails. "
-            "LION gdb is not required for tests; candidate generation uses expanded fixtures "
-            "if the gdb is missing. Scoring is a sklearn logistic ranker; the pixel heuristic "
-            "is the baseline, not a detector. 311 Line/Marking mixes lane lines with crosswalks. "
-            "Candidates are intersection nodes, not crosswalk polygons."
+            "LION gdb is not required for tests. Scoring is a sklearn logistic ranker on GIS "
+            "features; the pixel heuristic is the baseline, not a detector. 311 Line/Marking "
+            "mixes lane lines with crosswalks. Candidates are intersection nodes, not "
+            "crosswalk polygons. Citywide map plots a capped 'in need' subset of scored nodes."
         ),
     }
     write_json(PATHS.raw_dir / "source_manifest.json", manifest)
@@ -92,7 +99,11 @@ def fetch_sources() -> None:
 def prepare_candidates() -> None:
     ensure_live_sources()
     candidates = build_live_candidates()
-    write_json(PATHS.processed_dir / "candidates.json", [candidate.to_dict() for candidate in candidates])
+    write_json(
+        PATHS.processed_dir / "candidates.json",
+        [candidate.to_dict() for candidate in candidates],
+        indent=None,
+    )
 
 
 def enrich_candidates() -> None:
@@ -102,62 +113,38 @@ def enrich_candidates() -> None:
     complaint_detail_lookup = annotate_311_details(candidates)
     crash_lookup = annotate_crashes(candidates)
     neighborhood_lookup = annotate_neighborhoods(candidates)
-    metrics_by_id = _fetch_metrics(candidates)
+    # Citywide: do not fetch 2024 ortho crops. GIS features only.
     enriched = []
     for candidate in candidates:
         neighborhood = neighborhood_lookup.get(
-            candidate.id, {"neighborhood_id": "UNKNOWN", "neighborhood_name": "Unknown"}
+            candidate.id,
+            {"neighborhood_id": "UNKNOWN", "neighborhood_name": "Unknown", "borough": "Unknown"},
         )
-        item = {
-            **candidate.to_dict(),
-            "school_zone": school_zone_lookup.get(candidate.id, False),
-            "pavement_marking_311_count_since_2020": len(complaint_detail_lookup.get(candidate.id, [])),
-            "matched_311_complaints": complaint_detail_lookup.get(candidate.id, []),
-            "pedestrian_crash_count": crash_lookup.get(candidate.id, 0),
-            "neighborhood_id": neighborhood["neighborhood_id"],
-            "neighborhood_name": neighborhood["neighborhood_name"],
-            "google_maps_url": f"https://www.google.com/maps?q={candidate.lat},{candidate.lon}",
-            "image_metrics_missing": True,
-            "paint_missing_ratio": None,
-            "stripe_break_ratio": None,
-            "contrast_score": None,
-            "occlusion_penalty": None,
-            "processed_image_path": None,
-            "processed_thumbnail_path": None,
-        }
-        metrics = metrics_by_id.get(candidate.id)
-        if metrics is None:
-            enriched.append(item)
-            continue
-        item.update(
+        borough = str(
+            neighborhood.get("borough")
+            or borough_from_nta(neighborhood.get("neighborhood_id"))
+        )
+        enriched.append(
             {
-                "paint_missing_ratio": metrics.paint_missing_ratio,
-                "stripe_break_ratio": metrics.stripe_break_ratio,
-                "contrast_score": metrics.contrast_score,
-                "occlusion_penalty": metrics.occlusion_penalty,
-                "processed_image_path": metrics.image_path,
-                "processed_thumbnail_path": metrics.thumbnail_path,
-                "image_metrics_missing": False,
+                **candidate.to_dict(),
+                "school_zone": school_zone_lookup.get(candidate.id, False),
+                "pavement_marking_311_count_since_2020": len(complaint_detail_lookup.get(candidate.id, [])),
+                "matched_311_complaints": complaint_detail_lookup.get(candidate.id, [])[:RECENT_311_CAP],
+                "pedestrian_crash_count": crash_lookup.get(candidate.id, 0),
+                "neighborhood_id": neighborhood["neighborhood_id"],
+                "neighborhood_name": neighborhood["neighborhood_name"],
+                "borough": borough,
+                "google_maps_url": f"https://www.google.com/maps?q={candidate.lat},{candidate.lon}",
+                "image_metrics_missing": True,
+                "paint_missing_ratio": None,
+                "stripe_break_ratio": None,
+                "contrast_score": None,
+                "occlusion_penalty": None,
+                "processed_image_path": None,
+                "processed_thumbnail_path": None,
             }
         )
-        enriched.append(item)
-    write_json(PATHS.processed_dir / "enriched_candidates.json", enriched)
-
-
-def _fetch_metrics(candidates: List[CandidateRecord]) -> dict:
-    metrics_by_id: dict = {}
-
-    def _one(candidate: CandidateRecord):
-        try:
-            return candidate.id, fetch_and_analyze_candidate_image(candidate)
-        except Exception:
-            return candidate.id, None
-
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        for candidate_id, metrics in pool.map(_one, candidates):
-            if metrics is not None:
-                metrics_by_id[candidate_id] = metrics
-    return metrics_by_id
+    write_json(PATHS.processed_dir / "enriched_candidates.json", enriched, indent=None)
 
 
 def train_ranker() -> None:
@@ -172,11 +159,14 @@ def train_ranker() -> None:
             "trained_at": _utc_now(),
             "label_definition": definition,
             "include_311_feature": include_311,
+            "include_image_feature": scorer.include_image,
             "n": len(labeled),
             "n_pos": sum(int(row["label"]) for row in labeled),
             "feature_names": scorer.feature_names_,
+            "geography": NYC_LABEL,
             "neighborhoods": sorted({str(row.get("neighborhood_id") or "") for row in labeled}),
             "artifact": str(PATHS.model_artifact_path),
+            "note": "Citywide GIS-only ranker. Image/ortho features are omitted when all rows lack crops.",
         },
     )
 
@@ -185,6 +175,7 @@ def evaluate() -> None:
     rows = _labeled_training_rows()
     report = evaluate_spatial_cv(rows)
     report["generated_at"] = _utc_now()
+    report["geography"] = NYC_LABEL
     write_json(PATHS.eval_json_path, report)
     PATHS.eval_markdown_path.parent.mkdir(parents=True, exist_ok=True)
     PATHS.eval_markdown_path.write_text(_eval_markdown(report), encoding="utf-8")
@@ -200,9 +191,12 @@ def score_candidates() -> None:
     include_complaints = learned.include_311
     _, _, labeled = attach_labels(enriched)
     model_scores = learned.predict_scores(labeled)
+    explanations = learned.explain_rows(labeled, top_k=3)
     scored_records: List[dict] = []
 
-    for item, labeled_row, model_score in zip(enriched, labeled, model_scores):
+    for item, labeled_row, model_score, top_features in zip(
+        enriched, labeled, model_scores, explanations
+    ):
         candidate = candidate_from_dict({**item, **{k: labeled_row.get(k, item.get(k)) for k in item}})
         heuristic_result = heuristic.score(
             ScoringInput(
@@ -213,6 +207,7 @@ def score_candidates() -> None:
                 occlusion_penalty=candidate.occlusion_penalty,
                 school_zone=candidate.school_zone,
                 pavement_marking_311_count_since_2020=candidate.pavement_marking_311_count_since_2020,
+                image_metrics_missing=bool(item.get("image_metrics_missing", True)),
             ),
             include_complaints=include_complaints,
         )
@@ -225,19 +220,23 @@ def score_candidates() -> None:
             noun = "event" if crash_count == 1 else "events"
             reason_tags.append(f"{crash_count} ped. crash {noun} nearby")
         neighborhood_name = str(item.get("neighborhood_name") or "")
+        borough = str(item.get("borough") or borough_from_nta(item.get("neighborhood_id")))
         if neighborhood_name:
             reason_tags.append(neighborhood_name)
+        merged = {**item, **labeled_row}
         scored_records.append(
             {
                 **item,
                 "label": labeled_row.get("label"),
+                "borough": borough,
                 "model_score": round(score_value, 4),
                 "heuristic_score": float(heuristic_result.rank_score),
                 "severity_score": int(round(score_value * 100)),
                 "confidence_score": heuristic_result.confidence_score,
                 "rank_score": round(score_value, 4),
                 "reason_tags": reason_tags,
-                "priority_reason": build_priority_reason({**item, **labeled_row}),
+                "top_features": top_features,
+                "priority_reason": build_model_reason(merged, top_features),
             }
         )
 
@@ -249,7 +248,7 @@ def score_candidates() -> None:
         ),
         reverse=True,
     )
-    write_json(PATHS.processed_dir / "scored_candidates.json", scored_records)
+    write_json(PATHS.processed_dir / "scored_candidates.json", scored_records, indent=None)
 
 
 def export_snapshot() -> None:
@@ -260,21 +259,18 @@ def export_snapshot() -> None:
     if PATHS.eval_json_path.exists():
         eval_report = read_json(PATHS.eval_json_path)
 
-    _clear_directory(PATHS.export_dir / "images")
-    _clear_directory(PATHS.web_images_dir)
-
-    showcase = [
-        item
-        for item in scored_records
-        if item.get("processed_image_path") and Path(item["processed_image_path"]).exists()
-    ][:SHOWCASE_TOP_K]
-
-    for item in showcase:
+    plottable = select_plottable(scored_records)
+    for item in plottable:
         candidate = candidate_from_dict(item)
-        crop_bytes = Path(item["processed_image_path"]).read_bytes()
-        thumb_bytes = Path(item["processed_thumbnail_path"]).read_bytes()
-        image_url = store.write_crop(candidate.id, crop_bytes)
-        thumbnail_url = store.write_thumbnail(candidate.id, thumb_bytes)
+        image_url = ""
+        thumbnail_url = ""
+        processed = item.get("processed_image_path")
+        if processed and Path(str(processed)).exists():
+            crop_bytes = Path(str(processed)).read_bytes()
+            image_url = store.write_crop(candidate.id, crop_bytes)
+            thumb_path = item.get("processed_thumbnail_path")
+            if thumb_path and Path(str(thumb_path)).exists():
+                thumbnail_url = store.write_thumbnail(candidate.id, Path(str(thumb_path)).read_bytes())
         export_records.append(
             ExportRecord(
                 id=candidate.id,
@@ -289,7 +285,7 @@ def export_snapshot() -> None:
                 reason_tags=list(item["reason_tags"]),
                 school_zone=candidate.school_zone,
                 pavement_marking_311_count_since_2020=candidate.pavement_marking_311_count_since_2020,
-                matched_311_complaints=item.get("matched_311_complaints", []),
+                matched_311_complaints=list(item.get("matched_311_complaints") or [])[:RECENT_311_CAP],
                 image_url=image_url,
                 thumbnail_url=thumbnail_url,
                 google_maps_url=item["google_maps_url"],
@@ -297,14 +293,18 @@ def export_snapshot() -> None:
                 heuristic_score=float(item["heuristic_score"]),
                 neighborhood=str(item.get("neighborhood_name") or ""),
                 neighborhood_id=str(item.get("neighborhood_id") or ""),
+                borough=str(item.get("borough") or borough_from_nta(item.get("neighborhood_id"))),
                 priority_reason=str(item.get("priority_reason") or ""),
                 pedestrian_crash_count=int(item.get("pedestrian_crash_count") or 0),
+                top_features=list(item.get("top_features") or []),
             )
         )
 
     overall = (eval_report.get("overall") or {}) if isinstance(eval_report, dict) else {}
     learned_auc = (overall.get("learned") or {}).get("roc_auc")
     heuristic_auc = (overall.get("heuristic") or {}).get("roc_auc")
+    learned_p5 = (overall.get("learned") or {}).get("precision_at_5")
+    learned_ap = (overall.get("learned") or {}).get("average_precision")
     manifest_path = PATHS.raw_dir / "source_manifest.json"
     source_versions = {
         "imagery": LiveSourceVersions.imagery,
@@ -317,34 +317,87 @@ def export_snapshot() -> None:
     if manifest_path.exists():
         source_versions.update((read_json(manifest_path).get("source_versions") or {}))
     crosswalk_payload = [record.to_dict() for record in export_records]
+    n_scored = len(scored_records)
+    n_plotted = len(crosswalk_payload)
+    threshold = min((row["model_score"] for row in crosswalk_payload), default=None)
+    geojson_payload = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "id": row["id"],
+                "geometry": {"type": "Point", "coordinates": [row["lon"], row["lat"]]},
+                "properties": {
+                    "id": row["id"],
+                    "intersection_label": row["intersection_label"],
+                    "borough": row["borough"],
+                    "neighborhood": row["neighborhood"],
+                    "neighborhood_id": row["neighborhood_id"],
+                    "model_score": row["model_score"],
+                    "heuristic_score": row["heuristic_score"],
+                    "severity_score": row["severity_score"],
+                    "school_zone": row["school_zone"],
+                    "pavement_marking_311_count_since_2020": row["pavement_marking_311_count_since_2020"],
+                    "pedestrian_crash_count": row["pedestrian_crash_count"],
+                    "priority_reason": row["priority_reason"],
+                    "top_features": row["top_features"],
+                    "matched_311_complaints": row["matched_311_complaints"],
+                    "google_maps_url": row["google_maps_url"],
+                },
+            }
+            for row in crosswalk_payload
+        ],
+    }
     meta_payload = {
         "build_timestamp": _utc_now(),
         "source_versions": source_versions,
-        "pilot_boundary": LOWER_MANHATTAN_LABEL,
-        "total_records": len(crosswalk_payload),
-        "scoring_method": "sklearn logistic ranker (priority); heuristic paint/311 score is the baseline",
+        "pilot_boundary": NYC_LABEL,
+        "geography": NYC_LABEL,
+        "total_records": n_plotted,
+        "n_scored": n_scored,
+        "n_plotted": n_plotted,
+        "plot_percentile": PLOT_PERCENTILE,
+        "plot_max": PLOT_MAX,
+        "plot_threshold": threshold,
+        "plot_rule": (
+            f"Map shows crossings in need: model score at/above the {PLOT_PERCENTILE:.0f}th "
+            f"percentile (cap {PLOT_MAX}), with a per-borough floor so every borough is visible."
+        ),
+        "scoring_method": (
+            "sklearn logistic ranker (P(pedestrian crash nearby)); heuristic paint/311 score is the baseline. "
+            "Citywide features are GIS-only — street width, heading spread, school proximity, 311. "
+            "Not a vision detector."
+        ),
         "label_definition": eval_report.get("label_definition", "pedestrian_crash_nearby"),
         "eval_split": eval_report.get("split", "GroupKFold by neighborhood"),
         "eval_n": eval_report.get("n"),
         "eval_n_pos": eval_report.get("n_pos"),
         "eval_learned_auc": learned_auc,
         "eval_heuristic_auc": heuristic_auc,
-        "showcase_top_k": SHOWCASE_TOP_K,
+        "eval_learned_ap": learned_ap,
+        "eval_learned_precision_at_5": learned_p5,
+        "eval_by_borough": eval_report.get("by_borough") or [],
+        "include_image_feature": eval_report.get("include_image_feature", False),
+        "include_311_feature": eval_report.get("include_311_feature", True),
+        "showcase_top_k": n_plotted,
         "product_claim": (
-            "City-actionable inspection list of Lower Manhattan intersection nodes "
-            "(not crosswalk polygons) that look degraded or under-marked relative to "
-            "Vision Zero crash and 311 complaint burden."
+            "Citywide NYC inspection-priority map of pedestrian crossing nodes, ranked by a "
+            "learned tabular model vs a paint/311 heuristic. Hover a node for streets, 311, "
+            "and why the model flagged it."
         ),
         "caveat": (
-            "Not a crosswalk detector and not a pretty-paint ranking. Candidates are LION/"
-            "fixture intersection nodes; leg_label is the node, not a painted crossing. "
-            "311 Line/Marking complaints mix lane lines with crosswalks. Crash labels are "
-            "noisy / weakly supervised. Metrics use a spatial (neighborhood) split so train "
-            "and test NTAs are disjoint. Small n: treat AUC as directional, not a production SLA."
+            "Not a crosswalk detector. Candidates are LION intersection nodes, not painted "
+            "polygons. Citywide scores use GIS features only — 2024 ortho crops are not "
+            f"fetched for all {n_scored} scored nodes. The map plots {n_plotted} 'in need' "
+            f"nodes (top {PLOT_PERCENTILE:.0f}th percentile, cap {PLOT_MAX}), not every "
+            "intersection. 311 Line/Marking complaints mix lane lines with crosswalks. Crash "
+            "labels are noisy / weakly supervised. Metrics use a spatial (neighborhood) split "
+            "so train and test NTAs are disjoint. Treat AUC as directional, not a production SLA."
         ),
     }
 
-    store.write_export("crosswalks.json", json.dumps(crosswalk_payload, indent=2).encode("utf-8"))
+    store.write_export("crosswalks.json", json.dumps(crosswalk_payload).encode("utf-8"))
+    store.write_export("crossings.geojson", json.dumps(geojson_payload, separators=(",", ":")).encode("utf-8"))
     store.write_export("meta.json", json.dumps(meta_payload, indent=2).encode("utf-8"))
 
 
@@ -364,8 +417,11 @@ def _labeled_training_rows() -> list[dict]:
         rows = read_json(enriched_path)
         if rows:
             return rows
-    fixture_path = PATHS.fixtures_dir / "training_rows.json"
-    return read_json(fixture_path)
+    for name in ("citywide_training_rows.json", "training_rows.json"):
+        fixture_path = PATHS.fixtures_dir / name
+        if fixture_path.exists():
+            return read_json(fixture_path)
+    return []
 
 
 def _load_or_train_scorer(rows: list[dict]) -> LearnedPriorityScorer:
@@ -387,10 +443,13 @@ def _eval_markdown(report: dict) -> str:
     lines = [
         "# Spatial evaluation (neighborhood GroupKFold)",
         "",
+        f"- Geography: {report.get('geography', NYC_LABEL)}",
         f"- Label: `{report.get('label_definition')}`",
         f"- Split: {report.get('split')}",
         f"- n = {report.get('n')}, positives = {report.get('n_pos')}",
+        f"- NTAs in split: {report.get('n_neighborhoods', len(report.get('neighborhoods') or []))}",
         f"- 311 used as a feature: {report.get('include_311_feature')}",
+        f"- Image/ortho features: {report.get('include_image_feature')}",
         "",
         report.get("caveat") or "",
         "",
@@ -401,11 +460,36 @@ def _eval_markdown(report: dict) -> str:
         _metric_row("learned", learned),
         _metric_row("heuristic baseline", heuristic),
         "",
-        "## By neighborhood (test fold for that NTA)",
+        "## By borough (out-of-fold rows in that borough)",
         "",
-        "| NTA | name | n | positives | learned AUC | heuristic AUC | learned P@5 | heuristic P@5 |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| borough | n | positives | learned AUC | heuristic AUC | learned P@5 | heuristic P@5 |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
     ]
+    for row in report.get("by_borough") or []:
+        learned_n = row.get("learned") or {}
+        heuristic_n = row.get("heuristic") or {}
+        lines.append(
+            "| {name} | {n} | {pos} | {lauc} | {hauc} | {lp5} | {hp5} |".format(
+                name=row.get("borough"),
+                n=learned_n.get("n"),
+                pos=learned_n.get("n_pos"),
+                lauc=_fmt(learned_n.get("roc_auc")),
+                hauc=_fmt(heuristic_n.get("roc_auc")),
+                lp5=_fmt(learned_n.get("precision_at_5")),
+                hp5=_fmt(heuristic_n.get("precision_at_5")),
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "## Sample of NTAs (largest with n≥25; full citywide table omitted)",
+            "",
+            report.get("neighborhood_table_note") or "",
+            "",
+            "| NTA | name | n | positives | learned AUC | heuristic AUC | learned P@5 | heuristic P@5 |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        ]
+    )
     for row in report.get("by_neighborhood") or []:
         learned_n = row.get("learned") or {}
         heuristic_n = row.get("heuristic") or {}
@@ -443,13 +527,6 @@ def _fmt(value: object) -> str:
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-
-
-def _clear_directory(path: Path) -> None:
-    path.mkdir(parents=True, exist_ok=True)
-    for child in path.iterdir():
-        if child.is_file():
-            child.unlink()
 
 
 def main() -> None:

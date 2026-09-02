@@ -2,15 +2,23 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { CrosswalkMeta, CrosswalkRecord } from "@crosswalks/contracts";
-import { FilterBar, FooterMeta, CrosswalkCarousel } from "@crosswalks/ui";
 import { staticSnapshotSource } from "../lib/snapshot-source";
+import { applyFilters, DEFAULT_FILTERS, type MapFilters } from "../lib/filters";
+import { EvalStrip } from "../components/eval-strip";
+import { FilterDock } from "../components/filter-dock";
+import { HoverCard } from "../components/hover-card";
+import { CrossingList } from "../components/crossing-list";
+import { PriorityMap } from "../components/priority-map";
 
-type ActiveFilter = "all" | "school-zone" | "reported" | "crash";
+type ViewMode = "map" | "list";
 
 export default function HomePage() {
   const [records, setRecords] = useState<CrosswalkRecord[]>([]);
   const [meta, setMeta] = useState<CrosswalkMeta | null>(null);
-  const [activeFilter, setActiveFilter] = useState<ActiveFilter>("all");
+  const [filters, setFilters] = useState<MapFilters>(DEFAULT_FILTERS);
+  const [view, setView] = useState<ViewMode>("map");
+  const [hovered, setHovered] = useState<CrosswalkRecord | null>(null);
+  const [pinned, setPinned] = useState<CrosswalkRecord | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,56 +46,101 @@ export default function HomePage() {
     }
 
     load();
-
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const filtered = useMemo(() => {
-    if (activeFilter === "school-zone") {
-      return records.filter((record) => record.school_zone);
-    }
-
-    if (activeFilter === "reported") {
-      return records.filter((record) => record.pavement_marking_311_count_since_2020 > 0);
-    }
-
-    if (activeFilter === "crash") {
-      return records.filter((record) => record.pedestrian_crash_count > 0);
-    }
-
-    return records;
-  }, [activeFilter, records]);
+  const filtered = useMemo(() => applyFilters(records, filters), [records, filters]);
+  const active = pinned && filtered.some((record) => record.id === pinned.id) ? pinned : hovered;
+  const scores = records.map((record) => record.model_score);
+  const minScore = scores.length ? Math.min(...scores) : 0;
+  const maxScore = scores.length ? Math.max(...scores) : 1;
 
   return (
-    <main className="page-shell">
-      <header className="page-header">
-        <div>
-          <p className="eyebrow">Lower Manhattan pilot</p>
-          <h1>Inspection priority list</h1>
-          <p className="lede">
-            Pedestrian crossings ranked for a DOT planner: inspect or repaint these first. The list
-            joins LION intersection nodes (not painted crosswalk polygons), 2024 NYS ortho crops,
-            311 faded-marking complaints (lane lines mixed with crosswalks), proximity to
-            elementary/K-8 schools, and Vision Zero pedestrian crashes. A learned ranker scores
-            inspection priority; the paint/contrast heuristic is the baseline, not a detector.
-          </p>
+    <main className="app-shell">
+      <header className="chrome">
+        <div className="brand">
+          <p className="brand-kicker">NYC · five boroughs</p>
+          <h1>Crosswalk Vision</h1>
         </div>
-        <FilterBar
-          activeFilter={activeFilter}
-          onFilterChange={(filter) => setActiveFilter(filter as ActiveFilter)}
-        />
+        <EvalStrip meta={meta} visible={filtered.length} nScored={records.length} />
+        <div className="view-toggle" role="tablist" aria-label="Map or list">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === "map"}
+            className={view === "map" ? "is-active" : ""}
+            onClick={() => setView("map")}
+          >
+            Map
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === "list"}
+            className={view === "list" ? "is-active" : ""}
+            onClick={() => setView("list")}
+          >
+            List
+          </button>
+        </div>
       </header>
 
-      {isLoading ? <div className="status-panel">Loading snapshot...</div> : null}
-      {error ? <div className="status-panel">{error}</div> : null}
+      <FilterDock
+        filters={filters}
+        onChange={(next) => {
+          setFilters(next);
+          setPinned(null);
+        }}
+        minScore={Math.max(0, minScore)}
+        maxScore={maxScore || 1}
+      />
 
-      {!isLoading && !error ? (
+      {isLoading ? <div className="status-panel overlay">Loading ranked crossings…</div> : null}
+      {error ? <div className="status-panel overlay">{error}</div> : null}
+
+      {!isLoading && !error && view === "map" ? (
         <>
-          <CrosswalkCarousel records={filtered} />
-          <FooterMeta meta={meta} totalVisible={filtered.length} />
+          <PriorityMap
+            records={filtered}
+            activeId={active?.id ?? null}
+            onHover={(record) => {
+              if (record) {
+                setHovered(record);
+              }
+            }}
+            onSelect={(record) => setPinned(record)}
+          />
+          {active ? (
+            <div className="popup-dock">
+              <HoverCard
+                record={active}
+                onClose={() => {
+                  setPinned(null);
+                  setHovered(null);
+                }}
+              />
+            </div>
+          ) : (
+            <p className="map-hint">Hover a hash — crossings the ranker put in need.</p>
+          )}
         </>
+      ) : null}
+
+      {!isLoading && !error && view === "list" ? (
+        <CrossingList
+          records={filtered}
+          activeId={active?.id ?? filtered[0]?.id ?? null}
+          onSelect={(record) => setPinned(record)}
+        />
+      ) : null}
+
+      {meta ? (
+        <footer className="chrome-foot">
+          <p>{meta.plot_rule || meta.product_claim}</p>
+          <p>{meta.caveat}</p>
+        </footer>
       ) : null}
     </main>
   );

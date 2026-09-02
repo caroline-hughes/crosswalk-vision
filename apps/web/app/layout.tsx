@@ -1,10 +1,31 @@
 import type { Metadata } from "next";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Syne } from "next/font/google";
 import "./globals.css";
 
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap"
+});
+
+const plex = IBM_Plex_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-body",
+  display: "swap"
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  variable: "--font-mono",
+  display: "swap"
+});
+
 export const metadata: Metadata = {
-  title: "Crosswalk Vision — inspection priority",
+  title: "Crosswalk Vision — NYC inspection priority map",
   description:
-    "Lower Manhattan pedestrian-crossing inspection list from LION, 2024 NYS orthos, 311, school zones, and Vision Zero crashes."
+    "Citywide NYC map of pedestrian crossing nodes ranked by a learned tabular model versus a paint/311 heuristic. Spatial NTA evaluation, weak crash labels, not a detector."
 };
 
 export default function RootLayout({
@@ -14,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${syne.variable} ${plex.variable} ${plexMono.variable}`}>{children}</body>
     </html>
   );
 }

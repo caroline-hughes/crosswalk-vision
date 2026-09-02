@@ -10,12 +10,19 @@ export function CrosswalkCard({ record }: { record: CrosswalkRecord }) {
   return (
     <article className="card">
       <div className="card-image-wrap">
-        <img
-          src={record.image_url}
-          alt={altText}
-          className="card-image"
-          loading="lazy"
-        />
+        {record.image_url ? (
+          <img
+            src={record.image_url}
+            alt={altText}
+            className="card-image"
+            loading="lazy"
+          />
+        ) : (
+          <div className="card-image card-image-placeholder" aria-hidden="true">
+            <span>GIS node</span>
+            <strong>{record.borough || record.neighborhood}</strong>
+          </div>
+        )}
       </div>
 
       <div className="card-body">

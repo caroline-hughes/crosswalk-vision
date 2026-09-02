@@ -18,13 +18,34 @@ GIS_FEATURES: tuple[str, ...] = (
 )
 COMPLAINT_FEATURE = "pavement_marking_311_count_since_2020"
 
+FEATURE_LABELS: dict[str, str] = {
+    "paint_missing_ratio": "ortho paint-missing ratio",
+    "stripe_break_ratio": "stripe-break ratio",
+    "contrast_score": "marking contrast",
+    "occlusion_penalty": "ortho occlusion",
+    "school_zone": "near elementary/K-8 school",
+    "street_width_ft": "street width",
+    "approach_street_count": "number of approach streets",
+    "heading_spread": "approach heading spread",
+    COMPLAINT_FEATURE: "311 faded-marking complaints",
+}
+
+BOROUGH_FROM_NTA_PREFIX: dict[str, str] = {
+    "MN": "Manhattan",
+    "BX": "Bronx",
+    "BK": "Brooklyn",
+    "QN": "Queens",
+    "SI": "Staten Island",
+}
+
 # Crash-only labels may use 311 counts as a predictor. Composite labels must not:
 # that would leak the target into the feature matrix.
 MIN_CRASH_POSITIVES = 8
 
 
-def feature_names(*, include_311: bool) -> list[str]:
-    names = list(IMAGE_FEATURES + GIS_FEATURES)
+def feature_names(*, include_311: bool, include_image: bool = True) -> list[str]:
+    names: list[str] = list(IMAGE_FEATURES) if include_image else []
+    names.extend(GIS_FEATURES)
     if include_311:
         names.append(COMPLAINT_FEATURE)
     return names
@@ -39,10 +60,13 @@ def heading_spread_degrees(row: Mapping[str, object]) -> float:
     return float(min(diff, 180.0 - diff))
 
 
-def row_to_vector(row: Mapping[str, object], *, include_311: bool) -> np.ndarray:
+def row_to_vector(
+    row: Mapping[str, object], *, include_311: bool, include_image: bool = True
+) -> np.ndarray:
     values: list[float] = []
-    for name in IMAGE_FEATURES:
-        values.append(_nan_if_missing(row.get(name)))
+    if include_image:
+        for name in IMAGE_FEATURES:
+            values.append(_nan_if_missing(row.get(name)))
     values.append(1.0 if bool(row.get("school_zone")) else 0.0)
     values.append(_nan_if_missing(row.get("street_width_ft"), empty_zero=True))
     approach = row.get("approach_street_count")
@@ -54,10 +78,25 @@ def row_to_vector(row: Mapping[str, object], *, include_311: bool) -> np.ndarray
     return np.asarray(values, dtype=float)
 
 
-def rows_to_matrix(rows: Sequence[Mapping[str, object]], *, include_311: bool) -> np.ndarray:
+def rows_to_matrix(
+    rows: Sequence[Mapping[str, object]], *, include_311: bool, include_image: bool = True
+) -> np.ndarray:
     if not rows:
-        return np.zeros((0, len(feature_names(include_311=include_311))), dtype=float)
-    return np.vstack([row_to_vector(row, include_311=include_311) for row in rows])
+        return np.zeros((0, len(feature_names(include_311=include_311, include_image=include_image))), dtype=float)
+    return np.vstack(
+        [row_to_vector(row, include_311=include_311, include_image=include_image) for row in rows]
+    )
+
+
+def rows_have_image_metrics(rows: Sequence[Mapping[str, object]]) -> bool:
+    """True when at least one row has a real ortho-derived feature (not citywide GIS-only)."""
+    for row in rows:
+        if row.get("image_metrics_missing") is True:
+            continue
+        for name in IMAGE_FEATURES:
+            if _optional_float(row.get(name)) is not None:
+                return True
+    return False
 
 
 def choose_label_definition(rows: Sequence[Mapping[str, object]]) -> tuple[str, bool]:
@@ -80,6 +119,14 @@ def attach_labels(rows: Sequence[Mapping[str, object]]) -> tuple[str, bool, list
             item["label"] = int(crash or complaint)
         labeled.append(item)
     return definition, include_311, labeled
+
+
+def borough_from_nta(nta_id: object, borough: object = "") -> str:
+    named = str(borough or "").strip()
+    if named:
+        return named
+    prefix = str(nta_id or "")[:2].upper()
+    return BOROUGH_FROM_NTA_PREFIX.get(prefix, "Unknown")
 
 
 def _optional_float(value: object) -> float | None:

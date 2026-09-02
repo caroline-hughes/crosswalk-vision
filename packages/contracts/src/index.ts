@@ -14,6 +14,13 @@ export interface Matched311Complaint {
   url: string;
 }
 
+export interface ModelFeatureContribution {
+  feature: string;
+  label: string;
+  contribution: number;
+  direction: string;
+}
+
 export interface CrosswalkRecord {
   id: string;
   intersection_label: string;
@@ -35,8 +42,10 @@ export interface CrosswalkRecord {
   heuristic_score: number;
   neighborhood: string;
   neighborhood_id: string;
+  borough: string;
   priority_reason: string;
   pedestrian_crash_count: number;
+  top_features: ModelFeatureContribution[];
 }
 
 export interface CrosswalkMeta {
@@ -58,7 +67,17 @@ export interface CrosswalkMeta {
   eval_n_pos?: number | null;
   eval_learned_auc?: number | null;
   eval_heuristic_auc?: number | null;
+  eval_learned_ap?: number | null;
+  eval_learned_precision_at_5?: number | null;
   showcase_top_k?: number;
+  n_scored?: number;
+  n_plotted?: number;
+  plot_percentile?: number;
+  plot_threshold?: number | null;
+  plot_rule?: string;
+  geography?: string;
+  include_image_feature?: boolean;
+  include_311_feature?: boolean;
   product_claim: string;
   caveat: string;
 }
@@ -98,7 +117,17 @@ export function validateCrosswalkMeta(input: unknown): CrosswalkMeta {
     eval_n_pos: optionalNumber(value.eval_n_pos),
     eval_learned_auc: optionalNumber(value.eval_learned_auc),
     eval_heuristic_auc: optionalNumber(value.eval_heuristic_auc),
+    eval_learned_ap: optionalNumber(value.eval_learned_ap),
+    eval_learned_precision_at_5: optionalNumber(value.eval_learned_precision_at_5),
     showcase_top_k: optionalNumber(value.showcase_top_k),
+    n_scored: optionalNumber(value.n_scored),
+    n_plotted: optionalNumber(value.n_plotted),
+    plot_percentile: optionalNumber(value.plot_percentile),
+    plot_threshold: optionalNumber(value.plot_threshold),
+    plot_rule: optionalString(value.plot_rule),
+    geography: optionalString(value.geography),
+    include_image_feature: typeof value.include_image_feature === "boolean" ? value.include_image_feature : undefined,
+    include_311_feature: typeof value.include_311_feature === "boolean" ? value.include_311_feature : undefined,
     product_claim: mustBeString(value.product_claim, "product_claim"),
     caveat: mustBeString(value.caveat, "caveat")
   };
@@ -135,8 +164,10 @@ function validateCrosswalkRecord(input: unknown, index: number): CrosswalkRecord
     heuristic_score: mustBeNumber(value.heuristic_score, "heuristic_score"),
     neighborhood: mustBeString(value.neighborhood, "neighborhood"),
     neighborhood_id: mustBeString(value.neighborhood_id, "neighborhood_id"),
+    borough: typeof value.borough === "string" ? value.borough : "Unknown",
     priority_reason: mustBeString(value.priority_reason, "priority_reason"),
-    pedestrian_crash_count: mustBeNumber(value.pedestrian_crash_count, "pedestrian_crash_count")
+    pedestrian_crash_count: mustBeNumber(value.pedestrian_crash_count, "pedestrian_crash_count"),
+    top_features: mustBeFeatureArray(value.top_features)
   };
 }
 
@@ -192,6 +223,27 @@ function mustBeYear(value: unknown): 2024 {
   }
 
   return 2024;
+}
+
+function mustBeFeatureArray(value: unknown): ModelFeatureContribution[] {
+  if (value === undefined || value === null) {
+    return [];
+  }
+  if (!Array.isArray(value)) {
+    throw new Error("top_features must be an array.");
+  }
+  return value.map((entry, index) => {
+    if (!entry || typeof entry !== "object") {
+      throw new Error(`top_features[${index}] must be an object.`);
+    }
+    const feature = entry as Record<string, unknown>;
+    return {
+      feature: typeof feature.feature === "string" ? feature.feature : "",
+      label: typeof feature.label === "string" ? feature.label : String(feature.feature || ""),
+      contribution: typeof feature.contribution === "number" ? feature.contribution : 0,
+      direction: typeof feature.direction === "string" ? feature.direction : ""
+    };
+  });
 }
 
 function mustBeComplaintArray(value: unknown, field: string): Matched311Complaint[] {
