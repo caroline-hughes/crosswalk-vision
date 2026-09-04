@@ -13,12 +13,21 @@ import requests
 from PIL import Image
 from pyproj import Transformer
 
-from .config import PATHS
+from .config import (
+    ORTHO_LABEL,
+    ORTHO_MAPSERVER_EXPORT_URL,
+    ORTHO_PREFERRED_NEXT_YEAR,
+    ORTHO_SEASON,
+    ORTHO_UPGRADE_NOTE,
+    ORTHO_YEAR,
+    PATHS,
+)
 from .models import CandidateRecord, candidate_from_dict
 
 _TRANSFORM_4326_TO_3857 = Transformer.from_crs(4326, 3857, always_xy=True)
 
-EXPORT_URL = "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer/export"
+# Re-export so callers can keep importing from live_imagery.
+EXPORT_URL = ORTHO_MAPSERVER_EXPORT_URL
 _SESSION = requests.Session()
 
 PLOT_IMAGE_SIZE = (640, 480)

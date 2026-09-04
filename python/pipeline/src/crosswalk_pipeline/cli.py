@@ -19,7 +19,7 @@ from crosswalk_scoring import (
 )
 
 from .artifact_store import LocalArtifactStore
-from .config import PATHS
+from .config import ORTHO_LABEL, ORTHO_PREFERRED_NEXT_YEAR, ORTHO_UPGRADE_NOTE, ORTHO_YEAR, PATHS
 from .io_utils import read_json, write_json
 from .live_imagery import fetch_plottable_imagery
 from .live_sources import (
@@ -47,7 +47,7 @@ def fetch_sources() -> None:
         "pilot_boundary": NYC_LABEL,
         "sources": {
             "imagery": {
-                "name": "2024 NYS Orthoimagery (plotted in-need set only)",
+                "name": "Spring 2024 NYS Orthoimagery (plotted in-need set only)",
                 "url": "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer",
                 "note": (
                     "Fetch 2024 ortho crops only for the plotted 'in need' map set "
@@ -316,8 +316,8 @@ def export_snapshot() -> None:
     n_plotted = len(crosswalk_payload)
     n_with_imagery = sum(1 for row in crosswalk_payload if row.get("image_url") or row.get("thumbnail_url"))
     source_versions["imagery"] = (
-        f"2024 NYS ortho crops for {n_with_imagery}/{n_plotted} plotted in-need nodes "
-        "(not fetched citywide for scoring)."
+        f"{ORTHO_LABEL} (wms/{ORTHO_YEAR}) for {n_with_imagery}/{n_plotted} "
+        f"plotted in-need nodes. {ORTHO_UPGRADE_NOTE}"
     )
     threshold = min((row["model_score"] for row in crosswalk_payload), default=None)
     geojson_payload = {
@@ -382,12 +382,7 @@ def export_snapshot() -> None:
         "include_image_feature": eval_report.get("include_image_feature", False),
         "include_311_feature": eval_report.get("include_311_feature", True),
         "showcase_top_k": n_plotted,
-        "n_with_imagery": n_with_imagery,
-        "imagery_rule": (
-            "2024 NYS ArcGIS ortho crops for the plotted in-need set only "
-            f"({n_with_imagery}/{n_plotted} nodes have a crop). Not fetched for the "
-            f"{n_scored} scored nodes citywide. Ranking remains GIS-only."
-        ),
+        **_imagery_meta(n_with_imagery, n_plotted, n_scored),
         "product_claim": (
             "Citywide NYC inspection-priority map of pedestrian crossing nodes, ranked by a "
             "learned tabular model vs a paint/311 heuristic. Hover a node for streets, 311, "
@@ -427,16 +422,11 @@ def fetch_plot_imagery() -> None:
     meta = read_json(meta_path) if meta_path.exists() else {}
     n_plotted = len(records)
     n_scored = int(meta.get("n_scored") or n_plotted)
-    meta["n_with_imagery"] = n_with_imagery
-    meta["imagery_rule"] = (
-        "2024 NYS ArcGIS ortho crops for the plotted in-need set only "
-        f"({n_with_imagery}/{n_plotted} nodes have a crop). Not fetched for the "
-        f"{n_scored} scored nodes citywide. Ranking remains GIS-only."
-    )
+    meta.update(_imagery_meta(n_with_imagery, n_plotted, n_scored))
     versions = dict(meta.get("source_versions") or {})
     versions["imagery"] = (
-        f"2024 NYS ortho crops for {n_with_imagery}/{n_plotted} plotted in-need nodes "
-        "(not fetched citywide for scoring)."
+        f"{ORTHO_LABEL} (wms/{ORTHO_YEAR}) for {n_with_imagery}/{n_plotted} "
+        f"plotted in-need nodes. {ORTHO_UPGRADE_NOTE}"
     )
     meta["source_versions"] = versions
     if "caveat" in meta:
@@ -615,6 +605,23 @@ def _fmt(value: object) -> str:
     if isinstance(value, float):
         return f"{value:.3f}"
     return str(value)
+
+
+def _imagery_meta(n_with_imagery: int, n_plotted: int, n_scored: int) -> dict:
+    return {
+        "n_with_imagery": n_with_imagery,
+        "imagery_year": ORTHO_YEAR,
+        "imagery_label": ORTHO_LABEL,
+        "imagery_next_year": ORTHO_PREFERRED_NEXT_YEAR,
+        "imagery_upgrade_note": ORTHO_UPGRADE_NOTE,
+        "imagery_rule": (
+            f"{ORTHO_LABEL} (orthos.its.ny.gov wms/{ORTHO_YEAR}) for the plotted in-need "
+            f"set only ({n_with_imagery}/{n_plotted} nodes have a crop). NYS flew the five "
+            "boroughs in Spring 2024. 2025 MapServer is Hudson Valley / Westchester / etc "
+            f"and is blank over NYC. {ORTHO_UPGRADE_NOTE} NYC open imagery newest citywide "
+            f"layer is also {ORTHO_YEAR}. Not fetched for the {n_scored} scored nodes."
+        ),
+    }
 
 
 def _utc_now() -> str:

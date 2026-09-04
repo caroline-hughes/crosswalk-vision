@@ -4,7 +4,7 @@ Citywide **inspection-priority map** for pedestrian crossings in New York City (
 
 The product claim: join **LION intersection nodes** (not painted crosswalk polygons) with open NYC GIS (311 faded markings, elementary/K-8 school proximity, Vision Zero pedestrian crashes, 2020 NTAs) into a map a DOT planner can use to decide **which crossings to inspect or repaint first**.
 
-Live path: LION gdb when present (resolved from the NYC Open Data LION blob), else a committed multi-borough fixture; paginated 311; DOE school points; NYPD pedestrian crashes; citywide NTAs. Ranking is GIS-only (street width, heading spread, school proximity, 311). **2024 NYS ortho crops are fetched only for the plotted “in need” set** (~2,000 map nodes), never for all ~56k scored intersections. Thumbnails live in `apps/web/public/images/` and `data/export/images/`. Counts are in `data/export/meta.json` (`n_with_imagery`). Lower Manhattan leftover PNG crops under `data/processed/images/` are unused by the citywide map.
+Live path: LION gdb when present (resolved from the NYC Open Data LION blob), else a committed multi-borough fixture; paginated 311; DOE school points; NYPD pedestrian crashes; citywide NTAs. Ranking is GIS-only (street width, heading spread, school proximity, 311). **NYS ortho crops** are fetched only for the plotted “in need” set (~2,000 map nodes), never for all ~56k scored intersections. Popup/list cards label the photo “NYS ortho crop” with no year. One chrome note states the honest vintage: newest published NYC coverage is Spring 2024; NYS has 2026 on the five-borough flight schedule; crops refresh when that MapServer is live. Until then the fetch uses `wms/2024`. The year/URL is `ORTHO_YEAR` / `ORTHO_MAPSERVER_EXPORT_URL` in `python/pipeline/src/crosswalk_pipeline/config.py`. Technical year stays in `data/export/meta.json` (`imagery_year`, `imagery_upgrade_note`) for reproducibility.
 
 ## What this repo is
 
@@ -31,7 +31,7 @@ Documented in `data/raw/source_manifest.json`:
 | layer | source |
 | --- | --- |
 | Intersection geometry | NYC LION street base map (live gdb when present; otherwise `citywide_candidates.json`) |
-| Imagery | **Plotted set only.** 2024 NYS orthoimagery (`orthos.its.ny.gov` 2024 MapServer export) for the ~2,000 “in need” nodes the map shows. Not fetched for the other ~54k scored intersections. |
+| Imagery | **Plotted set only.** Fetch `wms/2024` until `wms/2026` (or equivalent NYC coverage) is published; then prefer 2026. Cards do not stamp the year. Score is GIS-only, not from the photo. |
 | 311 | NYC Open Data Street Condition / `Line/Marking - Faded` and `After Repaving` since 2020, **citywide**. **Socrata’s default page is 100**; fetch paginates with `$limit` / `$offset` / `$order`. These descriptors mix **lane lines with crosswalks**. |
 | Schools | DOE school locations (`wg9x-4ke6`), elementary / K-8 / early childhood within **800 ft**, citywide. |
 | Crashes | NYPD Motor Vehicle Collisions (`h9gi-nx95`), pedestrian injured or killed, citywide NYC bbox, since 2020 |

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import type { CrosswalkRecord } from "@crosswalks/contracts";
 import { scoreColor, scoreMarkerSize } from "../lib/filters";
+import { ORTHO_CAPTION, ORTHO_SCORE_NOTE } from "../lib/imagery";
 import { orthoSrc } from "./ortho-frame";
 import "leaflet/dist/leaflet.css";
 
@@ -21,9 +22,9 @@ function iconHtml(color: string): string {
 function photoHtml(record: CrosswalkRecord): string {
   const src = orthoSrc(record);
   if (!src) {
-    return `<div class="ortho-frame is-empty" aria-hidden="true"><span class="ortho-mark"></span><span>Ortho unavailable</span></div>`;
+    return `<div class="ortho-block is-empty" aria-hidden="true"><div class="ortho-frame is-empty"><span class="ortho-mark"></span><span>Ortho unavailable</span></div></div>`;
   }
-  return `<figure class="ortho-frame"><img src="${escapeHtml(src)}" alt="${escapeHtml(record.intersection_label)} aerial ortho" /></figure>`;
+  return `<figure class="ortho-block"><div class="ortho-frame"><img src="${escapeHtml(src)}" alt="${escapeHtml(`${record.intersection_label} ${ORTHO_CAPTION}`)}" /></div><figcaption class="ortho-caption"><span>${escapeHtml(ORTHO_CAPTION)}</span><span class="ortho-caption-note">${escapeHtml(ORTHO_SCORE_NOTE)}</span></figcaption></figure>`;
 }
 
 function popupHtml(record: CrosswalkRecord): string {
