@@ -6,7 +6,7 @@
     "imagery": {
       "name": "Spring 2024 NYS Orthoimagery (plotted in-need set only)",
       "url": "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer",
-      "note": "Spring 2024 NYS ortho crops for the plotted in-need map set (~2k nodes), never for all ~56k scored intersections. 2025 MapServer does not cover NYC; 2026 is not published. Ranking stays GIS-only."
+      "note": "Spring 2024 NYS ortho crops for the plotted in-need map set (~2k nodes). Stay on 2024 until wms/2026 (or equivalent NYC coverage) appears on orthos.its.ny.gov; then prefer 2026. Score is GIS-only, not from the photo."
     },
     "lion": {
       "name": "NYC LION Street Base Map (intersection nodes, five boroughs)",
@@ -32,7 +32,7 @@
     }
   },
   "source_versions": {
-    "imagery": "Spring 2024 NYS ITS ortho (wms/2024) for the plotted in-need set. 2025 does not cover NYC; no 2026 MapServer.",
+    "imagery": "Spring 2024 NYS ITS ortho (wms/2024) until wms/2026 (or equivalent NYC coverage) is published; then prefer 2026.",
     "lion": "NYC LION gdb (citywide intersection nodes)",
     "service_requests_311": "NYC 311 faded/after-repaving line markings since 2020 (8590 rows, SODA paginated, citywide)",
     "school_zones": "DOE elementary/K-8 points (990 schools, citywide, 800 ft)",

@@ -1,5 +1,5 @@
 import type { CrosswalkRecord } from "@crosswalks/contracts";
-import { ORTHO_CAPTION } from "../lib/imagery";
+import { ORTHO_CAPTION, ORTHO_SCORE_NOTE } from "../lib/imagery";
 
 export function orthoSrc(record: CrosswalkRecord): string {
   return record.image_url || record.thumbnail_url;
@@ -31,7 +31,10 @@ export function OrthoFrame({
       <div className="ortho-frame">
         <img src={src} alt={`${record.intersection_label} ${ORTHO_CAPTION}`} loading="lazy" />
       </div>
-      <figcaption className="ortho-caption">{ORTHO_CAPTION}</figcaption>
+      <figcaption className="ortho-caption">
+        <span>{ORTHO_CAPTION}</span>
+        <span className="ortho-caption-note">{ORTHO_SCORE_NOTE}</span>
+      </figcaption>
     </figure>
   );
 }

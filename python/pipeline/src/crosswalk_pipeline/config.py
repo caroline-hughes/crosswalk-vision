@@ -30,3 +30,19 @@ class PipelinePaths:
 
 
 PATHS = PipelinePaths()
+
+# One-line swap when NYS publishes five-borough coverage for a newer year.
+# Today: Spring 2024 (wms/2024). Prefer 2026 once wms/2026 (or equivalent) exists.
+ORTHO_YEAR = 2024
+ORTHO_PREFERRED_NEXT_YEAR = 2026
+ORTHO_SEASON = "Spring"
+ORTHO_LABEL = f"{ORTHO_SEASON} {ORTHO_YEAR} NYS ortho"
+ORTHO_MAPSERVER_EXPORT_URL = (
+    f"https://orthos.its.ny.gov/arcgis/rest/services/wms/{ORTHO_YEAR}/MapServer/export"
+)
+ORTHO_UPGRADE_NOTE = (
+    f"Imagery year is {ORTHO_YEAR} until wms/{ORTHO_PREFERRED_NEXT_YEAR} "
+    f"(or equivalent NYC coverage) appears on orthos.its.ny.gov; then prefer "
+    f"{ORTHO_PREFERRED_NEXT_YEAR}. Citywide model score is GIS-only and is not "
+    "computed from these crops."
+)
