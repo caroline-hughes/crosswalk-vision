@@ -41,8 +41,9 @@ ORTHO_MAPSERVER_EXPORT_URL = (
     f"https://orthos.its.ny.gov/arcgis/rest/services/wms/{ORTHO_YEAR}/MapServer/export"
 )
 ORTHO_UPGRADE_NOTE = (
-    f"Imagery year is {ORTHO_YEAR} until wms/{ORTHO_PREFERRED_NEXT_YEAR} "
-    f"(or equivalent NYC coverage) appears on orthos.its.ny.gov; then prefer "
-    f"{ORTHO_PREFERRED_NEXT_YEAR}. Citywide model score is GIS-only and is not "
-    "computed from these crops."
+    f"Newest published NYC borough coverage is {ORTHO_SEASON} {ORTHO_YEAR}. "
+    f"NYS has {ORTHO_PREFERRED_NEXT_YEAR} on the five-borough flight schedule; "
+    f"when wms/{ORTHO_PREFERRED_NEXT_YEAR} (or equivalent NYC coverage) is live "
+    f"on orthos.its.ny.gov, refresh plotted-set crops and note any retrain. "
+    "Citywide model score is GIS-only and is not computed from these crops."
 )

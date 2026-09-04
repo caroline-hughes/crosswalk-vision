@@ -2,6 +2,11 @@
 export const ORTHO_YEAR = 2024;
 export const ORTHO_PREFERRED_NEXT_YEAR = 2026;
 export const ORTHO_SEASON = "Spring";
-export const ORTHO_CAPTION = `${ORTHO_SEASON} ${ORTHO_YEAR} NYS ortho for inspection`;
-export const ORTHO_SCORE_NOTE = "Citywide model score is GIS-only — not from this image";
-export const ORTHO_CHROME_NOTE = `imagery ${ORTHO_SEASON} ${ORTHO_YEAR} NYS ortho · score is GIS-only`;
+
+/** Card UI — no year. Year lives in chrome and in meta.json. */
+export const ORTHO_CAPTION = "NYS ortho crop";
+export const ORTHO_SCORE_NOTE = "Score is GIS-only — not from this image";
+
+/** One persistent chrome note. Forward-looking, not apologetic. */
+export const ORTHO_CHROME_NOTE =
+  "Newest published NYC coverage is Spring 2024. NYS has 2026 on the five-borough flight schedule — we'll refresh crops (and note any retrain) when that MapServer is live.";

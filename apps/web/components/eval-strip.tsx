@@ -35,7 +35,7 @@ export function EvalStrip({
       <span>
         showing {visible}/{plotted} in-need of {scored} scored
       </span>
-      <span className="eval-imagery">{meta.imagery_label ? `imagery ${meta.imagery_label}` : ORTHO_CHROME_NOTE}</span>
+      <span className="eval-imagery">{ORTHO_CHROME_NOTE}</span>
       <span className="eval-weak">weak crash labels · not a detector</span>
     </div>
   );

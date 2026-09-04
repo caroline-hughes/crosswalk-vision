@@ -1,7 +1,7 @@
 {
   "build_timestamp": "2026-09-02T21:23:38+00:00",
   "source_versions": {
-    "imagery": "Spring 2024 NYS ortho (wms/2024) for 2000/2000 plotted in-need nodes. Imagery year is 2024 until wms/2026 (or equivalent NYC coverage) appears on orthos.its.ny.gov; then prefer 2026. Citywide model score is GIS-only and is not computed from these crops.",
+    "imagery": "Spring 2024 NYS ortho (wms/2024) for 2000/2000 plotted in-need nodes. Newest published NYC borough coverage is Spring 2024. NYS has 2026 on the five-borough flight schedule; when wms/2026 is live, refresh crops and note any retrain.",
     "lion": "NYC LION gdb (citywide intersection nodes)",
     "service_requests_311": "NYC 311 faded/after-repaving line markings since 2020 (8590 rows, SODA paginated, citywide)",
     "school_zones": "DOE elementary/K-8 points (990 schools, citywide, 800 ft)",
@@ -152,6 +152,6 @@
   "imagery_year": 2024,
   "imagery_label": "Spring 2024 NYS ortho",
   "imagery_next_year": 2026,
-  "imagery_upgrade_note": "Imagery year is 2024 until wms/2026 (or equivalent NYC coverage) appears on orthos.its.ny.gov; then prefer 2026. Citywide model score is GIS-only and is not computed from these crops.",
-  "imagery_rule": "Spring 2024 NYS ortho (orthos.its.ny.gov wms/2024) for the plotted in-need set only (2000/2000 nodes have a crop). NYS flew the five boroughs in Spring 2024. 2025 MapServer is Hudson Valley / Westchester / etc and is blank over NYC. Imagery year is 2024 until wms/2026 (or equivalent NYC coverage) appears on orthos.its.ny.gov; then prefer 2026. Citywide model score is GIS-only and is not computed from these crops. NYC open imagery newest citywide layer is also 2024. Not fetched for the 56366 scored nodes."
+  "imagery_upgrade_note": "Newest published NYC borough coverage is Spring 2024. NYS has 2026 on the five-borough flight schedule; when wms/2026 (or equivalent NYC coverage) is live on orthos.its.ny.gov, refresh plotted-set crops and note any retrain. Citywide model score is GIS-only and is not computed from these crops.",
+  "imagery_rule": "Spring 2024 NYS ortho (orthos.its.ny.gov wms/2024) for the plotted in-need set only (2000/2000 nodes have a crop). NYS flew the five boroughs in Spring 2024. 2025 MapServer is Hudson Valley / Westchester / etc and is blank over NYC. Newest published NYC borough coverage is Spring 2024. NYS has 2026 on the five-borough flight schedule; when wms/2026 (or equivalent NYC coverage) is live on orthos.its.ny.gov, refresh plotted-set crops and note any retrain. Citywide model score is GIS-only and is not computed from these crops. NYC open imagery newest citywide layer is also 2024. Not fetched for the 56366 scored nodes."
 }
