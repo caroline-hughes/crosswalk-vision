@@ -1,4 +1,5 @@
 import type { CrosswalkRecord } from "@crosswalks/contracts";
+import { OrthoFrame } from "./ortho-frame";
 
 function formatComplaintDate(value: string): string {
   const date = new Date(value);
@@ -17,6 +18,7 @@ export function HoverCard({
   return (
     <article className="hover-card" aria-label={`${record.intersection_label} model details`}>
       <span className="tape" aria-hidden="true" />
+      <OrthoFrame record={record} />
       <header className="hover-card-head">
         <div>
           <p className="hover-kicker">

@@ -1,6 +1,7 @@
 "use client";
 
 import { BOROUGHS, type MapFilters } from "../lib/filters";
+import { PriorityLegend } from "./priority-legend";
 
 export function FilterDock({
   filters,
@@ -60,6 +61,7 @@ export function FilterDock({
           }
         />
       </label>
+      <PriorityLegend />
     </div>
   );
 }

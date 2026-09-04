@@ -49,36 +49,36 @@ button, input, select {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  min-height: 52px;
-  padding: 0 18px;
+  gap: 22px;
+  min-height: 78px;
+  padding: 0 26px;
   border-bottom: 1px solid var(--ink);
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   min-width: 0;
 }
 
 .mark {
-  width: 28px;
-  height: 28px;
+  width: 42px;
+  height: 42px;
   flex: 0 0 auto;
-  border: 1.5px solid var(--ink);
+  border: 2px solid var(--ink);
   background: var(--accent);
   display: grid;
   place-items: center;
 }
 
 .mark-bars {
-  width: 16px;
-  height: 12px;
+  width: 24px;
+  height: 18px;
   background: repeating-linear-gradient(
     90deg,
-    var(--ink) 0 3px,
-    transparent 3px 5px
+    var(--ink) 0 4px,
+    transparent 4px 7px
   );
 }
 
@@ -92,7 +92,7 @@ button, input, select {
 .brand-kicker {
   margin: 0;
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
@@ -101,7 +101,7 @@ button, input, select {
 .brand h1 {
   margin: 0;
   font-family: var(--serif);
-  font-size: 18px;
+  font-size: 27px;
   font-weight: 600;
   font-optical-sizing: auto;
 }
@@ -109,19 +109,19 @@ button, input, select {
 .view-toggle {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .cta,
 .ghost-btn {
   appearance: none;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  border: 1.5px solid var(--ink);
-  padding: 7px 12px;
+  border: 2px solid var(--ink);
+  padding: 11px 18px;
   line-height: 1;
   cursor: pointer;
   text-decoration: none;
@@ -149,17 +149,17 @@ button, input, select {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: 10px 12px;
-  padding: 10px 18px 12px;
+  gap: 14px 16px;
+  padding: 14px 26px 16px;
   border-bottom: 1px solid var(--ink);
 }
 
 .filter-field {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 7px;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 14px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
@@ -169,16 +169,16 @@ button, input, select {
 .filter-field input[type="search"] {
   appearance: none;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 16px;
   letter-spacing: 0.02em;
   text-transform: none;
   color: var(--ink);
   background: var(--page);
-  border: 1.5px solid var(--ink);
+  border: 2px solid var(--ink);
   border-radius: 0;
-  min-height: 34px;
-  padding: 0 10px;
-  min-width: 128px;
+  min-height: 50px;
+  padding: 0 14px;
+  min-width: 168px;
 }
 
 .filter-field select:focus,
@@ -191,15 +191,15 @@ button, input, select {
 
 .filter-chip {
   appearance: none;
-  height: 34px;
-  padding: 0 12px;
+  height: 50px;
+  padding: 0 16px;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 14px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink);
   background: var(--page);
-  border: 1.5px solid var(--ink);
+  border: 2px solid var(--ink);
   border-radius: 0;
   cursor: pointer;
 }
@@ -214,24 +214,56 @@ button, input, select {
 }
 
 .filter-slider {
-  min-width: min(240px, 52vw);
+  min-width: min(280px, 52vw);
 }
 
 .filter-slider input[type="range"] {
   width: 100%;
-  height: 34px;
+  height: 50px;
   margin: 0;
   accent-color: var(--accent);
   background: transparent;
 }
 
+.priority-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-left: auto;
+  min-width: min(240px, 56vw);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.priority-legend-scale {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  font-size: 13px;
+}
+
+.priority-ramp {
+  flex: 1 1 auto;
+  height: 12px;
+  min-width: 72px;
+  border: 1.5px solid var(--ink);
+  background: linear-gradient(90deg, #d6a85a 0%, #ff4f00 42%, #941212 100%);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
 .eval-strip {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 20px;
-  padding: 8px 18px;
+  gap: 8px 24px;
+  padding: 12px 26px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 15px;
   letter-spacing: 0.04em;
   color: var(--muted);
 }
@@ -314,8 +346,8 @@ button, input, select {
 .list-card {
   background-color: var(--page);
   background-image: var(--grain);
-  border: 1.5px solid var(--ink);
-  padding: 16px 16px 14px;
+  border: 2px solid var(--ink);
+  padding: 0 0 14px;
   display: grid;
   gap: 8px;
 }
@@ -332,7 +364,7 @@ button, input, select {
   gap: 12px;
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 0 16px;
   border: 0;
   background: transparent;
   color: inherit;
@@ -359,6 +391,7 @@ button, input, select {
 
 .list-meta {
   margin: 0;
+  padding: 0 16px;
   font-family: var(--mono);
   font-size: 12px;
   color: var(--muted);
@@ -367,7 +400,7 @@ button, input, select {
 .list-card hr {
   border: 0;
   border-top: 1px solid var(--rule);
-  margin: 4px 0;
+  margin: 4px 16px;
 }
 
 .list-stats {
@@ -375,6 +408,7 @@ button, input, select {
   flex-wrap: wrap;
   gap: 8px 18px;
   margin: 0;
+  padding: 0 16px;
 }
 
 .list-stats div {
@@ -398,6 +432,7 @@ button, input, select {
 
 .list-why {
   margin: 0;
+  padding: 0 16px;
   font-size: 14px;
   line-height: 1.45;
 }
@@ -406,11 +441,12 @@ button, input, select {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  padding: 0 16px;
 }
 
 .hover-card {
   position: relative;
-  width: min(340px, 86vw);
+  width: min(360px, 86vw);
   background-color: var(--page);
   background-image: var(--grain);
   border: 2px solid var(--ink);
@@ -420,8 +456,8 @@ button, input, select {
 }
 
 .list-card .hover-card {
-  width: 100%;
-  margin-top: 6px;
+  width: auto;
+  margin: 6px 16px 0;
 }
 
 .hover-card .tape {
@@ -433,6 +469,51 @@ button, input, select {
   background: var(--accent);
   transform: rotate(-2deg);
   box-shadow: 1px 1px 0 var(--ink);
+}
+
+.ortho-frame {
+  margin: 0 0 12px;
+  border: 1.5px solid var(--ink);
+  background: var(--page-deep);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+}
+
+.list-card > .ortho-frame {
+  margin: 0 0 10px;
+  border-width: 0;
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.ortho-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ortho-frame.is-empty {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  padding: 18px 12px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ortho-mark {
+  width: 28px;
+  height: 20px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--ink) 0 4px,
+    transparent 4px 7px
+  );
+  opacity: 0.45;
 }
 
 .hover-card-head {
@@ -591,11 +672,17 @@ button, input, select {
 }
 
 .xing-pin {
-  width: 42px;
-  height: 42px;
+  --pin: #ff4f00;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   border: 2px solid #181613;
-  background: radial-gradient(circle at 32% 28%, #ff8a4a 0%, #ff4f00 42%, #d63d00 100%);
+  background: radial-gradient(
+    circle at 32% 28%,
+    color-mix(in srgb, var(--pin) 62%, #fff3d6) 0%,
+    var(--pin) 46%,
+    color-mix(in srgb, var(--pin) 62%, #5a0a00) 100%
+  );
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.35) inset,
     3px 4px 0 rgba(24, 22, 19, 0.22),
@@ -680,13 +767,28 @@ button, input, select {
   .chrome-top,
   .filter-dock,
   .eval-strip {
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 14px;
+    padding-right: 14px;
   }
 
-  .eval-strip .eval-weak {
+  .chrome-top {
+    min-height: 68px;
+    gap: 12px;
+  }
+
+  .eval-strip .eval-weak,
+  .priority-legend {
     margin-left: 0;
   }
 
-  .brand h1 { font-size: 16px; }
+  .brand h1 { font-size: 22px; }
+  .brand-kicker { font-size: 11px; }
+  .mark { width: 36px; height: 36px; }
+  .cta,
+  .ghost-btn { font-size: 13px; padding: 9px 12px; }
+  .filter-field { font-size: 12px; }
+  .filter-field select,
+  .filter-chip,
+  .filter-slider input[type="range"] { min-height: 44px; height: 44px; }
+  .eval-strip { font-size: 13px; }
 }

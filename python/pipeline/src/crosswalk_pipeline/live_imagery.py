@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import io
-import math
+import os
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, List, Mapping, Sequence, Tuple
 
 import numpy as np
 import requests
@@ -12,12 +14,18 @@ from PIL import Image
 from pyproj import Transformer
 
 from .config import PATHS
-from .models import CandidateRecord
+from .models import CandidateRecord, candidate_from_dict
 
 _TRANSFORM_4326_TO_3857 = Transformer.from_crs(4326, 3857, always_xy=True)
 
 EXPORT_URL = "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer/export"
 _SESSION = requests.Session()
+
+PLOT_IMAGE_SIZE = (640, 480)
+PLOT_THUMB_SIZE = (320, 240)
+IMAGERY_TOP_N = 500
+IMAGERY_WORKERS = 12
+SKIP_IMAGERY_ENV = "CROSSWALK_SKIP_IMAGERY"
 
 
 @dataclass(frozen=True)
@@ -54,7 +62,7 @@ def fetch_and_analyze_candidate_image(candidate: CandidateRecord) -> ImageMetric
     )
 
 
-def _fetch_crop(candidate: CandidateRecord) -> Image.Image:
+def _fetch_crop(candidate: CandidateRecord, *, size: Tuple[int, int] = (960, 720)) -> Image.Image:
     x, y = _TRANSFORM_4326_TO_3857.transform(candidate.lon, candidate.lat)
     half_width = 36.0
     half_height = 27.0
@@ -66,7 +74,7 @@ def _fetch_crop(candidate: CandidateRecord) -> Image.Image:
             "bbox": bbox,
             "bboxSR": 3857,
             "imageSR": 3857,
-            "size": "960,720",
+            "size": f"{size[0]},{size[1]}",
             "format": "png32",
             "transparent": "false",
             "f": "image",
@@ -75,6 +83,129 @@ def _fetch_crop(candidate: CandidateRecord) -> Image.Image:
     )
     response.raise_for_status()
     return Image.open(io.BytesIO(response.content)).convert("RGB")
+
+
+def plot_image_paths(candidate_id: str, images_dir: Path | None = None) -> Tuple[Path, Path]:
+    folder = images_dir or PATHS.processed_images_dir
+    return folder / f"{candidate_id}.jpg", folder / f"{candidate_id}-thumb.jpg"
+
+
+def select_imagery_targets(
+    plottable: Sequence[Mapping[str, object]],
+    *,
+    top_n: int = IMAGERY_TOP_N,
+    extra_n: int | None = None,
+) -> List[dict]:
+    """Choose which plotted nodes get a 2024 ortho crop.
+
+    Default extra_n=None fetches every plotted ('in need') node. Pass extra_n to
+    take the top scores plus a borough-stratified sample of the rest — never the
+    full 56k scored set.
+    """
+    ranked = sorted(
+        (dict(row) for row in plottable),
+        key=lambda row: (
+            float(row.get("model_score") or 0.0),
+            int(row.get("pedestrian_crash_count") or 0),
+        ),
+        reverse=True,
+    )
+    if extra_n is None:
+        return ranked
+    selected = ranked[: max(0, top_n)]
+    selected_ids = {str(row["id"]) for row in selected}
+    remainder = [row for row in ranked if str(row["id"]) not in selected_ids]
+    if extra_n <= 0 or not remainder:
+        return selected
+
+    by_borough: Dict[str, List[dict]] = defaultdict(list)
+    for row in remainder:
+        by_borough[str(row.get("borough") or "Unknown")].append(row)
+
+    sampled: List[dict] = []
+    buckets = {name: list(rows) for name, rows in by_borough.items()}
+    while len(sampled) < extra_n and buckets:
+        progressed = False
+        for name in list(buckets):
+            rows = buckets[name]
+            if not rows:
+                buckets.pop(name, None)
+                continue
+            # Walk each borough list so sample covers high and mid scores, not only the tail.
+            index = 0 if len(rows) == 1 else min(len(rows) - 1, max(0, len(rows) // 3))
+            sampled.append(rows.pop(index))
+            progressed = True
+            if len(sampled) >= extra_n:
+                break
+        if not progressed:
+            break
+    return selected + sampled
+
+
+def fetch_plottable_crop(candidate: CandidateRecord, *, force: bool = False) -> ImageMetrics:
+    """Fetch a 2024 NYS ortho crop for one plotted node. Cached JPEGs are reused."""
+    PATHS.processed_images_dir.mkdir(parents=True, exist_ok=True)
+    full_path, thumb_path = plot_image_paths(candidate.id)
+    if not force and full_path.exists() and thumb_path.exists():
+        return ImageMetrics(
+            paint_missing_ratio=0.0,
+            stripe_break_ratio=0.0,
+            contrast_score=0.0,
+            occlusion_penalty=0.0,
+            image_path=str(full_path),
+            thumbnail_path=str(thumb_path),
+        )
+
+    image = _fetch_crop(candidate, size=PLOT_IMAGE_SIZE)
+    _write_jpeg(image, full_path, quality=78)
+    thumb = image.resize(PLOT_THUMB_SIZE, Image.Resampling.LANCZOS)
+    _write_jpeg(thumb, thumb_path, quality=72)
+    return ImageMetrics(
+        paint_missing_ratio=0.0,
+        stripe_break_ratio=0.0,
+        contrast_score=0.0,
+        occlusion_penalty=0.0,
+        image_path=str(full_path),
+        thumbnail_path=str(thumb_path),
+    )
+
+
+def fetch_plottable_imagery(
+    plottable: Sequence[Mapping[str, object]],
+    *,
+    extra_n: int | None = None,
+    top_n: int = IMAGERY_TOP_N,
+    max_workers: int = IMAGERY_WORKERS,
+    force: bool = False,
+) -> Dict[str, ImageMetrics]:
+    """Download 2024 ortho crops for the plotted set only. Never the full scored city."""
+    if os.environ.get(SKIP_IMAGERY_ENV) == "1":
+        return {}
+    targets = select_imagery_targets(plottable, top_n=top_n, extra_n=extra_n)
+    results: Dict[str, ImageMetrics] = {}
+    if not targets:
+        return results
+
+    def _one(row: Mapping[str, object]) -> Tuple[str, ImageMetrics | None]:
+        candidate = candidate_from_dict(dict(row))
+        try:
+            return candidate.id, fetch_plottable_crop(candidate, force=force)
+        except Exception:
+            return candidate.id, None
+
+    workers = max(1, min(max_workers, len(targets)))
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = [pool.submit(_one, row) for row in targets]
+        for future in as_completed(futures):
+            candidate_id, metrics = future.result()
+            if metrics is not None:
+                results[candidate_id] = metrics
+    return results
+
+
+def _write_jpeg(image: Image.Image, path: Path, *, quality: int) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    image.convert("RGB").save(path, format="JPEG", quality=quality, optimize=True)
 
 
 def _compute_metrics(image: Image.Image) -> Dict[str, float]:

@@ -21,6 +21,7 @@ from crosswalk_scoring import (
 from .artifact_store import LocalArtifactStore
 from .config import PATHS
 from .io_utils import read_json, write_json
+from .live_imagery import fetch_plottable_imagery
 from .live_sources import (
     NYC_LABEL,
     PLOT_MAX,
@@ -46,12 +47,12 @@ def fetch_sources() -> None:
         "pilot_boundary": NYC_LABEL,
         "sources": {
             "imagery": {
-                "name": "2024 NYS Orthoimagery (not fetched citywide)",
+                "name": "2024 NYS Orthoimagery (plotted in-need set only)",
                 "url": "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer",
                 "note": (
-                    "Do not download a 2024 ortho crop for every NYC intersection. "
-                    "Citywide ranking is GIS-only. Lower Manhattan leftover crops in "
-                    "data/processed/images are unused by the map."
+                    "Fetch 2024 ortho crops only for the plotted 'in need' map set "
+                    "(~2k nodes), never for all ~56k scored intersections. Ranking "
+                    "stays GIS-only. Lower Manhattan leftover PNG crops are unused."
                 ),
             },
             "lion": {
@@ -90,7 +91,8 @@ def fetch_sources() -> None:
             "LION gdb is not required for tests. Scoring is a sklearn logistic ranker on GIS "
             "features; the pixel heuristic is the baseline, not a detector. 311 Line/Marking "
             "mixes lane lines with crosswalks. Candidates are intersection nodes, not "
-            "crosswalk polygons. Citywide map plots a capped 'in need' subset of scored nodes."
+            "crosswalk polygons. Citywide map plots a capped 'in need' subset of scored nodes. "
+            "2024 ortho crops are fetched only for that plotted set."
         ),
     }
     write_json(PATHS.raw_dir / "source_manifest.json", manifest)
@@ -260,17 +262,10 @@ def export_snapshot() -> None:
         eval_report = read_json(PATHS.eval_json_path)
 
     plottable = select_plottable(scored_records)
+    imagery = fetch_plottable_imagery(plottable)
     for item in plottable:
         candidate = candidate_from_dict(item)
-        image_url = ""
-        thumbnail_url = ""
-        processed = item.get("processed_image_path")
-        if processed and Path(str(processed)).exists():
-            crop_bytes = Path(str(processed)).read_bytes()
-            image_url = store.write_crop(candidate.id, crop_bytes)
-            thumb_path = item.get("processed_thumbnail_path")
-            if thumb_path and Path(str(thumb_path)).exists():
-                thumbnail_url = store.write_thumbnail(candidate.id, Path(str(thumb_path)).read_bytes())
+        image_url, thumbnail_url = _publish_imagery(store, candidate.id, imagery.get(candidate.id), item)
         export_records.append(
             ExportRecord(
                 id=candidate.id,
@@ -291,7 +286,7 @@ def export_snapshot() -> None:
                 google_maps_url=item["google_maps_url"],
                 model_score=float(item["model_score"]),
                 heuristic_score=float(item["heuristic_score"]),
-                neighborhood=str(item.get("neighborhood_name") or ""),
+                neighborhood=str(item.get("neighborhood_name") or item.get("neighborhood") or ""),
                 neighborhood_id=str(item.get("neighborhood_id") or ""),
                 borough=str(item.get("borough") or borough_from_nta(item.get("neighborhood_id"))),
                 priority_reason=str(item.get("priority_reason") or ""),
@@ -319,6 +314,11 @@ def export_snapshot() -> None:
     crosswalk_payload = [record.to_dict() for record in export_records]
     n_scored = len(scored_records)
     n_plotted = len(crosswalk_payload)
+    n_with_imagery = sum(1 for row in crosswalk_payload if row.get("image_url") or row.get("thumbnail_url"))
+    source_versions["imagery"] = (
+        f"2024 NYS ortho crops for {n_with_imagery}/{n_plotted} plotted in-need nodes "
+        "(not fetched citywide for scoring)."
+    )
     threshold = min((row["model_score"] for row in crosswalk_payload), default=None)
     geojson_payload = {
         "type": "FeatureCollection",
@@ -343,6 +343,8 @@ def export_snapshot() -> None:
                     "top_features": row["top_features"],
                     "matched_311_complaints": row["matched_311_complaints"],
                     "google_maps_url": row["google_maps_url"],
+                    "image_url": row.get("image_url") or "",
+                    "thumbnail_url": row.get("thumbnail_url") or "",
                 },
             }
             for row in crosswalk_payload
@@ -380,25 +382,88 @@ def export_snapshot() -> None:
         "include_image_feature": eval_report.get("include_image_feature", False),
         "include_311_feature": eval_report.get("include_311_feature", True),
         "showcase_top_k": n_plotted,
+        "n_with_imagery": n_with_imagery,
+        "imagery_rule": (
+            "2024 NYS ArcGIS ortho crops for the plotted in-need set only "
+            f"({n_with_imagery}/{n_plotted} nodes have a crop). Not fetched for the "
+            f"{n_scored} scored nodes citywide. Ranking remains GIS-only."
+        ),
         "product_claim": (
             "Citywide NYC inspection-priority map of pedestrian crossing nodes, ranked by a "
             "learned tabular model vs a paint/311 heuristic. Hover a node for streets, 311, "
-            "and why the model flagged it."
+            "ortho crop, and why the model flagged it."
         ),
         "caveat": (
             "Not a crosswalk detector. Candidates are LION intersection nodes, not painted "
-            "polygons. Citywide scores use GIS features only — 2024 ortho crops are not "
-            f"fetched for all {n_scored} scored nodes. The map plots {n_plotted} 'in need' "
-            f"nodes (top {PLOT_PERCENTILE:.0f}th percentile, cap {PLOT_MAX}), not every "
-            "intersection. 311 Line/Marking complaints mix lane lines with crosswalks. Crash "
-            "labels are noisy / weakly supervised. Metrics use a spatial (neighborhood) split "
-            "so train and test NTAs are disjoint. Treat AUC as directional, not a production SLA."
+            "polygons. Citywide scores use GIS features only — 2024 ortho crops are fetched "
+            f"for the plotted in-need set ({n_with_imagery}/{n_plotted}), not for all "
+            f"{n_scored} scored nodes. The map plots {n_plotted} 'in need' nodes (top "
+            f"{PLOT_PERCENTILE:.0f}th percentile, cap {PLOT_MAX}), not every intersection. "
+            "311 Line/Marking complaints mix lane lines with crosswalks. Crash labels are "
+            "noisy / weakly supervised. Metrics use a spatial (neighborhood) split so train "
+            "and test NTAs are disjoint. Treat AUC as directional, not a production SLA."
         ),
     }
 
     store.write_export("crosswalks.json", json.dumps(crosswalk_payload).encode("utf-8"))
     store.write_export("crossings.geojson", json.dumps(geojson_payload, separators=(",", ":")).encode("utf-8"))
     store.write_export("meta.json", json.dumps(meta_payload, indent=2).encode("utf-8"))
+
+
+def fetch_plot_imagery() -> None:
+    """Attach 2024 ortho crops to an existing plotted snapshot without rescoring."""
+    records_path = PATHS.export_dir / "crosswalks.json"
+    if not records_path.exists():
+        raise FileNotFoundError("data/export/crosswalks.json is missing; run export_snapshot first.")
+    records = read_json(records_path)
+    store = LocalArtifactStore()
+    imagery = fetch_plottable_imagery(records)
+    for item in records:
+        image_url, thumbnail_url = _publish_imagery(store, str(item["id"]), imagery.get(str(item["id"])), item)
+        item["image_url"] = image_url
+        item["thumbnail_url"] = thumbnail_url
+    n_with_imagery = sum(1 for row in records if row.get("image_url") or row.get("thumbnail_url"))
+    meta_path = PATHS.export_dir / "meta.json"
+    meta = read_json(meta_path) if meta_path.exists() else {}
+    n_plotted = len(records)
+    n_scored = int(meta.get("n_scored") or n_plotted)
+    meta["n_with_imagery"] = n_with_imagery
+    meta["imagery_rule"] = (
+        "2024 NYS ArcGIS ortho crops for the plotted in-need set only "
+        f"({n_with_imagery}/{n_plotted} nodes have a crop). Not fetched for the "
+        f"{n_scored} scored nodes citywide. Ranking remains GIS-only."
+    )
+    versions = dict(meta.get("source_versions") or {})
+    versions["imagery"] = (
+        f"2024 NYS ortho crops for {n_with_imagery}/{n_plotted} plotted in-need nodes "
+        "(not fetched citywide for scoring)."
+    )
+    meta["source_versions"] = versions
+    if "caveat" in meta:
+        meta["caveat"] = (
+            "Not a crosswalk detector. Candidates are LION intersection nodes, not painted "
+            "polygons. Citywide scores use GIS features only — 2024 ortho crops are fetched "
+            f"for the plotted in-need set ({n_with_imagery}/{n_plotted}), not for all "
+            f"{n_scored} scored nodes. The map plots {n_plotted} 'in need' nodes, not every "
+            "intersection. 311 Line/Marking complaints mix lane lines with crosswalks. Crash "
+            "labels are noisy / weakly supervised. Metrics use a spatial (neighborhood) split "
+            "so train and test NTAs are disjoint. Treat AUC as directional, not a production SLA."
+        )
+    geojson_path = PATHS.export_dir / "crossings.geojson"
+    if geojson_path.exists():
+        geojson = read_json(geojson_path)
+        by_id = {row["id"]: row for row in records}
+        for feature in geojson.get("features") or []:
+            props = feature.get("properties") or {}
+            row = by_id.get(str(feature.get("id") or props.get("id") or ""))
+            if not row:
+                continue
+            props["image_url"] = row.get("image_url") or ""
+            props["thumbnail_url"] = row.get("thumbnail_url") or ""
+            feature["properties"] = props
+        store.write_export("crossings.geojson", json.dumps(geojson, separators=(",", ":")).encode("utf-8"))
+    store.write_export("crosswalks.json", json.dumps(records).encode("utf-8"))
+    store.write_export("meta.json", json.dumps(meta, indent=2).encode("utf-8"))
 
 
 def build_all() -> None:
@@ -409,6 +474,33 @@ def build_all() -> None:
     evaluate()
     score_candidates()
     export_snapshot()
+
+
+def _publish_imagery(store: LocalArtifactStore, candidate_id: str, metrics, item: dict) -> tuple[str, str]:
+    if metrics is not None:
+        full = Path(metrics.image_path)
+        thumb = Path(metrics.thumbnail_path)
+        image_url = store.write_crop(candidate_id, full.read_bytes(), ext=full.suffix.lstrip(".") or "jpg") if full.exists() else ""
+        thumbnail_url = (
+            store.write_thumbnail(candidate_id, thumb.read_bytes(), ext=thumb.suffix.lstrip(".") or "jpg")
+            if thumb.exists()
+            else ""
+        )
+        return image_url, thumbnail_url
+
+    processed = item.get("processed_image_path")
+    if processed and Path(str(processed)).exists():
+        crop_path = Path(str(processed))
+        image_url = store.write_crop(candidate_id, crop_path.read_bytes(), ext=crop_path.suffix.lstrip(".") or "png")
+        thumb_path = item.get("processed_thumbnail_path")
+        thumbnail_url = ""
+        if thumb_path and Path(str(thumb_path)).exists():
+            thumb = Path(str(thumb_path))
+            thumbnail_url = store.write_thumbnail(
+                candidate_id, thumb.read_bytes(), ext=thumb.suffix.lstrip(".") or "png"
+            )
+        return image_url, thumbnail_url
+    return str(item.get("image_url") or ""), str(item.get("thumbnail_url") or "")
 
 
 def _labeled_training_rows() -> list[dict]:
@@ -541,6 +633,7 @@ def main() -> None:
             "evaluate",
             "score_candidates",
             "export_snapshot",
+            "fetch_plot_imagery",
             "build_all",
         ],
     )
@@ -554,6 +647,7 @@ def main() -> None:
         "evaluate": evaluate,
         "score_candidates": score_candidates,
         "export_snapshot": export_snapshot,
+        "fetch_plot_imagery": fetch_plot_imagery,
         "build_all": build_all,
     }
     commands[args.command]()

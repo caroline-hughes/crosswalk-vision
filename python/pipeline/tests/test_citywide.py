@@ -107,6 +107,8 @@ class SnapshotContractTest(unittest.TestCase):
         self.assertGreaterEqual(int(meta.get("n_scored") or 0), int(meta.get("n_plotted") or 0))
         self.assertEqual(meta["total_records"], len(records))
         self.assertIn("caveat", meta)
+        self.assertIn("image_url", first)
+        self.assertIn("thumbnail_url", first)
         self.assertIn("GIS", meta["scoring_method"])
         self.assertNotIn("detector", meta["scoring_method"].lower().replace("not a vision detector", ""))
         self.assertIn("not a vision detector", meta["scoring_method"].lower())
@@ -127,6 +129,9 @@ class SnapshotContractTest(unittest.TestCase):
             self.assertIn("model_score", props)
             self.assertIn("top_features", props)
             self.assertIn("priority_reason", props)
+            if first.get("image_url") or first.get("thumbnail_url"):
+                self.assertIn("image_url", props)
+                self.assertIn("thumbnail_url", props)
 
 
 if __name__ == "__main__":

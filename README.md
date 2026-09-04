@@ -4,7 +4,7 @@ Citywide **inspection-priority map** for pedestrian crossings in New York City (
 
 The product claim: join **LION intersection nodes** (not painted crosswalk polygons) with open NYC GIS (311 faded markings, elementary/K-8 school proximity, Vision Zero pedestrian crashes, 2020 NTAs) into a map a DOT planner can use to decide **which crossings to inspect or repaint first**.
 
-Live path: LION gdb when present (resolved from the NYC Open Data LION blob), else a committed multi-borough fixture; paginated 311; DOE school points; NYPD pedestrian crashes; citywide NTAs. **2024 NYS ortho crops are not fetched citywide** — that would explode time and disk at tens of thousands of nodes. Ranking is GIS-only (street width, heading spread, school proximity, 311). Lower Manhattan leftover ortho files under `data/processed/images/` are unused by the map.
+Live path: LION gdb when present (resolved from the NYC Open Data LION blob), else a committed multi-borough fixture; paginated 311; DOE school points; NYPD pedestrian crashes; citywide NTAs. Ranking is GIS-only (street width, heading spread, school proximity, 311). **2024 NYS ortho crops are fetched only for the plotted “in need” set** (~2,000 map nodes), never for all ~56k scored intersections. Thumbnails live in `apps/web/public/images/` and `data/export/images/`. Counts are in `data/export/meta.json` (`n_with_imagery`). Lower Manhattan leftover PNG crops under `data/processed/images/` are unused by the citywide map.
 
 ## What this repo is
 
@@ -20,7 +20,7 @@ There is no trained detector in this tree. The sister repo `crosswalk-detection-
 
 New York City, five boroughs. Candidates are **intersection nodes**, not crosswalk polygons. Live `leg_label` is `intersection node`.
 
-The map does **not** plot every scored node. The shipped snapshot scores **56,366** LION intersection nodes citywide and plots **2,000** “in need” crossings (95th percentile of model score, cap 2,000, with a per-borough floor). Filters: borough, near school, has 311, min model score. Counts live in `data/export/meta.json` (`n_scored` vs `n_plotted`).
+The map does **not** plot every scored node. The shipped snapshot scores **56,366** LION intersection nodes citywide and plots **2,000** “in need” crossings (95th percentile of model score, cap 2,000, with a per-borough floor). Pins are colored by **model score within that plotted set** (muted amber → `#FF4F00` → deep vermillion), not a binary in-need flag. Filters: borough, near school, has 311, min model score. Counts live in `data/export/meta.json` (`n_scored` vs `n_plotted`, plus `n_with_imagery`).
 
 Crash-only labels are used when there are enough crash-positive nodes; the model does **not** fall back to a crash-OR-311 composite target in that case. If crash positives ever drop below 8, the pipeline switches to that composite and **drops 311 counts from the feature set** to avoid leaking the label.
 
@@ -31,7 +31,7 @@ Documented in `data/raw/source_manifest.json`:
 | layer | source |
 | --- | --- |
 | Intersection geometry | NYC LION street base map (live gdb when present; otherwise `citywide_candidates.json`) |
-| Imagery | **Not used citywide.** 2024 NYS orthoimagery remains documented as leftover from the Lower Manhattan pilot. |
+| Imagery | **Plotted set only.** 2024 NYS orthoimagery (`orthos.its.ny.gov` 2024 MapServer export) for the ~2,000 “in need” nodes the map shows. Not fetched for the other ~54k scored intersections. |
 | 311 | NYC Open Data Street Condition / `Line/Marking - Faded` and `After Repaving` since 2020, **citywide**. **Socrata’s default page is 100**; fetch paginates with `$limit` / `$offset` / `$order`. These descriptors mix **lane lines with crosswalks**. |
 | Schools | DOE school locations (`wg9x-4ke6`), elementary / K-8 / early childhood within **800 ft**, citywide. |
 | Crashes | NYPD Motor Vehicle Collisions (`h9gi-nx95`), pedestrian injured or killed, citywide NYC bbox, since 2020 |
@@ -68,9 +68,9 @@ pip install -r python/requirements.txt
 PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli build_all
 ```
 
-Stages: `fetch_sources`, `prepare_candidates`, `enrich_candidates`, `train_ranker`, `evaluate`, `score_candidates`, `export_snapshot`.
+Stages: `fetch_sources`, `prepare_candidates`, `enrich_candidates`, `train_ranker`, `evaluate`, `score_candidates`, `export_snapshot`, `fetch_plot_imagery`.
 
-`export_snapshot` writes plottable `crosswalks.json` and `crossings.geojson` into `data/export/` and `apps/web/public/data/`. Intermediate scored dumps stay local (`data/processed/scored_candidates.json` is gitignored).
+`export_snapshot` writes plottable `crosswalks.json` and `crossings.geojson` into `data/export/` and `apps/web/public/data/`, and fetches 2024 ortho JPEGs for those plotted nodes (cached under `data/processed/images/nyc-*`, copied to `apps/web/public/images/`). `fetch_plot_imagery` re-runs just that crop step against an existing snapshot — useful when scored dumps are not on disk. Set `CROSSWALK_SKIP_IMAGERY=1` to skip live ortho downloads in tests. Intermediate scored dumps stay local (`data/processed/scored_candidates.json` is gitignored).
 
 Tests (no GPU, no LION gdb required):
 

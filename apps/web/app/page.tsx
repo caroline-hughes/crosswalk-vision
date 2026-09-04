@@ -111,6 +111,8 @@ export default function HomePage() {
             <PriorityMap
               records={filtered}
               activeId={active?.id ?? null}
+              scoreMin={Math.max(0, minScore)}
+              scoreMax={maxScore || 1}
               onHover={(record) => {
                 if (record) {
                   setHovered(record);

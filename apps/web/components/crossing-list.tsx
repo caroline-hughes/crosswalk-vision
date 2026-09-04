@@ -2,6 +2,7 @@
 
 import type { CrosswalkRecord } from "@crosswalks/contracts";
 import { HoverCard } from "./hover-card";
+import { OrthoFrame } from "./ortho-frame";
 
 export function CrossingList({
   records,
@@ -30,6 +31,7 @@ export function CrossingList({
           return (
             <li key={record.id}>
               <article className={`list-card ${isActive ? "is-active" : ""}`}>
+                <OrthoFrame record={record} />
                 <button type="button" className="list-card-hit" onClick={() => onSelect(record)}>
                   <span className="list-rank">{String(index + 1).padStart(3, "0")}</span>
                   <h2>{record.intersection_label}</h2>

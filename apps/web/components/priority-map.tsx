@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import type { CrosswalkRecord } from "@crosswalks/contracts";
+import { scoreColor, scoreMarkerSize } from "../lib/filters";
+import { orthoSrc } from "./ortho-frame";
 import "leaflet/dist/leaflet.css";
 
 function escapeHtml(value: string): string {
@@ -12,8 +14,16 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function iconHtml(): string {
-  return `<span class="xing-pin"><span class="xing-bars" aria-hidden="true"></span></span>`;
+function iconHtml(color: string): string {
+  return `<span class="xing-pin" style="--pin:${color}"><span class="xing-bars" aria-hidden="true"></span></span>`;
+}
+
+function photoHtml(record: CrosswalkRecord): string {
+  const src = orthoSrc(record);
+  if (!src) {
+    return `<div class="ortho-frame is-empty" aria-hidden="true"><span class="ortho-mark"></span><span>2024 ortho unavailable</span></div>`;
+  }
+  return `<figure class="ortho-frame"><img src="${escapeHtml(src)}" alt="${escapeHtml(record.intersection_label)} 2024 NYS ortho" /></figure>`;
 }
 
 function popupHtml(record: CrosswalkRecord): string {
@@ -36,6 +46,7 @@ function popupHtml(record: CrosswalkRecord): string {
   return `
     <article class="hover-card leaflet-hover">
       <span class="tape" aria-hidden="true"></span>
+      ${photoHtml(record)}
       <header class="hover-card-head">
         <div>
           <p class="hover-kicker">${escapeHtml(record.borough)} · ${escapeHtml(record.neighborhood || record.neighborhood_id)}</p>
@@ -70,11 +81,15 @@ type MarkerEntry = {
 export function PriorityMap({
   records,
   activeId,
+  scoreMin,
+  scoreMax,
   onHover,
   onSelect
 }: {
   records: CrosswalkRecord[];
   activeId: string | null;
+  scoreMin: number;
+  scoreMax: number;
   onHover: (record: CrosswalkRecord | null) => void;
   onSelect: (record: CrosswalkRecord) => void;
 }) {
@@ -185,12 +200,14 @@ export function PriorityMap({
       markersRef.current.clear();
 
       records.forEach((record) => {
+        const color = scoreColor(record.model_score, scoreMin, scoreMax);
+        const size = scoreMarkerSize(record.model_score, scoreMin, scoreMax);
         const icon = L.divIcon({
           className: "xing-icon",
-          html: iconHtml(),
-          iconSize: [42, 42],
-          iconAnchor: [21, 21],
-          popupAnchor: [0, -24]
+          html: iconHtml(color),
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2],
+          popupAnchor: [0, -Math.round(size * 0.55)]
         });
         const marker = L.marker([record.lat, record.lon], {
           icon,
@@ -199,7 +216,7 @@ export function PriorityMap({
         });
         marker.bindPopup(popupHtml(record), {
           className: "xing-popup",
-          maxWidth: 340,
+          maxWidth: 360,
           minWidth: 280,
           closeButton: true,
           autoPan: false
@@ -233,7 +250,7 @@ export function PriorityMap({
     return () => {
       cancelled = true;
     };
-  }, [records]);
+  }, [records, scoreMin, scoreMax]);
 
   useEffect(() => {
     const entry = activeId ? markersRef.current.get(activeId) : undefined;
