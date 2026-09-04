@@ -18,10 +18,13 @@ from .models import CandidateRecord, candidate_from_dict
 
 _TRANSFORM_4326_TO_3857 = Transformer.from_crs(4326, 3857, always_xy=True)
 
-# Newest published NYS ITS year that covers the five boroughs. 2025 MapServer
-# exists but is Hudson Valley / upstate only (blank over NYC). 2026 is planned
-# for NYC counties but has no public MapServer. NYC open imagery newest is 2024.
+# Newest published NYS ITS year that covers the five boroughs. NYS flew NYC in
+# Spring 2024 (Bronx / Kings / New York / Queens / Richmond). 2025 MapServer
+# exists but that lot is Hudson Valley / Westchester / etc. 2026 is on the
+# NYC flight schedule but has no public wms/2026 service. Do not claim 2026.
 ORTHO_YEAR = 2024
+ORTHO_SEASON = "Spring"
+ORTHO_LABEL = f"{ORTHO_SEASON} {ORTHO_YEAR} NYS ortho"
 EXPORT_URL = f"https://orthos.its.ny.gov/arcgis/rest/services/wms/{ORTHO_YEAR}/MapServer/export"
 _SESSION = requests.Session()
 

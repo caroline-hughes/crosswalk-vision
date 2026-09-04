@@ -8,6 +8,7 @@ from unittest.mock import patch
 from PIL import Image
 
 from crosswalk_pipeline.live_imagery import (
+    ORTHO_LABEL,
     ORTHO_YEAR,
     SKIP_IMAGERY_ENV,
     fetch_plottable_imagery,
@@ -38,6 +39,8 @@ def _rows(n: int = 20) -> list[dict]:
 class ImageryTargetTest(unittest.TestCase):
     def test_ortho_year_is_newest_published_nyc_layer(self) -> None:
         self.assertEqual(ORTHO_YEAR, 2024)
+        self.assertEqual(ORTHO_LABEL, "Spring 2024 NYS ortho")
+        self.assertNotIn("2026", ORTHO_LABEL)
 
     def test_default_selects_every_plotted_row(self) -> None:
         rows = _rows(12)
@@ -97,7 +100,9 @@ class SnapshotImageryContractTest(unittest.TestCase):
             self.assertTrue(any(row.get("image_url") for row in records))
             self.assertIn("plotted", str(meta.get("imagery_rule") or "").lower())
             self.assertEqual(int(meta.get("imagery_year") or 0), 2024)
+            self.assertEqual(meta.get("imagery_label"), "Spring 2024 NYS ortho")
             self.assertNotIn("2026 coming", str(meta.get("imagery_rule") or "").lower())
+            self.assertNotIn("claim 2026", str(meta.get("imagery_label") or "").lower())
 
 
 if __name__ == "__main__":

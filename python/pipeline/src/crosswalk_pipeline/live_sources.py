@@ -89,7 +89,7 @@ _TRANSFORM_4326_TO_2263 = Transformer.from_crs(4326, 2263, always_xy=True)
 class LiveSourceVersions:
     lion: str = "NYC LION (CSCL street network, all five boroughs)"
     imagery: str = (
-        "2024 NYS ITS ortho (wms/2024) for the plotted in-need set. "
+        "Spring 2024 NYS ITS ortho (wms/2024) for the plotted in-need set. "
         "2025 does not cover NYC; no 2026 MapServer."
     )
     school_zones: str = "DOE school points: elementary/K-8 within 800 ft (citywide)"

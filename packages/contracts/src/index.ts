@@ -80,6 +80,7 @@ export interface CrosswalkMeta {
   include_311_feature?: boolean;
   n_with_imagery?: number;
   imagery_year?: number;
+  imagery_label?: string;
   imagery_rule?: string;
   product_claim: string;
   caveat: string;
@@ -133,6 +134,7 @@ export function validateCrosswalkMeta(input: unknown): CrosswalkMeta {
     include_311_feature: typeof value.include_311_feature === "boolean" ? value.include_311_feature : undefined,
     n_with_imagery: optionalNumber(value.n_with_imagery),
     imagery_year: optionalNumber(value.imagery_year),
+    imagery_label: optionalString(value.imagery_label),
     imagery_rule: optionalString(value.imagery_rule),
     product_claim: mustBeString(value.product_claim, "product_claim"),
     caveat: mustBeString(value.caveat, "caveat")

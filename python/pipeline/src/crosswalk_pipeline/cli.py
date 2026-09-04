@@ -21,7 +21,7 @@ from crosswalk_scoring import (
 from .artifact_store import LocalArtifactStore
 from .config import PATHS
 from .io_utils import read_json, write_json
-from .live_imagery import ORTHO_YEAR, fetch_plottable_imagery
+from .live_imagery import ORTHO_LABEL, ORTHO_YEAR, fetch_plottable_imagery
 from .live_sources import (
     NYC_LABEL,
     PLOT_MAX,
@@ -47,7 +47,7 @@ def fetch_sources() -> None:
         "pilot_boundary": NYC_LABEL,
         "sources": {
             "imagery": {
-                "name": "2024 NYS Orthoimagery (plotted in-need set only)",
+                "name": "Spring 2024 NYS Orthoimagery (plotted in-need set only)",
                 "url": "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer",
                 "note": (
                     "Fetch 2024 ortho crops only for the plotted 'in need' map set "
@@ -316,7 +316,7 @@ def export_snapshot() -> None:
     n_plotted = len(crosswalk_payload)
     n_with_imagery = sum(1 for row in crosswalk_payload if row.get("image_url") or row.get("thumbnail_url"))
     source_versions["imagery"] = (
-        f"{ORTHO_YEAR} NYS ITS ortho (wms/{ORTHO_YEAR}) for {n_with_imagery}/{n_plotted} "
+        f"{ORTHO_LABEL} (wms/{ORTHO_YEAR}) for {n_with_imagery}/{n_plotted} "
         "plotted in-need nodes. 2025 MapServer does not cover NYC; no 2026 service."
     )
     threshold = min((row["model_score"] for row in crosswalk_payload), default=None)
@@ -384,13 +384,14 @@ def export_snapshot() -> None:
         "showcase_top_k": n_plotted,
         "n_with_imagery": n_with_imagery,
         "imagery_year": ORTHO_YEAR,
+        "imagery_label": ORTHO_LABEL,
         "imagery_rule": (
-            f"{ORTHO_YEAR} NYS ITS ortho (orthos.its.ny.gov wms/{ORTHO_YEAR}) for the "
-            f"plotted in-need set only ({n_with_imagery}/{n_plotted} nodes have a crop). "
-            "2025 MapServer is Hudson Valley / upstate and is blank over NYC. 2026 is "
-            "planned for the five boroughs but has no public MapServer. NYC open imagery "
-            f"newest citywide layer is also {ORTHO_YEAR}. Not fetched for the {n_scored} "
-            "scored nodes. Ranking remains GIS-only."
+            f"{ORTHO_LABEL} (orthos.its.ny.gov wms/{ORTHO_YEAR}) for the plotted in-need "
+            f"set only ({n_with_imagery}/{n_plotted} nodes have a crop). NYS flew the five "
+            "boroughs in Spring 2024. 2025 MapServer is Hudson Valley / Westchester / etc "
+            "and is blank over NYC. 2026 is on the NYC flight schedule but has no public "
+            f"MapServer. NYC open imagery newest citywide layer is also {ORTHO_YEAR}. Not "
+            "fetched for the scored nodes. Ranking remains GIS-only."
         ),
         "product_claim": (
             "Citywide NYC inspection-priority map of pedestrian crossing nodes, ranked by a "
@@ -433,17 +434,18 @@ def fetch_plot_imagery() -> None:
     n_scored = int(meta.get("n_scored") or n_plotted)
     meta["n_with_imagery"] = n_with_imagery
     meta["imagery_year"] = ORTHO_YEAR
+    meta["imagery_label"] = ORTHO_LABEL
     meta["imagery_rule"] = (
-        f"{ORTHO_YEAR} NYS ITS ortho (orthos.its.ny.gov wms/{ORTHO_YEAR}) for the "
-        f"plotted in-need set only ({n_with_imagery}/{n_plotted} nodes have a crop). "
-        "2025 MapServer is Hudson Valley / upstate and is blank over NYC. 2026 is "
-        "planned for the five boroughs but has no public MapServer. NYC open imagery "
-        f"newest citywide layer is also {ORTHO_YEAR}. Not fetched for the {n_scored} "
-        "scored nodes. Ranking remains GIS-only."
+        f"{ORTHO_LABEL} (orthos.its.ny.gov wms/{ORTHO_YEAR}) for the plotted in-need "
+        f"set only ({n_with_imagery}/{n_plotted} nodes have a crop). NYS flew the five "
+        "boroughs in Spring 2024. 2025 MapServer is Hudson Valley / Westchester / etc "
+        "and is blank over NYC. 2026 is on the NYC flight schedule but has no public "
+        f"MapServer. NYC open imagery newest citywide layer is also {ORTHO_YEAR}. Not "
+        "fetched for the scored nodes. Ranking remains GIS-only."
     )
     versions = dict(meta.get("source_versions") or {})
     versions["imagery"] = (
-        f"{ORTHO_YEAR} NYS ITS ortho (wms/{ORTHO_YEAR}) for {n_with_imagery}/{n_plotted} "
+        f"{ORTHO_LABEL} (wms/{ORTHO_YEAR}) for {n_with_imagery}/{n_plotted} "
         "plotted in-need nodes. 2025 MapServer does not cover NYC; no 2026 service."
     )
     meta["source_versions"] = versions
