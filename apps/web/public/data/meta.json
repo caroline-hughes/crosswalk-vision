@@ -1,7 +1,7 @@
 {
   "build_timestamp": "2026-09-02T21:23:38+00:00",
   "source_versions": {
-    "imagery": "Citywide ranking skips 2024 NYS ortho crops (too large at ~68k nodes). Lower Manhattan leftover imagery is unused by the map.",
+    "imagery": "2024 NYS ortho crops for 2000/2000 plotted in-need nodes (not fetched citywide for scoring).",
     "lion": "NYC LION gdb (citywide intersection nodes)",
     "service_requests_311": "NYC 311 faded/after-repaving line markings since 2020 (8590 rows, SODA paginated, citywide)",
     "school_zones": "DOE elementary/K-8 points (990 schools, citywide, 800 ft)",
@@ -147,5 +147,7 @@
   "include_311_feature": true,
   "showcase_top_k": 2000,
   "product_claim": "Citywide NYC inspection-priority map of pedestrian crossing nodes, ranked by a learned tabular model vs a paint/311 heuristic. Hover a node for streets, 311, and why the model flagged it.",
-  "caveat": "Not a crosswalk detector. Candidates are LION intersection nodes, not painted polygons. Citywide scores use GIS features only \u2014 2024 ortho crops are not fetched for all 56366 scored nodes. The map plots 2000 'in need' nodes (top 95th percentile, cap 2000), not every intersection. 311 Line/Marking complaints mix lane lines with crosswalks. Crash labels are noisy / weakly supervised. Metrics use a spatial (neighborhood) split so train and test NTAs are disjoint. Treat AUC as directional, not a production SLA."
+  "caveat": "Not a crosswalk detector. Candidates are LION intersection nodes, not painted polygons. Citywide scores use GIS features only \u2014 2024 ortho crops are fetched for the plotted in-need set (2000/2000), not for all 56366 scored nodes. The map plots 2000 'in need' nodes, not every intersection. 311 Line/Marking complaints mix lane lines with crosswalks. Crash labels are noisy / weakly supervised. Metrics use a spatial (neighborhood) split so train and test NTAs are disjoint. Treat AUC as directional, not a production SLA.",
+  "n_with_imagery": 2000,
+  "imagery_rule": "2024 NYS ArcGIS ortho crops for the plotted in-need set only (2000/2000 nodes have a crop). Not fetched for the 56366 scored nodes citywide. Ranking remains GIS-only."
 }

@@ -14,3 +14,4 @@ data/processed/candidates.json
 data/processed/enriched_candidates.json
 data/processed/scored_candidates.json
 data/processed/images/nyc-*
+data/export/images/nyc-*
