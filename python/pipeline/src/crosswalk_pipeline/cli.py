@@ -476,7 +476,9 @@ def _publish_imagery(store: LocalArtifactStore, candidate_id: str, metrics, item
             if thumb.exists()
             else ""
         )
-        return image_url, thumbnail_url
+        # Static site ships thumbs only (see LocalArtifactStore.write_crop).
+        web_url = thumbnail_url or image_url
+        return web_url, thumbnail_url or web_url
 
     processed = item.get("processed_image_path")
     if processed and Path(str(processed)).exists():
@@ -489,7 +491,12 @@ def _publish_imagery(store: LocalArtifactStore, candidate_id: str, metrics, item
             thumbnail_url = store.write_thumbnail(
                 candidate_id, thumb.read_bytes(), ext=thumb.suffix.lstrip(".") or "png"
             )
-        return image_url, thumbnail_url
+        elif image_url and crop_path.exists():
+            thumbnail_url = store.write_thumbnail(
+                candidate_id, crop_path.read_bytes(), ext=crop_path.suffix.lstrip(".") or "png"
+            )
+        web_url = thumbnail_url or image_url
+        return web_url, thumbnail_url or web_url
     return str(item.get("image_url") or ""), str(item.get("thumbnail_url") or "")
 
 

@@ -110,6 +110,19 @@ class SnapshotImageryContractTest(unittest.TestCase):
             self.assertIn("wms/2026", str(meta.get("imagery_upgrade_note") or ""))
             self.assertIn("GIS-only", str(meta.get("imagery_upgrade_note") or ""))
             self.assertNotIn("2026 coming", str(meta.get("imagery_rule") or "").lower())
+            web_images = root / "apps" / "web" / "public" / "images"
+            full_on_web = [
+                path.name
+                for path in web_images.glob("nyc-*.jpg")
+                if not path.name.endswith("-thumb.jpg")
+            ]
+            self.assertEqual(
+                full_on_web,
+                [],
+                "full 640px crops must not ship in apps/web/public (Vercel Hobby 100MB limit)",
+            )
+            sample = next(row for row in records if row.get("image_url"))
+            self.assertIn("-thumb", sample["image_url"])
 
 
 if __name__ == "__main__":
