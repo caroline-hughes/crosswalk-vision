@@ -21,9 +21,9 @@ function iconHtml(color: string): string {
 function photoHtml(record: CrosswalkRecord): string {
   const src = orthoSrc(record);
   if (!src) {
-    return `<div class="ortho-frame is-empty" aria-hidden="true"><span class="ortho-mark"></span><span>2024 ortho unavailable</span></div>`;
+    return `<div class="ortho-frame is-empty" aria-hidden="true"><span class="ortho-mark"></span><span>Ortho unavailable</span></div>`;
   }
-  return `<figure class="ortho-frame"><img src="${escapeHtml(src)}" alt="${escapeHtml(record.intersection_label)} 2024 NYS ortho" /></figure>`;
+  return `<figure class="ortho-frame"><img src="${escapeHtml(src)}" alt="${escapeHtml(record.intersection_label)} aerial ortho" /></figure>`;
 }
 
 function popupHtml(record: CrosswalkRecord): string {

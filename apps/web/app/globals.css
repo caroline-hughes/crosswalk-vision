@@ -275,6 +275,10 @@ button, input, select {
   text-transform: uppercase;
 }
 
+.eval-imagery {
+  color: var(--ink);
+}
+
 .eval-strip .eval-weak {
   margin-left: auto;
 }

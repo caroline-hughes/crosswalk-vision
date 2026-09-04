@@ -65,8 +65,8 @@ export default function HomePage() {
               <span className="mark-bars" />
             </span>
             <div className="wordmark">
-              <p className="brand-kicker">NYC · five boroughs</p>
-              <h1>Crosswalk Vision</h1>
+              <p className="brand-kicker">five boroughs · inspection priority</p>
+              <h1>NYC Crosswalk Watch</h1>
             </div>
           </div>
           <div className="view-toggle" role="tablist" aria-label="Map or list">

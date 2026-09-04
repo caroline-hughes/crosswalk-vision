@@ -34,6 +34,7 @@ export function EvalStrip({
       <span>
         showing {visible}/{plotted} in-need of {scored} scored
       </span>
+      <span className="eval-imagery">imagery 2024 NYS ortho · 2026 coming</span>
       <span className="eval-weak">weak crash labels · not a detector</span>
     </div>
   );

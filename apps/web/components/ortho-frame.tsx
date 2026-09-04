@@ -18,14 +18,14 @@ export function OrthoFrame({
     return (
       <div className={`${classes} is-empty`} aria-hidden="true">
         <span className="ortho-mark" />
-        <span>2024 ortho unavailable</span>
+        <span>Ortho unavailable</span>
       </div>
     );
   }
 
   return (
     <figure className={classes}>
-      <img src={src} alt={`${record.intersection_label} 2024 NYS ortho`} loading="lazy" />
+      <img src={src} alt={`${record.intersection_label} aerial ortho`} loading="lazy" />
     </figure>
   );
 }
