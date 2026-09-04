@@ -15,3 +15,6 @@ data/processed/enriched_candidates.json
 data/processed/scored_candidates.json
 data/processed/images/nyc-*
 data/export/images/nyc-*
+# Full 640px crops are too large for Vercel Hobby (100 MB static). Thumbs ship.
+apps/web/public/images/nyc-*.jpg
+!apps/web/public/images/nyc-*-thumb.jpg
