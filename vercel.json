@@ -1,0 +1,9 @@
+{
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "buildCommand": "npm run web:build",
+  "outputDirectory": "apps/web/out",
+  "engines": {
+    "node": "22.x"
+  }
+}

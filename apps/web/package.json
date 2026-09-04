@@ -1,6 +1,9 @@
 {
   "name": "@crosswalks/web",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build"
@@ -9,7 +12,7 @@
     "@crosswalks/contracts": "file:../../packages/contracts",
     "@crosswalks/ui": "file:../../packages/ui",
     "leaflet": "^1.9.4",
-    "next": "15.3.1",
+    "next": "15.3.6",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
