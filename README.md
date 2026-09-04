@@ -81,7 +81,7 @@ PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m unittest discover -
 
 ## Node version
 
-Use `Node 22.x`.
+Use `Node 22.x` (`.nvmrc`, root and `apps/web` `engines`, `vercel.json`). On Vercel, set the project Node version to **22.x** if the dashboard still defaults to 24. Next is **15.3.6** (CVE-2025-66478 patch for the 15.3 line).
 
 ```bash
 npm install
