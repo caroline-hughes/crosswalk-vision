@@ -1,4 +1,5 @@
 import type { CrosswalkMeta } from "@crosswalks/contracts";
+import { ORTHO_CHROME_NOTE } from "../lib/imagery";
 
 function fmt(value: number | null | undefined, digits = 2): string {
   return typeof value === "number" && Number.isFinite(value) ? value.toFixed(digits) : "n/a";
@@ -34,7 +35,7 @@ export function EvalStrip({
       <span>
         showing {visible}/{plotted} in-need of {scored} scored
       </span>
-      <span className="eval-imagery">imagery 2024 NYS ortho · 2026 coming</span>
+      <span className="eval-imagery">{meta.imagery_year ? `imagery ${meta.imagery_year} NYS ortho` : ORTHO_CHROME_NOTE}</span>
       <span className="eval-weak">weak crash labels · not a detector</span>
     </div>
   );

@@ -8,6 +8,7 @@ from unittest.mock import patch
 from PIL import Image
 
 from crosswalk_pipeline.live_imagery import (
+    ORTHO_YEAR,
     SKIP_IMAGERY_ENV,
     fetch_plottable_imagery,
     plot_image_paths,
@@ -35,6 +36,9 @@ def _rows(n: int = 20) -> list[dict]:
 
 
 class ImageryTargetTest(unittest.TestCase):
+    def test_ortho_year_is_newest_published_nyc_layer(self) -> None:
+        self.assertEqual(ORTHO_YEAR, 2024)
+
     def test_default_selects_every_plotted_row(self) -> None:
         rows = _rows(12)
         selected = select_imagery_targets(rows)
@@ -92,6 +96,8 @@ class SnapshotImageryContractTest(unittest.TestCase):
             self.assertGreater(int(meta["n_with_imagery"]), 0)
             self.assertTrue(any(row.get("image_url") for row in records))
             self.assertIn("plotted", str(meta.get("imagery_rule") or "").lower())
+            self.assertEqual(int(meta.get("imagery_year") or 0), 2024)
+            self.assertNotIn("2026 coming", str(meta.get("imagery_rule") or "").lower())
 
 
 if __name__ == "__main__":

@@ -18,7 +18,11 @@ from .models import CandidateRecord, candidate_from_dict
 
 _TRANSFORM_4326_TO_3857 = Transformer.from_crs(4326, 3857, always_xy=True)
 
-EXPORT_URL = "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer/export"
+# Newest published NYS ITS year that covers the five boroughs. 2025 MapServer
+# exists but is Hudson Valley / upstate only (blank over NYC). 2026 is planned
+# for NYC counties but has no public MapServer. NYC open imagery newest is 2024.
+ORTHO_YEAR = 2024
+EXPORT_URL = f"https://orthos.its.ny.gov/arcgis/rest/services/wms/{ORTHO_YEAR}/MapServer/export"
 _SESSION = requests.Session()
 
 PLOT_IMAGE_SIZE = (640, 480)
