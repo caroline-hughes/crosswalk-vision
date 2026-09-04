@@ -1,23 +1,153 @@
 {
-  "build_timestamp": "2026-09-02T19:57:53+00:00",
+  "build_timestamp": "2026-09-02T21:23:38+00:00",
   "source_versions": {
-    "imagery": "NYS 2024 orthos via ArcGIS MapServer",
-    "lion": "fixture candidates (LION download failed)",
-    "service_requests_311": "NYC 311 faded/after-repaving line markings since 2020 (150 rows, SODA paginated)",
-    "school_zones": "DOE school points: elementary/K-8 within 800 ft (not attendance-zone polygons)",
-    "vision_zero_crashes": "NYPD Motor Vehicle Collisions pedestrian injured/killed since 2020 (h9gi-nx95)",
-    "neighborhoods": "NYC 2020 Neighborhood Tabulation Areas"
+    "imagery": "2024 NYS ortho crops for 2000/2000 plotted in-need nodes (not fetched citywide for scoring).",
+    "lion": "NYC LION gdb (citywide intersection nodes)",
+    "service_requests_311": "NYC 311 faded/after-repaving line markings since 2020 (8590 rows, SODA paginated, citywide)",
+    "school_zones": "DOE elementary/K-8 points (990 schools, citywide, 800 ft)",
+    "vision_zero_crashes": "NYPD pedestrian injured/killed since 2020 (50625 rows, citywide)",
+    "neighborhoods": "NYC 2020 Neighborhood Tabulation Areas (all boroughs)"
   },
-  "pilot_boundary": "Lower Manhattan south of Canal Street",
-  "total_records": 16,
-  "scoring_method": "sklearn logistic ranker (priority); heuristic paint/311 score is the baseline",
+  "pilot_boundary": "New York City (five boroughs)",
+  "geography": "New York City (five boroughs)",
+  "total_records": 2000,
+  "n_scored": 56366,
+  "n_plotted": 2000,
+  "plot_percentile": 95.0,
+  "plot_max": 2000,
+  "plot_threshold": 0.8087,
+  "plot_rule": "Map shows crossings in need: model score at/above the 95th percentile (cap 2000), with a per-borough floor so every borough is visible.",
+  "scoring_method": "sklearn logistic ranker (P(pedestrian crash nearby)); heuristic paint/311 score is the baseline. Citywide features are GIS-only \u2014 street width, heading spread, school proximity, 311. Not a vision detector.",
   "label_definition": "pedestrian_crash_nearby",
   "eval_split": "GroupKFold by neighborhood_id (train/test NTAs are disjoint)",
-  "eval_n": 42,
-  "eval_n_pos": 26,
-  "eval_learned_auc": 0.4807692307692308,
-  "eval_heuristic_auc": 0.40624999999999994,
-  "showcase_top_k": 16,
-  "product_claim": "City-actionable inspection list of Lower Manhattan intersection nodes (not crosswalk polygons) that look degraded or under-marked relative to Vision Zero crash and 311 complaint burden.",
-  "caveat": "Not a crosswalk detector and not a pretty-paint ranking. Candidates are LION/fixture intersection nodes; leg_label is the node, not a painted crossing. 311 Line/Marking complaints mix lane lines with crosswalks. Crash labels are noisy / weakly supervised. Metrics use a spatial (neighborhood) split so train and test NTAs are disjoint. Small n: treat AUC as directional, not a production SLA."
+  "eval_n": 56366,
+  "eval_n_pos": 17510,
+  "eval_learned_auc": 0.692987760192799,
+  "eval_heuristic_auc": 0.5401357802306443,
+  "eval_learned_ap": 0.49529814947980855,
+  "eval_learned_precision_at_5": 0.8,
+  "eval_by_borough": [
+    {
+      "borough": "Manhattan",
+      "learned": {
+        "n": 5280,
+        "n_pos": 2680,
+        "positive_rate": 0.5075757575757576,
+        "roc_auc": 0.7341572187141218,
+        "average_precision": 0.721707386917524,
+        "brier": 0.21280195791821094,
+        "precision_at_5": 0.8,
+        "precision_at_10": 0.7
+      },
+      "heuristic": {
+        "n": 5280,
+        "n_pos": 2680,
+        "positive_rate": 0.5075757575757576,
+        "roc_auc": 0.5530769948335247,
+        "average_precision": 0.547753602109463,
+        "precision_at_5": 1.0,
+        "precision_at_10": 0.8,
+        "note": "heuristic scores are not probabilities; Brier is omitted"
+      }
+    },
+    {
+      "borough": "Bronx",
+      "learned": {
+        "n": 7280,
+        "n_pos": 2753,
+        "positive_rate": 0.37815934065934065,
+        "roc_auc": 0.7024270007352262,
+        "average_precision": 0.5591078017952849,
+        "brier": 0.22864865482077423,
+        "precision_at_5": 0.0,
+        "precision_at_10": 0.4
+      },
+      "heuristic": {
+        "n": 7280,
+        "n_pos": 2753,
+        "positive_rate": 0.37815934065934065,
+        "roc_auc": 0.5257626056230723,
+        "average_precision": 0.3967310026423806,
+        "precision_at_5": 0.8,
+        "precision_at_10": 0.6,
+        "note": "heuristic scores are not probabilities; Brier is omitted"
+      }
+    },
+    {
+      "borough": "Brooklyn",
+      "learned": {
+        "n": 13740,
+        "n_pos": 5849,
+        "positive_rate": 0.42569141193595345,
+        "roc_auc": 0.6549932694477039,
+        "average_precision": 0.5591260841011625,
+        "brier": 0.2319896398767896,
+        "precision_at_5": 0.8,
+        "precision_at_10": 0.5
+      },
+      "heuristic": {
+        "n": 13740,
+        "n_pos": 5849,
+        "positive_rate": 0.42569141193595345,
+        "roc_auc": 0.5337217797309681,
+        "average_precision": 0.45190697584437234,
+        "precision_at_5": 0.6,
+        "precision_at_10": 0.8,
+        "note": "heuristic scores are not probabilities; Brier is omitted"
+      }
+    },
+    {
+      "borough": "Queens",
+      "learned": {
+        "n": 23042,
+        "n_pos": 5307,
+        "positive_rate": 0.2303185487370888,
+        "roc_auc": 0.6528048846763075,
+        "average_precision": 0.35621133994529763,
+        "brier": 0.21603152004752713,
+        "precision_at_5": 0.8,
+        "precision_at_10": 0.7
+      },
+      "heuristic": {
+        "n": 23042,
+        "n_pos": 5307,
+        "positive_rate": 0.2303185487370888,
+        "roc_auc": 0.5427799637365823,
+        "average_precision": 0.2652865408125883,
+        "precision_at_5": 0.6,
+        "precision_at_10": 0.7,
+        "note": "heuristic scores are not probabilities; Brier is omitted"
+      }
+    },
+    {
+      "borough": "Staten Island",
+      "learned": {
+        "n": 6972,
+        "n_pos": 911,
+        "positive_rate": 0.1306655192197361,
+        "roc_auc": 0.6644817208725561,
+        "average_precision": 0.26511267269583527,
+        "brier": 0.21668622830314585,
+        "precision_at_5": 1.0,
+        "precision_at_10": 0.6
+      },
+      "heuristic": {
+        "n": 6972,
+        "n_pos": 911,
+        "positive_rate": 0.1306655192197361,
+        "roc_auc": 0.5818294286173266,
+        "average_precision": 0.19016398969395049,
+        "precision_at_5": 0.6,
+        "precision_at_10": 0.5,
+        "note": "heuristic scores are not probabilities; Brier is omitted"
+      }
+    }
+  ],
+  "include_image_feature": false,
+  "include_311_feature": true,
+  "showcase_top_k": 2000,
+  "product_claim": "Citywide NYC inspection-priority map of pedestrian crossing nodes, ranked by a learned tabular model vs a paint/311 heuristic. Hover a node for streets, 311, and why the model flagged it.",
+  "caveat": "Not a crosswalk detector. Candidates are LION intersection nodes, not painted polygons. Citywide scores use GIS features only \u2014 2024 ortho crops are fetched for the plotted in-need set (2000/2000), not for all 56366 scored nodes. The map plots 2000 'in need' nodes, not every intersection. 311 Line/Marking complaints mix lane lines with crosswalks. Crash labels are noisy / weakly supervised. Metrics use a spatial (neighborhood) split so train and test NTAs are disjoint. Treat AUC as directional, not a production SLA.",
+  "n_with_imagery": 2000,
+  "imagery_rule": "2024 NYS ArcGIS ortho crops for the plotted in-need set only (2000/2000 nodes have a crop). Not fetched for the 56366 scored nodes citywide. Ranking remains GIS-only."
 }

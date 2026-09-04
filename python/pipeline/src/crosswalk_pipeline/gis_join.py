@@ -5,8 +5,11 @@ import math
 from pathlib import Path
 from typing import Dict, List, Mapping, Sequence
 
+import numpy as np
 from pyproj import Transformer
 from shapely.geometry import Point, shape
+from shapely.strtree import STRtree
+from sklearn.neighbors import BallTree
 
 _TRANSFORM_4326_TO_2263 = Transformer.from_crs(4326, 2263, always_xy=True)
 
@@ -26,27 +29,29 @@ def join_events_to_candidates(
     if not candidates or not events:
         return matched
 
-    candidate_xy = {
-        str(candidate["id"]): _to_2263(float(candidate["lon"]), float(candidate["lat"]))
-        for candidate in candidates
-    }
+    candidate_ids = [str(candidate["id"]) for candidate in candidates]
+    candidate_xy = np.array(
+        [_to_2263(float(candidate["lon"]), float(candidate["lat"])) for candidate in candidates],
+        dtype=float,
+    )
+    tree = BallTree(candidate_xy, metric="euclidean")
 
+    event_xy: list[tuple[float, float]] = []
+    event_keep: list[dict] = []
     for event in events:
         event_lat = _as_float(event.get(lat_field))
         event_lon = _as_float(event.get(lon_field))
         if event_lat is None or event_lon is None:
             continue
-        event_x, event_y = _to_2263(event_lon, event_lat)
-        nearest_id = None
-        nearest_distance = None
-        for candidate_id, (candidate_x, candidate_y) in candidate_xy.items():
-            distance = math.hypot(candidate_x - event_x, candidate_y - event_y)
-            if nearest_distance is None or distance < nearest_distance:
-                nearest_id = candidate_id
-                nearest_distance = distance
-        if nearest_id is None or nearest_distance is None or nearest_distance > radius_ft:
-            continue
-        matched[nearest_id].append(dict(event))
+        event_xy.append(_to_2263(event_lon, event_lat))
+        event_keep.append(dict(event))
+    if not event_xy:
+        return matched
+
+    distances, indices = tree.query(np.asarray(event_xy, dtype=float), k=1)
+    for event, distance, index in zip(event_keep, distances[:, 0], indices[:, 0]):
+        if float(distance) <= radius_ft:
+            matched[candidate_ids[int(index)]].append(event)
     return matched
 
 
@@ -57,32 +62,43 @@ def assign_neighborhoods(
     collection = _load_geojson(nta_geojson)
     features = collection.get("features") or []
     polygons = []
+    meta: list[tuple[str, str, str]] = []
     for feature in features:
         geometry = feature.get("geometry")
         properties = feature.get("properties") or {}
         if not geometry:
             continue
-        polygons.append(
-            (
-                shape(geometry),
-                str(_nta_id(properties)),
-                str(_nta_name(properties)),
-            )
-        )
+        geom = shape(geometry)
+        polygons.append(geom)
+        meta.append((_nta_id(properties), _nta_name(properties), _nta_borough(properties)))
 
+    tree = STRtree(polygons) if polygons else None
     assigned: Dict[str, Dict[str, str]] = {}
     for candidate in candidates:
         point = Point(float(candidate["lon"]), float(candidate["lat"]))
         neighborhood_id = "UNKNOWN"
         neighborhood_name = "Unknown"
-        for polygon, nta_id, nta_name in polygons:
-            if polygon.contains(point) or polygon.intersects(point):
-                neighborhood_id = nta_id
-                neighborhood_name = nta_name
-                break
+        borough = "Unknown"
+        hit_idx = None
+        if tree is not None and polygons:
+            hits = tree.query(point)
+            for idx in np.atleast_1d(hits):
+                polygon = polygons[int(idx)]
+                if polygon.contains(point) or polygon.intersects(point) or polygon.distance(point) <= 1e-8:
+                    hit_idx = int(idx)
+                    break
+            if hit_idx is None:
+                # Boundary / water-adjacent nodes often miss contains by a hair.
+                distances = [geom.distance(point) for geom in polygons]
+                nearest = int(np.argmin(distances))
+                if distances[nearest] < 0.01:
+                    hit_idx = nearest
+        if hit_idx is not None:
+            neighborhood_id, neighborhood_name, borough = meta[hit_idx]
         assigned[str(candidate["id"])] = {
             "neighborhood_id": neighborhood_id,
             "neighborhood_name": neighborhood_name,
+            "borough": borough,
         }
     return assigned
 
@@ -105,11 +121,14 @@ def points_within_radius(
         point_xy.append(_to_2263(lon, lat))
     if not point_xy:
         return flagged
-    for candidate in candidates:
-        candidate_x, candidate_y = _to_2263(float(candidate["lon"]), float(candidate["lat"]))
-        flagged[str(candidate["id"])] = any(
-            math.hypot(candidate_x - px, candidate_y - py) <= radius_ft for px, py in point_xy
-        )
+    tree = BallTree(np.asarray(point_xy, dtype=float), metric="euclidean")
+    candidate_xy = np.array(
+        [_to_2263(float(candidate["lon"]), float(candidate["lat"])) for candidate in candidates],
+        dtype=float,
+    )
+    hits = tree.query_radius(candidate_xy, r=radius_ft)
+    for candidate, neighbors in zip(candidates, hits):
+        flagged[str(candidate["id"])] = len(neighbors) > 0
     return flagged
 
 
@@ -144,6 +163,21 @@ def _nta_name(properties: Mapping[str, object]) -> str:
         if properties.get(key):
             return str(properties[key])
     return "Unknown"
+
+
+def _nta_borough(properties: Mapping[str, object]) -> str:
+    for key in ("BoroName", "boroname", "borough"):
+        if properties.get(key):
+            return str(properties[key])
+    nta_id = _nta_id(properties)
+    prefix = nta_id[:2].upper()
+    return {
+        "MN": "Manhattan",
+        "BX": "Bronx",
+        "BK": "Brooklyn",
+        "QN": "Queens",
+        "SI": "Staten Island",
+    }.get(prefix, "Unknown")
 
 
 def _to_2263(lon: float, lat: float) -> tuple[float, float]:

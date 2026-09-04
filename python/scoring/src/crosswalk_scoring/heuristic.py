@@ -13,6 +13,7 @@ class ScoringInput:
     occlusion_penalty: float
     school_zone: bool
     pavement_marking_311_count_since_2020: int
+    image_metrics_missing: bool = False
 
 
 @dataclass(frozen=True)
@@ -28,24 +29,31 @@ class HeuristicCrosswalkScorer:
         self.confidence_floor = confidence_floor
 
     def score(self, scoring_input: ScoringInput, include_complaints: bool = True) -> ScoredCandidate:
-        expected_paint_penalty = self._clamp(scoring_input.paint_missing_ratio) * 50.0
-        stripe_break_penalty = self._clamp(scoring_input.stripe_break_ratio) * 20.0
-        low_contrast_penalty = (1.0 - self._clamp(scoring_input.contrast_score)) * 16.0
+        if scoring_input.image_metrics_missing:
+            expected_paint_penalty = 0.0
+            stripe_break_penalty = 0.0
+            low_contrast_penalty = 0.0
+            confidence_score = 0.5
+        else:
+            expected_paint_penalty = self._clamp(scoring_input.paint_missing_ratio) * 50.0
+            stripe_break_penalty = self._clamp(scoring_input.stripe_break_ratio) * 20.0
+            low_contrast_penalty = (1.0 - self._clamp(scoring_input.contrast_score)) * 16.0
+            confidence_score = round(1.0 - self._clamp(scoring_input.occlusion_penalty), 2)
         complaint_boost = 0.0
         if include_complaints:
             complaint_boost = min(scoring_input.pavement_marking_311_count_since_2020, 5) * 3.0
 
         severity_score = round(expected_paint_penalty + stripe_break_penalty + low_contrast_penalty + complaint_boost)
-        confidence_score = round(1.0 - self._clamp(scoring_input.occlusion_penalty), 2)
         rank_score = float(severity_score)
 
         reason_tags: List[str] = []
-        if scoring_input.contrast_score <= 0.45:
-            reason_tags.append("low contrast")
-        if scoring_input.stripe_break_ratio >= 0.35:
-            reason_tags.append("broken stripes")
-        if scoring_input.paint_missing_ratio >= 0.35:
-            reason_tags.append("partial paint loss")
+        if not scoring_input.image_metrics_missing:
+            if scoring_input.contrast_score <= 0.45:
+                reason_tags.append("low contrast")
+            if scoring_input.stripe_break_ratio >= 0.35:
+                reason_tags.append("broken stripes")
+            if scoring_input.paint_missing_ratio >= 0.35:
+                reason_tags.append("partial paint loss")
         if scoring_input.school_zone:
             reason_tags.append("school zone")
         if include_complaints and scoring_input.pavement_marking_311_count_since_2020 > 0:

@@ -5,7 +5,7 @@ from typing import Mapping, Sequence
 import numpy as np
 from sklearn.metrics import average_precision_score, roc_auc_score
 
-from .features import attach_labels
+from .features import attach_labels, borough_from_nta, rows_have_image_metrics
 from .heuristic import HeuristicCrosswalkScorer, ScoringInput
 from .learned import LearnedPriorityScorer
 from .spatial_split import neighborhood_group_kfold, neighborhood_ids
@@ -57,6 +57,7 @@ def evaluate_spatial_cv(rows: Sequence[Mapping[str, object]]) -> dict:
             "note": "too few rows for spatial CV",
         }
 
+    include_image = rows_have_image_metrics(labeled)
     groups = neighborhood_ids(labeled)
     unique_groups = sorted(set(groups))
     y = np.array([int(row["label"]) for row in labeled], dtype=int)
@@ -70,7 +71,11 @@ def evaluate_spatial_cv(rows: Sequence[Mapping[str, object]]) -> dict:
     for train_idx, test_idx in neighborhood_group_kfold(labeled):
         train_rows = [labeled[i] for i in train_idx]
         test_rows = [labeled[i] for i in test_idx]
-        scorer = LearnedPriorityScorer(include_311=include_311, label_definition=definition)
+        scorer = LearnedPriorityScorer(
+            include_311=include_311,
+            include_image=include_image,
+            label_definition=definition,
+        )
         scorer.fit(train_rows)
         fold_scores = scorer.predict_scores(test_rows)
         oof[test_idx] = fold_scores
@@ -95,30 +100,44 @@ def evaluate_spatial_cv(rows: Sequence[Mapping[str, object]]) -> dict:
     finite = np.isfinite(oof)
     overall_learned = binary_metrics(y[finite], oof[finite])
     overall_heuristic = _ranking_only(binary_metrics(y[finite], heuristic_scores[finite]))
+    by_neighborhood = _trim_neighborhood_table(per_neighborhood)
     return {
         "label_definition": definition,
         "include_311_feature": include_311,
+        "include_image_feature": include_image,
         "n": int(y.size),
         "n_pos": int(y.sum()),
         "neighborhoods": unique_groups,
+        "n_neighborhoods": len(unique_groups),
         "split": "GroupKFold by neighborhood_id (train/test NTAs are disjoint)",
         "caveat": (
             "Pedestrian-crash coordinates are noisy and weakly supervised: a nearby crash "
             "does not prove the crossing paint caused it, and many crossings have no crash "
             "because of exposure, not because markings are fine. Metrics are reported only "
-            "when both classes are present; otherwise they are null."
+            "when both classes are present; otherwise they are null. Citywide ranking is "
+            "GIS-only (no per-intersection ortho); this is a learned tabular ranker, not a "
+            "vision detector."
         ),
         "overall": {
             "learned": overall_learned,
             "heuristic": overall_heuristic,
         },
-        "by_neighborhood": sorted(per_neighborhood, key=lambda item: item["neighborhood_id"]),
+        "by_borough": _metrics_by_borough(labeled, y, oof, heuristic_scores, finite),
+        "by_neighborhood": by_neighborhood,
+        "neighborhood_table_note": (
+            "Full NTA list is large citywide; table keeps NTAs with n>=25, up to 12 largest."
+        ),
     }
 
 
 def fit_production_scorer(rows: Sequence[Mapping[str, object]]) -> LearnedPriorityScorer:
     definition, include_311, labeled = attach_labels(rows)
-    scorer = LearnedPriorityScorer(include_311=include_311, label_definition=definition)
+    include_image = rows_have_image_metrics(labeled)
+    scorer = LearnedPriorityScorer(
+        include_311=include_311,
+        include_image=include_image,
+        label_definition=definition,
+    )
     scorer.fit(labeled)
     return scorer
 
@@ -138,6 +157,50 @@ def _name_for(rows: Sequence[Mapping[str, object]], neighborhood_id: str) -> str
         if str(row.get("neighborhood_id") or "") == neighborhood_id:
             return str(row.get("neighborhood_name") or neighborhood_id)
     return neighborhood_id
+
+
+def _trim_neighborhood_table(
+    rows: Sequence[Mapping[str, object]],
+    *,
+    min_n: int = 25,
+    limit: int = 12,
+) -> list[dict]:
+    usable = []
+    for row in rows:
+        learned = row.get("learned") or {}
+        n = int(learned.get("n") or 0)
+        if n >= min_n:
+            usable.append(dict(row))
+    usable.sort(key=lambda item: int((item.get("learned") or {}).get("n") or 0), reverse=True)
+    return usable[:limit]
+
+
+def _metrics_by_borough(
+    labeled: Sequence[Mapping[str, object]],
+    y: np.ndarray,
+    oof: np.ndarray,
+    heuristic_scores: np.ndarray,
+    finite: np.ndarray,
+) -> list[dict]:
+    boroughs = np.array(
+        [
+            borough_from_nta(row.get("neighborhood_id"), row.get("borough"))
+            for row in labeled
+        ]
+    )
+    out: list[dict] = []
+    for name in ("Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"):
+        mask = finite & (boroughs == name)
+        if not np.any(mask):
+            continue
+        out.append(
+            {
+                "borough": name,
+                "learned": binary_metrics(y[mask], oof[mask]),
+                "heuristic": _ranking_only(binary_metrics(y[mask], heuristic_scores[mask])),
+            }
+        )
+    return out
 
 
 def _scoring_input_from_row(row: Mapping[str, object]) -> ScoringInput:
@@ -161,4 +224,5 @@ def _scoring_input_from_row(row: Mapping[str, object]) -> ScoringInput:
         occlusion_penalty=_float("occlusion_penalty"),
         school_zone=bool(row.get("school_zone")),
         pavement_marking_311_count_since_2020=int(row.get("pavement_marking_311_count_since_2020") or 0),
+        image_metrics_missing=bool(row.get("image_metrics_missing")),
     )

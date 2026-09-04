@@ -12,6 +12,7 @@ dependencies = [
   "pyproj",
   "requests",
   "shapely",
+  "scikit-learn",
 ]
 
 [build-system]

@@ -24,14 +24,14 @@ class LocalArtifactStore:
     web_images_dir: Path = PATHS.web_images_dir
     web_data_dir: Path = PATHS.web_data_dir
 
-    def write_crop(self, candidate_id: str, data: bytes) -> str:
-        file_name = f"{candidate_id}.png"
+    def write_crop(self, candidate_id: str, data: bytes, *, ext: str = "png") -> str:
+        file_name = f"{candidate_id}.{ext.lstrip('.')}"
         self._write_bytes(self.export_dir / "images" / file_name, data)
         self._write_bytes(self.web_images_dir / file_name, data)
         return f"/images/{file_name}"
 
-    def write_thumbnail(self, candidate_id: str, data: bytes) -> str:
-        file_name = f"{candidate_id}-thumb.png"
+    def write_thumbnail(self, candidate_id: str, data: bytes, *, ext: str = "png") -> str:
+        file_name = f"{candidate_id}-thumb.{ext.lstrip('.')}"
         self._write_bytes(self.export_dir / "images" / file_name, data)
         self._write_bytes(self.web_images_dir / file_name, data)
         return f"/images/{file_name}"

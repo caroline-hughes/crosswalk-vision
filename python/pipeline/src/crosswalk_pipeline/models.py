@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from typing import Dict, List
 
 
@@ -24,6 +24,7 @@ class CandidateRecord:
     approach_street_count: int = 2
     neighborhood_id: str = ""
     neighborhood_name: str = ""
+    borough: str = ""
     pedestrian_crash_count: int = 0
 
     def to_dict(self) -> Dict[str, object]:
@@ -52,8 +53,10 @@ class ExportRecord:
     heuristic_score: float = 0.0
     neighborhood: str = ""
     neighborhood_id: str = ""
+    borough: str = ""
     priority_reason: str = ""
     pedestrian_crash_count: int = 0
+    top_features: List[Dict[str, object]] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, object]:
         return asdict(self)
@@ -85,5 +88,6 @@ def candidate_from_dict(item: dict) -> CandidateRecord:
         approach_street_count=int(item.get("approach_street_count") or 2),
         neighborhood_id=str(item.get("neighborhood_id") or ""),
         neighborhood_name=str(item.get("neighborhood_name") or ""),
+        borough=str(item.get("borough") or ""),
         pedestrian_crash_count=int(item.get("pedestrian_crash_count") or 0),
     )
