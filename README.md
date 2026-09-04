@@ -81,7 +81,16 @@ PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m unittest discover -
 
 ## Node version
 
-Use `Node 22.x` (`.nvmrc`, root and `apps/web` `engines`, `vercel.json`). On Vercel, set the project Node version to **22.x** if the dashboard still defaults to 24. Next is **15.3.6** (CVE-2025-66478 patch for the 15.3 line).
+Use `Node 22.x` (`.nvmrc`, root and `apps/web` `engines`). On Vercel, set the project Node version to **22.x** if the dashboard still defaults to 24. Next is **15.3.6** (CVE-2025-66478 patch for the 15.3 line).
+
+### Vercel (static export)
+
+The app is `output: "export"` (`apps/web/out`). Workspaces (`@crosswalks/contracts`, `@crosswalks/ui`) only resolve if install runs from the **repo root**. Two project setups work:
+
+1. **Root Directory blank** (repo root) — uses `vercel.json`: install `npm install`, build `npm run web:build`, output `apps/web/out`.
+2. **Root Directory `apps/web`** — uses `apps/web/vercel.json`: install `cd ../.. && npm install`, build `cd ../.. && npm run web:build`, output `out`.
+
+Do not run `npm install` only inside `apps/web` without the repo-root workspace install.
 
 ```bash
 npm install

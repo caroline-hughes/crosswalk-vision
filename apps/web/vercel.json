@@ -1,6 +1,7 @@
 {
-  "framework": "nextjs",
-  "engines": {
-    "node": "22.x"
-  }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "cd ../.. && npm install",
+  "buildCommand": "cd ../.. && npm run web:build",
+  "outputDirectory": "out"
 }
