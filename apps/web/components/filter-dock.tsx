@@ -33,21 +33,6 @@ export function FilterDock({
         </select>
       </label>
 
-      <button
-        type="button"
-        className={`filter-chip ${filters.nearSchool ? "is-active" : ""}`}
-        onClick={() => onChange({ ...filters, nearSchool: !filters.nearSchool })}
-      >
-        Near school
-      </button>
-      <button
-        type="button"
-        className={`filter-chip ${filters.has311 ? "is-active" : ""}`}
-        onClick={() => onChange({ ...filters, has311: !filters.has311 })}
-      >
-        Has 311
-      </button>
-
       <label className="filter-field filter-slider">
         <span>Min P(crash) {filters.minModelScore.toFixed(2)}</span>
         <input

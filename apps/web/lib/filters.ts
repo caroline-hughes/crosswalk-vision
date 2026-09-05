@@ -12,27 +12,17 @@ export type BoroughName = (typeof BOROUGHS)[number];
 
 export interface MapFilters {
   borough: "all" | BoroughName;
-  nearSchool: boolean;
-  has311: boolean;
   minModelScore: number;
 }
 
 export const DEFAULT_FILTERS: MapFilters = {
   borough: "all",
-  nearSchool: false,
-  has311: false,
   minModelScore: 0
 };
 
 export function applyFilters(records: CrosswalkRecord[], filters: MapFilters): CrosswalkRecord[] {
   return records.filter((record) => {
     if (filters.borough !== "all" && record.borough !== filters.borough) {
-      return false;
-    }
-    if (filters.nearSchool && !record.school_zone) {
-      return false;
-    }
-    if (filters.has311 && record.pavement_marking_311_count_since_2020 <= 0) {
       return false;
     }
     if (record.model_score < filters.minModelScore) {

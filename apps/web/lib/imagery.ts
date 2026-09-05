@@ -4,7 +4,7 @@ export const ORTHO_PREFERRED_NEXT_YEAR = 2026;
 export const ORTHO_SEASON = "Spring";
 
 /** Card UI — no year. Year lives in chrome and in meta.json. */
-export const ORTHO_CAPTION = "NYS ortho crop";
+export const ORTHO_CAPTION = "Aerial imagery";
 export const ORTHO_SCORE_NOTE = "Score is GIS-only — not from this image";
 
 /** One persistent chrome note. Forward-looking, not apologetic. */

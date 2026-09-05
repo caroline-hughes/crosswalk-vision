@@ -7,7 +7,6 @@ export function PriorityLegend() {
         <span className="priority-ramp" aria-hidden="true" />
         <span>Higher</span>
       </div>
-      <span>among flagged crossings</span>
     </div>
   );
 }
