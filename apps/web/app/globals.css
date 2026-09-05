@@ -259,11 +259,6 @@ button, input, select {
   box-shadow: 1px 1px 0 var(--ink);
 }
 
-.model-slot {
-  position: relative;
-  min-width: 0;
-}
-
 .model-chip {
   appearance: none;
   display: inline-flex;
@@ -300,28 +295,21 @@ button, input, select {
   box-shadow: 2px 2px 0 var(--ink);
 }
 
-.model-panel {
-  position: fixed;
-  top: 58px;
-  right: 16px;
-  z-index: 4000;
-  width: min(420px, 92vw);
-  background-color: var(--page);
-  background-image: var(--grain);
-  border: 2px solid var(--ink);
-  box-shadow: 4px 4px 0 var(--ink);
-  padding: 12px 14px;
+.model-drawer {
+  padding: 8px 16px 10px;
+  border-top: 1px solid var(--ink);
+  background: var(--page-deep);
   font-family: var(--mono);
   font-size: 12px;
-  line-height: 1.45;
+  line-height: 1.4;
   color: var(--ink);
 }
 
-.model-panel p {
-  margin: 0 0 8px;
+.model-drawer p {
+  margin: 0 0 6px;
 }
 
-.model-panel p:last-child {
+.model-drawer p:last-child {
   margin-bottom: 0;
 }
 
@@ -872,11 +860,6 @@ button, input, select {
 
   .view-toggle {
     margin-left: 0;
-  }
-
-  .model-panel {
-    left: 0;
-    right: auto;
   }
 
   .brand h1 { font-size: 16px; }

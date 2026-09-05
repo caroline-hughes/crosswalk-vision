@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { CrosswalkMeta, CrosswalkRecord } from "@crosswalks/contracts";
 import { staticSnapshotSource } from "../lib/snapshot-source";
 import { applyFilters, DEFAULT_FILTERS, type MapFilters } from "../lib/filters";
-import { EvalStrip } from "../components/eval-strip";
+import { EvalStrip, ModelDrawer } from "../components/eval-strip";
 import { FilterDock } from "../components/filter-dock";
 import { CrossingList } from "../components/crossing-list";
 import { PriorityMap } from "../components/priority-map";
@@ -18,6 +18,7 @@ export default function HomePage() {
   const [view, setView] = useState<ViewMode>("map");
   const [hovered, setHovered] = useState<CrosswalkRecord | null>(null);
   const [pinned, setPinned] = useState<CrosswalkRecord | null>(null);
+  const [modelOpen, setModelOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,7 +79,13 @@ export default function HomePage() {
             minScore={Math.max(0, minScore)}
             maxScore={maxScore || 1}
           />
-          <EvalStrip meta={meta} visible={filtered.length} nScored={records.length} />
+          <EvalStrip
+            meta={meta}
+            visible={filtered.length}
+            nScored={records.length}
+            open={modelOpen}
+            onToggle={() => setModelOpen((current) => !current)}
+          />
           <div className="view-toggle" role="tablist" aria-label="Map or list">
             <button
               type="button"
@@ -100,6 +107,7 @@ export default function HomePage() {
             </button>
           </div>
         </div>
+        {modelOpen ? <ModelDrawer meta={meta} visible={filtered.length} nScored={records.length} /> : null}
       </header>
 
       <div className="stage">
