@@ -39,7 +39,8 @@ button, input, select {
 .chrome {
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: 2000;
+  overflow: visible;
   background-color: var(--page);
   background-image: var(--grain);
   border-bottom: 1px solid var(--ink);
@@ -300,10 +301,10 @@ button, input, select {
 }
 
 .model-panel {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  z-index: 40;
+  position: fixed;
+  top: 58px;
+  right: 16px;
+  z-index: 4000;
   width: min(420px, 92vw);
   background-color: var(--page);
   background-image: var(--grain);

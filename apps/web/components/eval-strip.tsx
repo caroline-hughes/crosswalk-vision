@@ -38,7 +38,7 @@ export function EvalStrip({
         aria-controls="model-panel"
         onClick={() => setOpen((current) => !current)}
       >
-        <span className="model-chip-label">Model</span>
+        <span className="model-chip-label">Model {open ? "–" : "+"}</span>
         <span>
           AUC {learned} vs {heuristic}
         </span>
