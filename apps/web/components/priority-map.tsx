@@ -7,6 +7,9 @@ import { ORTHO_CAPTION, ORTHO_SCORE_NOTE } from "../lib/imagery";
 import { orthoSrc } from "./ortho-frame";
 import "leaflet/dist/leaflet.css";
 
+const HOVER_OPEN_MS = 240;
+const HOVER_CLOSE_MS = 200;
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")
@@ -22,9 +25,9 @@ function iconHtml(color: string): string {
 function photoHtml(record: CrosswalkRecord): string {
   const src = orthoSrc(record);
   if (!src) {
-    return `<div class="ortho-block is-empty" aria-hidden="true"><div class="ortho-frame is-empty"><span class="ortho-mark"></span><span>Ortho unavailable</span></div></div>`;
+    return `<div class="ortho-block is-empty" aria-hidden="true"><div class="ortho-frame is-empty"><span class="ortho-mark"></span><span>Imagery unavailable</span></div></div>`;
   }
-  return `<figure class="ortho-block"><div class="ortho-frame"><img src="${escapeHtml(src)}" alt="${escapeHtml(`${record.intersection_label} ${ORTHO_CAPTION}`)}" /></div><figcaption class="ortho-caption"><span>${escapeHtml(ORTHO_CAPTION)}</span><span class="ortho-caption-note">${escapeHtml(ORTHO_SCORE_NOTE)}</span></figcaption></figure>`;
+  return `<figure class="ortho-block"><div class="ortho-frame"><img src="${escapeHtml(src)}" alt="${escapeHtml(`${record.intersection_label} ${ORTHO_CAPTION}`)}" onerror="this.onerror=null;this.hidden=true;this.parentElement.classList.add('is-empty');var fallback=this.nextElementSibling;if(fallback){fallback.hidden=false;}" /><div class="ortho-fallback" hidden><span class="ortho-mark"></span><span>Imagery unavailable</span></div></div><figcaption class="ortho-caption"><span>${escapeHtml(ORTHO_CAPTION)}</span><span class="ortho-caption-note">${escapeHtml(ORTHO_SCORE_NOTE)}</span></figcaption></figure>`;
 }
 
 function popupHtml(record: CrosswalkRecord): string {
@@ -81,28 +84,39 @@ type MarkerEntry = {
 
 export function PriorityMap({
   records,
-  activeId,
+  pinnedId,
   scoreMin,
   scoreMax,
   onHover,
   onSelect
 }: {
   records: CrosswalkRecord[];
-  activeId: string | null;
+  pinnedId: string | null;
   scoreMin: number;
   scoreMax: number;
   onHover: (record: CrosswalkRecord | null) => void;
-  onSelect: (record: CrosswalkRecord) => void;
+  onSelect: (record: CrosswalkRecord | null) => void;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<import("leaflet").Map | null>(null);
   const layerRef = useRef<import("leaflet").LayerGroup | null>(null);
   const markersRef = useRef<Map<string, MarkerEntry>>(new Map());
-  const lastPopupId = useRef<string | null>(null);
+  const stickyIdRef = useRef<string | null>(null);
+  const hoverIdRef = useRef<string | null>(null);
+  const hoverOpenTimer = useRef<number | null>(null);
+  const hoverCloseTimer = useRef<number | null>(null);
+  const overPopupRef = useRef(false);
   const hoverRef = useRef(onHover);
   const selectRef = useRef(onSelect);
   hoverRef.current = onHover;
   selectRef.current = onSelect;
+
+  const clearTimer = (timer: { current: number | null }) => {
+    if (timer.current !== null) {
+      window.clearTimeout(timer.current);
+      timer.current = null;
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -120,7 +134,8 @@ export function PriorityMap({
         doubleClickZoom: true,
         dragging: true,
         minZoom: 10,
-        maxZoom: 18
+        maxZoom: 18,
+        closePopupOnClick: false
       }).setView([40.7128, -74.006], 11);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -132,41 +147,30 @@ export function PriorityMap({
       layerRef.current = L.layerGroup().addTo(map);
       mapRef.current = map;
 
-      const openNearest = (latlng: import("leaflet").LatLng, sticky: boolean) => {
-        const origin = map.latLngToContainerPoint(latlng);
-        let best: MarkerEntry | undefined;
-        let bestD = 28;
-        markersRef.current.forEach((entry) => {
-          const point = map.latLngToContainerPoint(entry.marker.getLatLng());
-          const distance = origin.distanceTo(point);
-          if (distance < bestD) {
-            bestD = distance;
-            best = entry;
-          }
-        });
-        markersRef.current.forEach((entry) => {
-          const el = entry.marker.getElement();
-          el?.classList.toggle("is-lifted", Boolean(best && entry.record.id === best.record.id));
-        });
-        if (!best) {
+      map.on("click", () => {
+        if (overPopupRef.current) {
           return;
         }
-        if (lastPopupId.current !== best.record.id) {
-          lastPopupId.current = best.record.id;
-          best.marker.openPopup();
-        }
-        hoverRef.current(best.record);
-        if (sticky) {
-          selectRef.current(best.record);
-        }
-      };
+        stickyIdRef.current = null;
+        hoverIdRef.current = null;
+        map.closePopup();
+        hoverRef.current(null);
+        selectRef.current(null);
+      });
 
-      map.on("mousemove", (event: import("leaflet").LeafletMouseEvent) => {
-        openNearest(event.latlng, false);
-      });
-      map.on("click", (event: import("leaflet").LeafletMouseEvent) => {
-        openNearest(event.latlng, true);
-      });
+      const onKeyDown = (event: KeyboardEvent) => {
+        if (event.key !== "Escape") {
+          return;
+        }
+        stickyIdRef.current = null;
+        hoverIdRef.current = null;
+        map.closePopup();
+        hoverRef.current(null);
+        selectRef.current(null);
+      };
+      window.addEventListener("keydown", onKeyDown);
+      (map as unknown as { __onEsc?: (event: KeyboardEvent) => void }).__onEsc = onKeyDown;
+
       window.setTimeout(() => map.invalidateSize(), 80);
     }
 
@@ -174,7 +178,12 @@ export function PriorityMap({
 
     return () => {
       cancelled = true;
-      mapRef.current?.remove();
+      const map = mapRef.current;
+      const onEsc = map ? (map as unknown as { __onEsc?: (event: KeyboardEvent) => void }).__onEsc : undefined;
+      if (onEsc) {
+        window.removeEventListener("keydown", onEsc);
+      }
+      map?.remove();
       mapRef.current = null;
       layerRef.current = null;
       markersRef.current.clear();
@@ -199,6 +208,47 @@ export function PriorityMap({
 
       layer.clearLayers();
       markersRef.current.clear();
+      clearTimer(hoverOpenTimer);
+      clearTimer(hoverCloseTimer);
+      overPopupRef.current = false;
+
+      const closeExclusive = (keepId?: string) => {
+        markersRef.current.forEach((entry) => {
+          if (entry.record.id !== keepId && entry.marker.isPopupOpen()) {
+            entry.marker.closePopup();
+          }
+        });
+      };
+
+      const bindPopupChrome = (entry: MarkerEntry) => {
+        const popup = entry.marker.getPopup();
+        const element = popup?.getElement();
+        if (!element || element.dataset.xingBound === "1") {
+          return;
+        }
+        element.dataset.xingBound = "1";
+        L.DomEvent.disableClickPropagation(element);
+        L.DomEvent.disableScrollPropagation(element);
+        element.addEventListener("mouseenter", () => {
+          overPopupRef.current = true;
+          clearTimer(hoverCloseTimer);
+        });
+        element.addEventListener("mouseleave", () => {
+          overPopupRef.current = false;
+          if (stickyIdRef.current) {
+            return;
+          }
+          clearTimer(hoverCloseTimer);
+          hoverCloseTimer.current = window.setTimeout(() => {
+            if (stickyIdRef.current || overPopupRef.current) {
+              return;
+            }
+            entry.marker.closePopup();
+            hoverIdRef.current = null;
+            hoverRef.current(null);
+          }, HOVER_CLOSE_MS);
+        });
+      };
 
       records.forEach((record) => {
         const color = scoreColor(record.model_score, scoreMin, scoreMax);
@@ -208,7 +258,7 @@ export function PriorityMap({
           html: iconHtml(color),
           iconSize: [size, size],
           iconAnchor: [size / 2, size / 2],
-          popupAnchor: [0, -Math.round(size * 0.55)]
+          popupAnchor: [28, -Math.round(size * 0.35)]
         });
         const marker = L.marker([record.lat, record.lon], {
           icon,
@@ -220,17 +270,74 @@ export function PriorityMap({
           maxWidth: 360,
           minWidth: 280,
           closeButton: true,
-          autoPan: false
+          autoPan: true,
+          autoClose: false,
+          closeOnClick: false,
+          closeOnEscapeKey: true,
+          offset: L.point(18, -14),
+          autoPanPadding: L.point(48, 72)
+        });
+
+        marker.on("popupopen", () => {
+          marker.getElement()?.classList.add("is-lifted");
+          bindPopupChrome({ marker, record });
+        });
+        marker.on("popupclose", () => {
+          marker.getElement()?.classList.remove("is-lifted");
+          if (stickyIdRef.current === record.id) {
+            stickyIdRef.current = null;
+            selectRef.current(null);
+          }
+          if (hoverIdRef.current === record.id) {
+            hoverIdRef.current = null;
+            hoverRef.current(null);
+          }
         });
         marker.on("mouseover", () => {
           marker.getElement()?.classList.add("is-lifted");
-          marker.openPopup();
-          hoverRef.current(record);
+          if (stickyIdRef.current || overPopupRef.current) {
+            return;
+          }
+          if (hoverIdRef.current && hoverIdRef.current !== record.id) {
+            return;
+          }
+          clearTimer(hoverCloseTimer);
+          clearTimer(hoverOpenTimer);
+          hoverOpenTimer.current = window.setTimeout(() => {
+            if (stickyIdRef.current || overPopupRef.current) {
+              return;
+            }
+            closeExclusive(record.id);
+            hoverIdRef.current = record.id;
+            marker.openPopup();
+            hoverRef.current(record);
+          }, HOVER_OPEN_MS);
         });
         marker.on("mouseout", () => {
-          marker.getElement()?.classList.remove("is-lifted");
+          if (stickyIdRef.current !== record.id && hoverIdRef.current !== record.id) {
+            marker.getElement()?.classList.remove("is-lifted");
+          }
+          clearTimer(hoverOpenTimer);
+          if (stickyIdRef.current) {
+            return;
+          }
+          clearTimer(hoverCloseTimer);
+          hoverCloseTimer.current = window.setTimeout(() => {
+            if (stickyIdRef.current || overPopupRef.current) {
+              return;
+            }
+            marker.closePopup();
+            hoverIdRef.current = null;
+            hoverRef.current(null);
+          }, HOVER_CLOSE_MS);
         });
-        marker.on("click", () => {
+        marker.on("click", (event: import("leaflet").LeafletMouseEvent) => {
+          L.DomEvent.stopPropagation(event);
+          clearTimer(hoverOpenTimer);
+          clearTimer(hoverCloseTimer);
+          stickyIdRef.current = record.id;
+          hoverIdRef.current = null;
+          closeExclusive(record.id);
           marker.openPopup();
           selectRef.current(record);
         });
@@ -239,7 +346,7 @@ export function PriorityMap({
       });
 
       if (records.length > 0) {
-        const bounds = L.latLngBounds(records.map((record) => [record.lat, record.lon] as [number, number]));
+        const bounds = L.latLngBounds(records.map((row) => [row.lat, row.lon] as [number, number]));
         if (bounds.isValid()) {
           map.fitBounds(bounds, { padding: [56, 56], maxZoom: 13 });
         }
@@ -254,11 +361,20 @@ export function PriorityMap({
   }, [records, scoreMin, scoreMax]);
 
   useEffect(() => {
-    const entry = activeId ? markersRef.current.get(activeId) : undefined;
+    stickyIdRef.current = pinnedId;
+    const entry = pinnedId ? markersRef.current.get(pinnedId) : undefined;
     if (entry && !entry.marker.isPopupOpen()) {
       entry.marker.openPopup();
     }
-  }, [activeId]);
+    if (!pinnedId) {
+      return;
+    }
+    markersRef.current.forEach((other) => {
+      if (other.record.id !== pinnedId && other.marker.isPopupOpen()) {
+        other.marker.closePopup();
+      }
+    });
+  }, [pinnedId]);
 
   return <div ref={containerRef} className="priority-map" role="presentation" />;
 }

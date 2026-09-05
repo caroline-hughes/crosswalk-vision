@@ -111,6 +111,22 @@ class SnapshotImageryContractTest(unittest.TestCase):
             self.assertIn("GIS-only", str(meta.get("imagery_upgrade_note") or ""))
             self.assertNotIn("2026 coming", str(meta.get("imagery_rule") or "").lower())
 
+    def test_plotted_image_files_exist_for_web(self) -> None:
+        root = Path(__file__).resolve().parents[3]
+        records = json.loads((root / "apps" / "web" / "public" / "data" / "crosswalks.json").read_text())
+        public = root / "apps" / "web" / "public"
+        missing: list[str] = []
+        for row in records:
+            for key in ("thumbnail_url", "image_url"):
+                url = str(row.get(key) or "")
+                if not url:
+                    missing.append(f"{row.get('id')}:{key}:empty")
+                    continue
+                path = public / url.lstrip("/")
+                if not path.is_file() or path.stat().st_size < 512:
+                    missing.append(url)
+        self.assertEqual(missing[:12], [], f"{len(missing)} plotted image paths missing or empty")
+
 
 if __name__ == "__main__":
     unittest.main()

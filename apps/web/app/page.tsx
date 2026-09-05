@@ -59,7 +59,7 @@ export default function HomePage() {
   return (
     <main className="app-shell">
       <header className="chrome">
-        <div className="chrome-top">
+        <div className="chrome-row">
           <div className="brand">
             <span className="mark" aria-hidden="true">
               <span className="mark-bars" />
@@ -69,6 +69,16 @@ export default function HomePage() {
               <h1>NYC Crosswalk Watch</h1>
             </div>
           </div>
+          <FilterDock
+            filters={filters}
+            onChange={(next) => {
+              setFilters(next);
+              setPinned(null);
+            }}
+            minScore={Math.max(0, minScore)}
+            maxScore={maxScore || 1}
+          />
+          <EvalStrip meta={meta} visible={filtered.length} nScored={records.length} />
           <div className="view-toggle" role="tablist" aria-label="Map or list">
             <button
               type="button"
@@ -90,16 +100,6 @@ export default function HomePage() {
             </button>
           </div>
         </div>
-        <FilterDock
-          filters={filters}
-          onChange={(next) => {
-            setFilters(next);
-            setPinned(null);
-          }}
-          minScore={Math.max(0, minScore)}
-          maxScore={maxScore || 1}
-        />
-        <EvalStrip meta={meta} visible={filtered.length} nScored={records.length} />
       </header>
 
       <div className="stage">
@@ -110,18 +110,14 @@ export default function HomePage() {
           <>
             <PriorityMap
               records={filtered}
-              activeId={active?.id ?? null}
+              pinnedId={pinned && filtered.some((record) => record.id === pinned.id) ? pinned.id : null}
               scoreMin={Math.max(0, minScore)}
               scoreMax={maxScore || 1}
-              onHover={(record) => {
-                if (record) {
-                  setHovered(record);
-                }
-              }}
-              onSelect={(record) => setPinned(record)}
+              onHover={setHovered}
+              onSelect={setPinned}
             />
             {active ? null : (
-              <p className="map-hint">Hover a crossing the ranker put in need.</p>
+              <p className="map-hint">Click a pin for streets, 311, and aerial imagery.</p>
             )}
           </>
         ) : null}
