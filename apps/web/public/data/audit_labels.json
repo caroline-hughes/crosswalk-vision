@@ -1,0 +1,1442 @@
+{
+  "nyc-22859": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.9899,
+    "intersection_label": "Center Boulevard & 49 Avenue",
+    "borough": "Queens",
+    "neighborhood_id": "QN0201"
+  },
+  "nyc-21970": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.9786,
+    "intersection_label": "Grand Street & River Street",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK0102"
+  },
+  "nyc-21349": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.9774,
+    "intersection_label": "8 Avenue & West 41 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0502"
+  },
+  "nyc-23418": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.9719,
+    "intersection_label": "Amsterdam Avenue & West 96 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0702"
+  },
+  "nyc-22814": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.9716,
+    "intersection_label": "2 Avenue & East 59 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0604"
+  },
+  "nyc-23722": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.9679,
+    "intersection_label": "3 Avenue & East 96 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0803"
+  },
+  "nyc-21337": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.9646,
+    "intersection_label": "7 Avenue & West 31 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0501"
+  },
+  "nyc-22608": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.943,
+    "intersection_label": "West 57 Street & 5 Avenue",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0502"
+  },
+  "nyc-22464": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.9234,
+    "intersection_label": "3 Avenue & East 32 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0603"
+  },
+  "nyc-18439": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.8519,
+    "intersection_label": "Church Avenue & Fairview Place",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1701"
+  },
+  "nyc-16214": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.8473,
+    "intersection_label": "Ocean Parkway & Brighton Beach Avenue",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1303"
+  },
+  "nyc-21467": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.8456,
+    "intersection_label": "7 Avenue & West 46 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0502"
+  },
+  "nyc-47273": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.8353,
+    "intersection_label": "Westchester Avenue & Prospect Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0202"
+  },
+  "nyc-4781": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.8265,
+    "intersection_label": "Arthur Kill Road & Clarke Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0302"
+  },
+  "nyc-9040978": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.8238,
+    "intersection_label": "Pitkin Avenue & East New York Avenue",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1602"
+  },
+  "nyc-52382": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.8135,
+    "intersection_label": "Westchester Avenue & St Lawrence Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0901"
+  },
+  "nyc-23376": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.8122,
+    "intersection_label": "West End Avenue & West 96 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0702"
+  },
+  "nyc-48633": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.8122,
+    "intersection_label": "Broadway & West 231 Street",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0802"
+  },
+  "nyc-22684": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.807,
+    "intersection_label": "East 54 Street & 3 Avenue",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0604"
+  },
+  "nyc-2099": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7997,
+    "intersection_label": "Hylan Boulevard & Kingdom Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0304"
+  },
+  "nyc-9090": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7651,
+    "intersection_label": "Forest Avenue & Ridgewood Place",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0104"
+  },
+  "nyc-8403": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7588,
+    "intersection_label": "Mason Avenue & Cromwell Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0201"
+  },
+  "nyc-539": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7525,
+    "intersection_label": "Page Avenue & Camden Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0305"
+  },
+  "nyc-48614": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7516,
+    "intersection_label": "Broadway & West 230 Street",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0802"
+  },
+  "nyc-104630": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7426,
+    "intersection_label": "Rikers Island Access Road & Rikers Island Connector Road",
+    "borough": "Bronx",
+    "neighborhood_id": "QN0151"
+  },
+  "nyc-9152": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7418,
+    "intersection_label": "Haven Esplanade & Silver Lake Road",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0104"
+  },
+  "nyc-2771": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7402,
+    "intersection_label": "Arthur Kill Road & Muldoon Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0303"
+  },
+  "nyc-15680": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7325,
+    "intersection_label": "Old Fulton Street & Furman Street",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK0201"
+  },
+  "nyc-48771": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7289,
+    "intersection_label": "Reservoir Avenue & University Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0801"
+  },
+  "nyc-9004785": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7238,
+    "intersection_label": "Sutter Avenue & Driveway",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1602"
+  },
+  "nyc-406": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7108,
+    "intersection_label": "Page Avenue & Estelle Place",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0305"
+  },
+  "nyc-78819": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.7034,
+    "intersection_label": "West Street & Chambers Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0101"
+  },
+  "nyc-33601": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6905,
+    "intersection_label": "104 Street & 165 Avenue",
+    "borough": "Queens",
+    "neighborhood_id": "QN1003"
+  },
+  "nyc-41692": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6757,
+    "intersection_label": "43 Street & Queens Boulevard",
+    "borough": "Queens",
+    "neighborhood_id": "QN0202"
+  },
+  "nyc-25714": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6741,
+    "intersection_label": "Flatbush Avenue & Avenue U",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1802"
+  },
+  "nyc-52672": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6713,
+    "intersection_label": "Westchester Avenue & Pugsley Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0903"
+  },
+  "nyc-26801": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.666,
+    "intersection_label": "Eastern Parkway & Schenectady Avenue",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK0901"
+  },
+  "nyc-22465": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6484,
+    "intersection_label": "3 Avenue & East 33 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0603"
+  },
+  "nyc-37048": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6466,
+    "intersection_label": "Hillside Avenue & 165 Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN1201"
+  },
+  "nyc-4656": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6459,
+    "intersection_label": "Sampson Avenue & Katan Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0302"
+  },
+  "nyc-52471": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6431,
+    "intersection_label": "Westchester Avenue & Taylor Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0901"
+  },
+  "nyc-37435": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6413,
+    "intersection_label": "Hillside Avenue & 179 Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN1201"
+  },
+  "nyc-8402": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6413,
+    "intersection_label": "Mason Avenue & Garretson Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0201"
+  },
+  "nyc-22862": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6407,
+    "intersection_label": "Center Boulevard & 48 Avenue",
+    "borough": "Queens",
+    "neighborhood_id": "QN0201"
+  },
+  "nyc-537": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6325,
+    "intersection_label": "Page Avenue & Bartow Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0305"
+  },
+  "nyc-43271": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6164,
+    "intersection_label": "Westchester Avenue & Trinity Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0102"
+  },
+  "nyc-18995": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.6147,
+    "intersection_label": "Empire Boulevard & Clove Road",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK0902"
+  },
+  "nyc-36165": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.601,
+    "intersection_label": "Rockaway Boulevard & 142 Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN1203"
+  },
+  "nyc-39958": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5978,
+    "intersection_label": "120 Avenue & 203 Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN1205"
+  },
+  "nyc-52879": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.597,
+    "intersection_label": "East Tremont Avenue & Lurting Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX1001"
+  },
+  "nyc-22746": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5873,
+    "intersection_label": "2 Avenue & East 54 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0604"
+  },
+  "nyc-50032": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5759,
+    "intersection_label": "62 Drive & 98 Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN0601"
+  },
+  "nyc-87774": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5759,
+    "intersection_label": "Ocean Parkway & Avenue F",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1203"
+  },
+  "nyc-3524": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5666,
+    "intersection_label": "Richmond Avenue & Signs Road",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0204"
+  },
+  "nyc-2089": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5638,
+    "intersection_label": "Woodrow Road & Ruxton Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0304"
+  },
+  "nyc-35956": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.557,
+    "intersection_label": "150 Street & South Cargo Road",
+    "borough": "Queens",
+    "neighborhood_id": "QN8381"
+  },
+  "nyc-86421": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5506,
+    "intersection_label": "Hillside Avenue & Range Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN1302"
+  },
+  "nyc-56826": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5498,
+    "intersection_label": "Randall Avenue & Balcom Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX1002"
+  },
+  "nyc-9698": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5467,
+    "intersection_label": "Mason Avenue & Alter Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0201"
+  },
+  "nyc-49715": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5432,
+    "intersection_label": "West 263 Street & Tyndall Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0803"
+  },
+  "nyc-12987": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5428,
+    "intersection_label": "86 Street & 25 Avenue",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1103"
+  },
+  "nyc-43268": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5419,
+    "intersection_label": "Westchester Avenue & Cauldwell Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0102"
+  },
+  "nyc-61666": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5357,
+    "intersection_label": "Northern Boulevard & 220 Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN1102"
+  },
+  "nyc-45004": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5352,
+    "intersection_label": "West 236 Street & Riverdale Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0803"
+  },
+  "nyc-37228": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5277,
+    "intersection_label": "Jamaica Avenue & 172 Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN1201"
+  },
+  "nyc-95365": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5179,
+    "intersection_label": "West Street & North Moore Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0102"
+  },
+  "nyc-17025": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5166,
+    "intersection_label": "Emmons Avenue & East 19 Street",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1503"
+  },
+  "nyc-14407": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5162,
+    "intersection_label": "Columbia Street & Bush Street",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK0601"
+  },
+  "nyc-80302": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5156,
+    "intersection_label": "Flatbush Avenue & Aviation Road",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK5691"
+  },
+  "nyc-22737": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.508,
+    "intersection_label": "1 Avenue & East 50 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0604"
+  },
+  "nyc-53421": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5064,
+    "intersection_label": "East Gun Hill Road & White Plains Road",
+    "borough": "Bronx",
+    "neighborhood_id": "BX1201"
+  },
+  "nyc-3535": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5033,
+    "intersection_label": "Elmwood Park Drive & Donna Court",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0204"
+  },
+  "nyc-48414": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.5013,
+    "intersection_label": "Westchester Avenue & Manor Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0901"
+  },
+  "nyc-41132": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.4968,
+    "intersection_label": "Queens Boulevard & 48 Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN0202"
+  },
+  "nyc-92023": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.4961,
+    "intersection_label": "Hillside Avenue & Little Neck Parkway",
+    "borough": "Queens",
+    "neighborhood_id": "QN1301"
+  },
+  "nyc-16855": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.4924,
+    "intersection_label": "Neptune Avenue & Cass Place",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1303"
+  },
+  "nyc-21624": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.4914,
+    "intersection_label": "Amsterdam Avenue & West 61 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0701"
+  },
+  "nyc-37046": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.4855,
+    "intersection_label": "Hillside Avenue & 165 Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN1201"
+  },
+  "nyc-7441": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.4823,
+    "intersection_label": "Clawson Street & Bache Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0202"
+  },
+  "nyc-29345": {
+    "looks_faded": true,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.4805,
+    "intersection_label": "Pennsylvania Avenue & Livonia Avenue",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK0503"
+  },
+  "nyc-9007068": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.4431,
+    "intersection_label": "Bellamy Loop & Co-op City Sect 4 Ped Path",
+    "borough": "Bronx",
+    "neighborhood_id": "BX1004"
+  },
+  "nyc-21227": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.4153,
+    "intersection_label": "West 44 Street & 11 Avenue",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0402"
+  },
+  "nyc-50909": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.4041,
+    "intersection_label": "Northern Boulevard & 109 Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN0303"
+  },
+  "nyc-78959": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.4012,
+    "intersection_label": "East 149 Street & Grand Concourse",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0101"
+  },
+  "nyc-44187": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.3963,
+    "intersection_label": "Walton Avenue & East Mount Eden Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0403"
+  },
+  "nyc-9034459": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.3918,
+    "intersection_label": "Jackson Avenue & 43 Avenue",
+    "borough": "Queens",
+    "neighborhood_id": "QN0201"
+  },
+  "nyc-10466": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.3191,
+    "intersection_label": "Weser Avenue & Pierce Street",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0103"
+  },
+  "nyc-47489": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.3058,
+    "intersection_label": "Spofford Avenue & Bryant Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0201"
+  },
+  "nyc-39507": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.3028,
+    "intersection_label": "Hook Creek Boulevard & North Conduit Avenue",
+    "borough": "Queens",
+    "neighborhood_id": "QN1307"
+  },
+  "nyc-37720": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.3026,
+    "intersection_label": "Liberty Avenue & Brinkerhoff Avenue",
+    "borough": "Queens",
+    "neighborhood_id": "QN1205"
+  },
+  "nyc-55415": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.2913,
+    "intersection_label": "College Point Boulevard & Fowler Avenue",
+    "borough": "Queens",
+    "neighborhood_id": "QN8191"
+  },
+  "nyc-49361": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.2591,
+    "intersection_label": "Netherland Avenue & West 256 Street",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0803"
+  },
+  "nyc-20144": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.2562,
+    "intersection_label": "Christopher Street & Washington Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0203"
+  },
+  "nyc-10656": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.2509,
+    "intersection_label": "Park Hill Court & Fairway Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0102"
+  },
+  "nyc-32412": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.226,
+    "intersection_label": "Jamaica Avenue & 91 Street",
+    "borough": "Queens",
+    "neighborhood_id": "QN0905"
+  },
+  "nyc-41460": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.22,
+    "intersection_label": "Northern Boulevard & 40 Road",
+    "borough": "Queens",
+    "neighborhood_id": "QN0161"
+  },
+  "nyc-44256": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.2148,
+    "intersection_label": "Webster Avenue & East 169 Street",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0302"
+  },
+  "nyc-42828": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.2064,
+    "intersection_label": "Bruckner Boulevard & Alexander Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0101"
+  },
+  "nyc-52942": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.1978,
+    "intersection_label": "Westchester Avenue & Doris Street",
+    "borough": "Bronx",
+    "neighborhood_id": "BX1001"
+  },
+  "nyc-29112": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.1762,
+    "intersection_label": "Mother Gaston Boulevard & Sutter Avenue",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1602"
+  },
+  "nyc-13337": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.1527,
+    "intersection_label": "New Utrecht Avenue & 18 Avenue",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1101"
+  },
+  "nyc-19740": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.1321,
+    "intersection_label": "Sandford Street & Willoughby Avenue",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK0301"
+  },
+  "nyc-1253": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.115,
+    "intersection_label": "Maguire Avenue & Anthony Street",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0304"
+  },
+  "nyc-20893": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.1118,
+    "intersection_label": "1 Avenue & East 6 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0303"
+  },
+  "nyc-22744": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.11,
+    "intersection_label": "1 Avenue & East 51 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0604"
+  },
+  "nyc-60389": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.1011,
+    "intersection_label": "Bell Boulevard & 18 Avenue",
+    "borough": "Queens",
+    "neighborhood_id": "QN0703"
+  },
+  "nyc-52159": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0992,
+    "intersection_label": "Randall Avenue & Stickball Boulevard",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0902"
+  },
+  "nyc-5196": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.097,
+    "intersection_label": "Amboy Road & Guyon Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0301"
+  },
+  "nyc-46931": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0933,
+    "intersection_label": "Northern Boulevard & Junction Boulevard",
+    "borough": "Queens",
+    "neighborhood_id": "QN0301"
+  },
+  "nyc-2933": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0911,
+    "intersection_label": "Woodrow Road & Gary Street",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0303"
+  },
+  "nyc-58026": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0872,
+    "intersection_label": "Einstein Loop East & Einstein Loop North",
+    "borough": "Bronx",
+    "neighborhood_id": "BX1004"
+  },
+  "nyc-21829": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.085,
+    "intersection_label": "2 Avenue & East 30 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0603"
+  },
+  "nyc-17481": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0842,
+    "intersection_label": "Avenue M & East 12 Street",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1403"
+  },
+  "nyc-3094": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0783,
+    "intersection_label": "Arthur Kill Road & Getz Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0302"
+  },
+  "nyc-9030564": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0744,
+    "intersection_label": "Willow Court & Gateway Boulevard",
+    "borough": "Queens",
+    "neighborhood_id": "QN1401"
+  },
+  "nyc-26008": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0717,
+    "intersection_label": "Avenue K & East 82 Street",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1803"
+  },
+  "nyc-48306": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0711,
+    "intersection_label": "Southern Boulevard & East 179 Street",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0601"
+  },
+  "nyc-11872": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0706,
+    "intersection_label": "Poly Place & Cropsey Avenue",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1091"
+  },
+  "nyc-42987": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0706,
+    "intersection_label": "Willis Avenue & East 143 Street",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0101"
+  },
+  "nyc-465": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0661,
+    "intersection_label": "Veterans Road West & West Shore Parkway",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0305"
+  },
+  "nyc-28739": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0656,
+    "intersection_label": "Remsen Avenue & Avenue M",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1803"
+  },
+  "nyc-21831": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0644,
+    "intersection_label": "2 Avenue & East 31 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0603"
+  },
+  "nyc-1094": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0639,
+    "intersection_label": "Bloomingdale Road & Woodrow Road",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0304"
+  },
+  "nyc-1719": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0639,
+    "intersection_label": "Daffodil Court & Dogwood Drive",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0303"
+  },
+  "nyc-26950": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0639,
+    "intersection_label": "Patchen Avenue & Chauncey Street",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK0302"
+  },
+  "nyc-52161": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0633,
+    "intersection_label": "Randall Avenue & Pugsley Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0902"
+  },
+  "nyc-49876": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0629,
+    "intersection_label": "Junction Boulevard & Horace Harding Expressway",
+    "borough": "Queens",
+    "neighborhood_id": "QN0601"
+  },
+  "nyc-25696": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0622,
+    "intersection_label": "Utica Avenue & Avenue I",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1801"
+  },
+  "nyc-49935": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0622,
+    "intersection_label": "62 Drive & Junction Boulevard",
+    "borough": "Queens",
+    "neighborhood_id": "QN0601"
+  },
+  "nyc-28693": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0606,
+    "intersection_label": "Flatlands Avenue & East 96 Street",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1803"
+  },
+  "nyc-449": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.06,
+    "intersection_label": "Veterans Road West & Arthur Kill Road",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0305"
+  },
+  "nyc-44404": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0585,
+    "intersection_label": "Riverside Drive & Payson Avenue",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN1202"
+  },
+  "nyc-13003": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0583,
+    "intersection_label": "Neptune Avenue & West 16 Street",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1302"
+  },
+  "nyc-49183": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0583,
+    "intersection_label": "Webster Avenue & East 204 Street",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0703"
+  },
+  "nyc-55889": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0578,
+    "intersection_label": "154 Street & 35 Avenue",
+    "borough": "Queens",
+    "neighborhood_id": "QN0704"
+  },
+  "nyc-17249": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0567,
+    "intersection_label": "Mcdonald Avenue & Lawrence Avenue",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1202"
+  },
+  "nyc-52565": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0561,
+    "intersection_label": "White Plains Road & Watson Avenue",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0901"
+  },
+  "nyc-18027": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0556,
+    "intersection_label": "Coney Island Avenue & Hinckley Place",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1203"
+  },
+  "nyc-55414": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0556,
+    "intersection_label": "College Point Boulevard & Blossom Avenue",
+    "borough": "Queens",
+    "neighborhood_id": "QN8191"
+  },
+  "nyc-4654": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0539,
+    "intersection_label": "Giffords Lane & Brower Court",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0302"
+  },
+  "nyc-12844": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0528,
+    "intersection_label": "86 Street & Bay 26 Street",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1101"
+  },
+  "nyc-82949": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0522,
+    "intersection_label": "Beach 32 Street & Seagirt Boulevard",
+    "borough": "Queens",
+    "neighborhood_id": "QN1401"
+  },
+  "nyc-17059": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.05,
+    "intersection_label": "Ocean Avenue & Avenue Y",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1503"
+  },
+  "nyc-1551": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0494,
+    "intersection_label": "Woodrow Road & Huguenot Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0304"
+  },
+  "nyc-4552": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0489,
+    "intersection_label": "Elverton Avenue & Barlow Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0302"
+  },
+  "nyc-2040": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0483,
+    "intersection_label": "Huguenot Avenue & Deisius Street",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0304"
+  },
+  "nyc-42988": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0483,
+    "intersection_label": "Willis Avenue & East 144 Street",
+    "borough": "Bronx",
+    "neighborhood_id": "BX0101"
+  },
+  "nyc-17062": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0478,
+    "intersection_label": "Ocean Avenue & Avenue X",
+    "borough": "Brooklyn",
+    "neighborhood_id": "BK1503"
+  },
+  "nyc-5250": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0472,
+    "intersection_label": "Richmond Road & Rockland Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0301"
+  },
+  "nyc-21796": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0461,
+    "intersection_label": "East 13 Street & Avenue B",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0303"
+  },
+  "nyc-181": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.045,
+    "intersection_label": "Brighton Street & Pittsville Avenue",
+    "borough": "Staten Island",
+    "neighborhood_id": "SI0305"
+  },
+  "nyc-21306": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0389,
+    "intersection_label": "10 Avenue & West 45 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0402"
+  },
+  "nyc-23819": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0388,
+    "intersection_label": "1 Avenue & East 99 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN1101"
+  },
+  "nyc-23407": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0356,
+    "intersection_label": "Columbus Avenue & West 88 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0702"
+  },
+  "nyc-42478": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0328,
+    "intersection_label": "3 Avenue & East 120 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN1102"
+  },
+  "nyc-23820": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0211,
+    "intersection_label": "East 102 Street & 3 Avenue",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN1101"
+  },
+  "nyc-23723": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.019,
+    "intersection_label": "3 Avenue & East 97 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN1101"
+  },
+  "nyc-21832": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0,
+    "intersection_label": "1 Avenue & East 29 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0603"
+  },
+  "nyc-23708": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0,
+    "intersection_label": "1 Avenue & East 87 Street",
+    "borough": "Manhattan",
+    "neighborhood_id": "MN0803"
+  },
+  "nyc-41674": {
+    "looks_faded": false,
+    "provisional": true,
+    "seed": "image_heuristic",
+    "image_paint_score": 0.0,
+    "intersection_label": "29 Street & 30 Road",
+    "borough": "Queens",
+    "neighborhood_id": "QN0103"
+  }
+}

@@ -70,6 +70,13 @@
       "priority_reason": { "type": "string" },
       "pedestrian_crash_count": { "type": "number" },
       "borough": { "type": "string" },
+      "paint_missing_ratio": { "type": ["number", "null"] },
+      "stripe_break_ratio": { "type": ["number", "null"] },
+      "contrast_score": { "type": ["number", "null"] },
+      "occlusion_penalty": { "type": ["number", "null"] },
+      "image_paint_score": { "type": ["number", "null"] },
+      "urgency_score": { "type": "number" },
+      "passed_visual_gate": { "type": "boolean" },
       "top_features": {
         "type": "array",
         "items": {

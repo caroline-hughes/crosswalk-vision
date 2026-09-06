@@ -12,6 +12,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 from .features import FEATURE_LABELS, feature_names, rows_to_matrix
+from .paint import LABEL_FADED_MARKING
 
 DEFAULT_MODEL_PATH = Path(__file__).resolve().parents[2] / "artifacts" / "priority_ranker.joblib"
 
@@ -28,25 +29,31 @@ def _build_pipeline() -> Pipeline:
 
 @dataclass
 class LearnedPriorityScorer:
-    include_311: bool = True
+    include_311: bool = False
     include_image: bool = True
+    include_gis: bool = False
     pipeline: Pipeline | None = None
     feature_names_: list[str] | None = None
-    label_definition: str = "pedestrian_crash_nearby"
+    label_definition: str = LABEL_FADED_MARKING
 
     def __post_init__(self) -> None:
         if self.pipeline is None:
             self.pipeline = _build_pipeline()
         if self.feature_names_ is None:
             self.feature_names_ = feature_names(
-                include_311=self.include_311, include_image=self.include_image
+                include_311=self.include_311,
+                include_image=self.include_image,
+                include_gis=self.include_gis,
             )
 
     def fit(self, rows: Sequence[Mapping[str, object]]) -> "LearnedPriorityScorer":
         if not rows:
             raise ValueError("cannot train a ranker on zero rows")
         X = rows_to_matrix(
-            rows, include_311=self.include_311, include_image=self.include_image
+            rows,
+            include_311=self.include_311,
+            include_image=self.include_image,
+            include_gis=self.include_gis,
         )
         y = np.array([int(row.get("label") or 0) for row in rows], dtype=int)
         if np.unique(y).size < 2:
@@ -56,7 +63,9 @@ class LearnedPriorityScorer:
             self.pipeline = _build_pipeline()
             self.pipeline.fit(X, y)
         self.feature_names_ = feature_names(
-            include_311=self.include_311, include_image=self.include_image
+            include_311=self.include_311,
+            include_image=self.include_image,
+            include_gis=self.include_gis,
         )
         return self
 
@@ -66,14 +75,17 @@ class LearnedPriorityScorer:
         if self.pipeline is None:
             raise ValueError("scorer has no fitted pipeline")
         X = rows_to_matrix(
-            rows, include_311=self.include_311, include_image=self.include_image
+            rows,
+            include_311=self.include_311,
+            include_image=self.include_image,
+            include_gis=self.include_gis,
         )
         return _positive_class_scores(self.pipeline, X)
 
     def explain_rows(
         self, rows: Sequence[Mapping[str, object]], *, top_k: int = 3
     ) -> list[list[dict]]:
-        """Top logistic contributions after scaling (signed: + raises P(crash nearby))."""
+        """Top logistic contributions after scaling (signed: + raises remaking priority)."""
         empty: list[list[dict]] = [[] for _ in rows]
         if not rows or self.pipeline is None or not self.feature_names_:
             return empty
@@ -82,7 +94,10 @@ class LearnedPriorityScorer:
         if clf is None or not hasattr(clf, "coef_"):
             return empty
         X = rows_to_matrix(
-            rows, include_311=self.include_311, include_image=self.include_image
+            rows,
+            include_311=self.include_311,
+            include_image=self.include_image,
+            include_gis=self.include_gis,
         )
         transformed = self.pipeline[:-1].transform(X)
         coef = np.asarray(clf.coef_[0], dtype=float)
@@ -114,6 +129,7 @@ class LearnedPriorityScorer:
             {
                 "include_311": self.include_311,
                 "include_image": self.include_image,
+                "include_gis": self.include_gis,
                 "label_definition": self.label_definition,
                 "feature_names": self.feature_names_,
                 "pipeline": self.pipeline,
@@ -127,11 +143,12 @@ class LearnedPriorityScorer:
         source = Path(path) if path is not None else DEFAULT_MODEL_PATH
         payload = joblib.load(source)
         return cls(
-            include_311=bool(payload.get("include_311", True)),
+            include_311=bool(payload.get("include_311", False)),
             include_image=bool(payload.get("include_image", True)),
+            include_gis=bool(payload.get("include_gis", False)),
             pipeline=payload["pipeline"],
             feature_names_=list(payload.get("feature_names") or []),
-            label_definition=str(payload.get("label_definition") or "pedestrian_crash_nearby"),
+            label_definition=str(payload.get("label_definition") or LABEL_FADED_MARKING),
         )
 
 

@@ -44,6 +44,6 @@ ORTHO_UPGRADE_NOTE = (
     f"Newest published NYC borough coverage is {ORTHO_SEASON} {ORTHO_YEAR}. "
     f"NYS has {ORTHO_PREFERRED_NEXT_YEAR} on the five-borough flight schedule; "
     f"when wms/{ORTHO_PREFERRED_NEXT_YEAR} (or equivalent NYC coverage) is live "
-    f"on orthos.its.ny.gov, refresh plotted-set crops and note any retrain. "
-    "Citywide model score is GIS-only and is not computed from these crops."
+    f"on orthos.its.ny.gov, refresh crops, recompute paint metrics, and note any retrain. "
+    "Remaking priority is computed from these crops (paint metrics + 311), not from street width."
 )

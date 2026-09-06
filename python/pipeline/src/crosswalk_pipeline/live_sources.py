@@ -76,9 +76,9 @@ NYC_LABEL = "New York City (five boroughs)"
 LOWER_MANHATTAN_LABEL = NYC_LABEL  # kept for import compatibility with older CLI
 SCHOOL_PROXIMITY_FT = 800.0
 SCHOOL_LOCATION_CATEGORIES = {"Elementary", "K-8", "Early Childhood"}
-PLOT_PERCENTILE = 95.0
+PLOT_PERCENTILE = 80.0
 PLOT_MAX = 2000
-PLOT_BOROUGH_FLOOR = 40
+PLOT_BOROUGH_FLOOR = 20
 RECENT_311_CAP = 3
 LION_STREET_FEATURE_TYPES = {"0", "A", "W"}
 
@@ -385,35 +385,47 @@ def annotate_neighborhoods(candidates: List[CandidateRecord]) -> Dict[str, Dict[
 
 
 def select_plottable(scored_records: List[dict]) -> List[dict]:
-    """Cap the map to a readable 'in need' set: top percentile, plus a per-borough floor."""
+    """Plot only crossings that pass the hard image-paint visual gate.
+
+    Borough floors may add more gated rows, never a good-looking crop.
+    """
+    from crosswalk_scoring import image_paint_score, passes_visual_gate, visual_gate_threshold
+
     if not scored_records:
         return []
-    scores = sorted((float(row.get("model_score") or 0.0) for row in scored_records), reverse=True)
-    percentile_index = min(len(scores) - 1, max(0, int(math.floor(len(scores) * (1.0 - PLOT_PERCENTILE / 100.0)))))
-    threshold = scores[percentile_index]
+    named = [
+        row
+        for row in scored_records
+        if "unnamed" not in str(row.get("intersection_label") or "").lower()
+    ]
+    image_scores = []
+    for row in named:
+        score = row.get("image_paint_score")
+        if score is None:
+            computed = image_paint_score(row)
+            score = None if computed != computed else computed
+        if score is not None:
+            image_scores.append(float(score))
+    threshold = visual_gate_threshold(image_scores)
+    gated = []
+    for row in named:
+        item = dict(row)
+        item["visual_gate_threshold"] = threshold
+        if passes_visual_gate(item, threshold=threshold):
+            item["passed_visual_gate"] = True
+            gated.append(item)
+
     ranked = sorted(
-        scored_records,
+        gated,
         key=lambda row: (
-            float(row.get("model_score") or 0.0),
-            int(row.get("pedestrian_crash_count") or 0),
-            float(row.get("heuristic_score") or 0.0),
+            float(row.get("rank_score") or row.get("model_score") or 0.0),
+            float(row.get("image_paint_score") or 0.0),
+            int(row.get("pavement_marking_311_count_since_2020") or 0),
         ),
         reverse=True,
     )
-    ranked = [
-        row
-        for row in ranked
-        if "unnamed" not in str(row.get("intersection_label") or "").lower()
-    ]
-    selected: List[dict] = []
-    selected_ids: set[str] = set()
-    for row in ranked:
-        if float(row.get("model_score") or 0.0) < threshold:
-            break
-        selected.append(row)
-        selected_ids.add(str(row["id"]))
-        if len(selected) >= PLOT_MAX:
-            break
+    selected = ranked[:PLOT_MAX]
+    selected_ids = {str(row["id"]) for row in selected}
 
     by_borough: Dict[str, List[dict]] = defaultdict(list)
     for row in ranked:
@@ -428,13 +440,13 @@ def select_plottable(scored_records: List[dict]) -> List[dict]:
             selected.append(row)
             selected_ids.add(str(row["id"]))
             have += 1
-            if have >= PLOT_BOROUGH_FLOOR:
+            if have >= PLOT_BOROUGH_FLOOR or len(selected) >= PLOT_MAX:
                 break
 
     selected.sort(
         key=lambda row: (
-            float(row.get("model_score") or 0.0),
-            int(row.get("pedestrian_crash_count") or 0),
+            float(row.get("rank_score") or row.get("model_score") or 0.0),
+            float(row.get("image_paint_score") or 0.0),
         ),
         reverse=True,
     )

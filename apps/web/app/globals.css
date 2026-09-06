@@ -613,6 +613,22 @@ button, input, select {
   line-height: 1.4;
 }
 
+.crash-badge {
+  margin: 0 0 8px;
+  padding: 4px 7px;
+  width: fit-content;
+  border: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.list-crash {
+  margin: 0 16px 4px;
+}
+
 .hover-stats {
   display: grid;
   gap: 6px;

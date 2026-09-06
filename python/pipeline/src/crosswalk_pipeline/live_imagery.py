@@ -151,32 +151,71 @@ def select_imagery_targets(
     return selected + sampled
 
 
+def _metrics_from_image(image: Image.Image, candidate: CandidateRecord, full_path: Path, thumb_path: Path) -> ImageMetrics:
+    scored = _score_intersection_orientations(image, candidate)
+    return ImageMetrics(
+        paint_missing_ratio=scored["paint_missing_ratio"],
+        stripe_break_ratio=scored["stripe_break_ratio"],
+        contrast_score=scored["contrast_score"],
+        occlusion_penalty=scored["occlusion_penalty"],
+        image_path=str(full_path),
+        thumbnail_path=str(thumb_path),
+    )
+
+
+def resolve_crop_path(candidate_id: str) -> Path | None:
+    """Find a committed or processed crop for this node."""
+    names = (f"{candidate_id}.jpg", f"{candidate_id}.png")
+    folders = (PATHS.web_images_dir, PATHS.processed_images_dir, PATHS.export_dir / "images")
+    for folder in folders:
+        for name in names:
+            path = folder / name
+            if path.exists():
+                return path
+    return None
+
+
+def analyze_existing_crop(candidate: CandidateRecord) -> ImageMetrics | None:
+    crop = resolve_crop_path(candidate.id)
+    if crop is None:
+        return None
+    image = Image.open(crop).convert("RGB")
+    thumb = plot_image_paths(candidate.id)[1]
+    if not thumb.exists():
+        web_thumb = PATHS.web_images_dir / f"{candidate.id}-thumb.jpg"
+        thumb = web_thumb if web_thumb.exists() else crop
+    return _metrics_from_image(image, candidate, crop, thumb)
+
+
+def analyze_existing_crops(rows: Sequence[Mapping[str, object]]) -> Dict[str, ImageMetrics]:
+    """Compute live_imagery metrics from crops already on disk. No network."""
+    results: Dict[str, ImageMetrics] = {}
+    for row in rows:
+        candidate = candidate_from_dict(dict(row))
+        metrics = analyze_existing_crop(candidate)
+        if metrics is not None:
+            results[candidate.id] = metrics
+    return results
+
+
 def fetch_plottable_crop(candidate: CandidateRecord, *, force: bool = False) -> ImageMetrics:
-    """Fetch a 2024 NYS ortho crop for one plotted node. Cached JPEGs are reused."""
+    """Fetch a 2024 NYS ortho crop for one plotted node. Cached JPEGs are reused and scored."""
     PATHS.processed_images_dir.mkdir(parents=True, exist_ok=True)
     full_path, thumb_path = plot_image_paths(candidate.id)
     if not force and full_path.exists() and thumb_path.exists():
-        return ImageMetrics(
-            paint_missing_ratio=0.0,
-            stripe_break_ratio=0.0,
-            contrast_score=0.0,
-            occlusion_penalty=0.0,
-            image_path=str(full_path),
-            thumbnail_path=str(thumb_path),
-        )
+        image = Image.open(full_path).convert("RGB")
+        return _metrics_from_image(image, candidate, full_path, thumb_path)
+    cached = resolve_crop_path(candidate.id)
+    if not force and cached is not None:
+        image = Image.open(cached).convert("RGB")
+        thumb = thumb_path if thumb_path.exists() else cached
+        return _metrics_from_image(image, candidate, cached, thumb)
 
     image = _fetch_crop(candidate, size=PLOT_IMAGE_SIZE)
     _write_jpeg(image, full_path, quality=78)
     thumb = image.resize(PLOT_THUMB_SIZE, Image.Resampling.LANCZOS)
     _write_jpeg(thumb, thumb_path, quality=72)
-    return ImageMetrics(
-        paint_missing_ratio=0.0,
-        stripe_break_ratio=0.0,
-        contrast_score=0.0,
-        occlusion_penalty=0.0,
-        image_path=str(full_path),
-        thumbnail_path=str(thumb_path),
-    )
+    return _metrics_from_image(image, candidate, full_path, thumb_path)
 
 
 def fetch_plottable_imagery(
@@ -217,7 +256,21 @@ def _write_jpeg(image: Image.Image, path: Path, *, quality: int) -> None:
     image.convert("RGB").save(path, format="JPEG", quality=quality, optimize=True)
 
 
+def analyze_image_file(path: Path, candidate: CandidateRecord | None = None) -> Dict[str, float]:
+    """Score an existing ortho crop. Used for the paint ranker and the visual gate."""
+    image = Image.open(path).convert("RGB")
+    if candidate is None:
+        return _compute_metrics(image)
+    return _score_intersection_orientations(image, candidate)
+
+
 def _compute_metrics(image: Image.Image) -> Dict[str, float]:
+    """Absolute-brightness paint metrics so fresh white bars beat faded gray asphalt.
+
+    Relative-only quantiles treat the brightest 10% as paint even when nothing is
+    actually white. Absolute floors keep Victory-style intact bars from looking
+    as faded as worn gray crossings.
+    """
     image_array = np.asarray(image).astype(np.float32)
     height, width, _ = image_array.shape
     y0, y1 = int(height * 0.28), int(height * 0.72)
@@ -234,12 +287,18 @@ def _compute_metrics(image: Image.Image) -> Dict[str, float]:
     if valid_brightness.size == 0:
         valid_brightness = brightness.reshape(-1)
 
-    bright_threshold = float(np.quantile(valid_brightness, 0.9))
-    paint_mask = (brightness >= bright_threshold) & (channel_spread <= 44.0) & usable_mask
+    # Crisp thermoplastic is near-white. Relative highlight alone is not enough.
+    abs_paint = (brightness >= 168.0) & (channel_spread <= 38.0) & usable_mask
+    rel_cut = max(148.0, float(np.quantile(valid_brightness, 0.90)))
+    rel_paint = (brightness >= rel_cut) & (channel_spread <= 40.0) & (brightness >= 150.0) & usable_mask
+    paint_mask = abs_paint | rel_paint
 
-    coverage = float(paint_mask.mean())
-    ideal_coverage = 0.14
-    paint_missing_ratio = _clamp((ideal_coverage - coverage) / ideal_coverage if coverage < ideal_coverage else 0.0)
+    crisp_coverage = float(abs_paint.mean())
+    mid_coverage = float(paint_mask.mean())
+    ideal_coverage = 0.12
+    paint_missing_ratio = _clamp((ideal_coverage - crisp_coverage) / ideal_coverage)
+    if mid_coverage < 0.045:
+        paint_missing_ratio = max(paint_missing_ratio, 0.62)
 
     column_strength = paint_mask.mean(axis=0)
     if column_strength.size:
@@ -249,7 +308,11 @@ def _compute_metrics(image: Image.Image) -> Dict[str, float]:
         stripe_peak_strength = 0.0
     stripe_break_ratio = _clamp(1.0 - stripe_peak_strength / 0.34)
 
-    contrast_raw = (float(np.quantile(valid_brightness, 0.95)) - float(np.quantile(valid_brightness, 0.35))) / 110.0
+    p95 = float(np.quantile(valid_brightness, 0.95))
+    p30 = float(np.quantile(valid_brightness, 0.30))
+    contrast_raw = (p95 - p30) / 120.0
+    if p95 < 160.0:
+        contrast_raw *= 0.55
     contrast_score = _clamp(contrast_raw)
 
     occlusion_penalty = _clamp(float(shadow_mask.mean()) / 0.5)

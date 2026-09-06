@@ -49,7 +49,7 @@ export function FilterDock({
       </button>
 
       <label className="filter-field filter-slider">
-        <span>Min P(crash) {filters.minModelScore.toFixed(2)}</span>
+        <span>Min paint score {filters.minModelScore.toFixed(2)}</span>
         <input
           type="range"
           min={minScore}

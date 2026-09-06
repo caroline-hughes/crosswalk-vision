@@ -8,6 +8,9 @@ from typing import List
 
 from crosswalk_scoring import (
     DEFAULT_MODEL_PATH,
+    IMAGE_GATE_FLOOR,
+    IMAGE_GATE_QUANTILE,
+    LABEL_FADED_MARKING,
     HeuristicCrosswalkScorer,
     LearnedPriorityScorer,
     ScoringInput,
@@ -16,12 +19,18 @@ from crosswalk_scoring import (
     build_model_reason,
     evaluate_spatial_cv,
     fit_production_scorer,
+    image_paint_score,
+    remaking_priority,
+    seed_audit_rows,
+    urgency_boost,
+    visual_gate_threshold,
+    write_audit_exports,
 )
 
 from .artifact_store import LocalArtifactStore
 from .config import ORTHO_LABEL, ORTHO_PREFERRED_NEXT_YEAR, ORTHO_UPGRADE_NOTE, ORTHO_YEAR, PATHS
 from .io_utils import read_json, write_json
-from .live_imagery import fetch_plottable_imagery
+from .live_imagery import analyze_existing_crops, fetch_plottable_imagery
 from .live_sources import (
     NYC_LABEL,
     PLOT_MAX,
@@ -50,9 +59,9 @@ def fetch_sources() -> None:
                 "name": "Spring 2024 NYS Orthoimagery (plotted in-need set only)",
                 "url": "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer",
                 "note": (
-                    "Fetch 2024 ortho crops only for the plotted 'in need' map set "
-                    "(~2k nodes), never for all ~56k scored intersections. Ranking "
-                    "stays GIS-only. Lower Manhattan leftover PNG crops are unused."
+                    "Reuse 2024 ortho crops on the imagery-backed set (~2k plotted "
+                    "nodes) for paint metrics. Remaking priority comes from those "
+                    "crops plus 311, then a hard visual gate. Not a detector."
                 ),
             },
             "lion": {
@@ -88,11 +97,11 @@ def fetch_sources() -> None:
         },
         "note": (
             "Live NYC downloads fall back to committed fixtures when an endpoint fails. "
-            "LION gdb is not required for tests. Scoring is a sklearn logistic ranker on GIS "
-            "features; the pixel heuristic is the baseline, not a detector. 311 Line/Marking "
-            "mixes lane lines with crosswalks. Candidates are intersection nodes, not "
-            "crosswalk polygons. Citywide map plots a capped 'in need' subset of scored nodes. "
-            "2024 ortho crops are fetched only for that plotted set."
+            "LION gdb is not required for tests. Scoring is a sklearn logistic paint/"
+            "remaking ranker on ortho metrics (311 is the weak label, not a crash label). "
+            "The pixel heuristic is the baseline, not a detector. 311 Line/Marking mixes "
+            "lane lines with crosswalks. The map plots only crossings that pass a hard "
+            "image-paint visual gate."
         ),
     }
     write_json(PATHS.raw_dir / "source_manifest.json", manifest)
@@ -149,6 +158,28 @@ def enrich_candidates() -> None:
     write_json(PATHS.processed_dir / "enriched_candidates.json", enriched, indent=None)
 
 
+def analyze_imagery() -> None:
+    """Attach live_imagery paint metrics to the imagery-backed snapshot rows."""
+    rows = _imagery_universe()
+    metrics = analyze_existing_crops(rows)
+    attached = _attach_metrics(rows, metrics)
+    write_json(PATHS.processed_dir / "paint_training_rows.json", attached, indent=None)
+    write_json(
+        PATHS.processed_dir / "image_metrics.json",
+        {
+            cid: {
+                "paint_missing_ratio": item.paint_missing_ratio,
+                "stripe_break_ratio": item.stripe_break_ratio,
+                "contrast_score": item.contrast_score,
+                "occlusion_penalty": item.occlusion_penalty,
+                "image_path": item.image_path,
+            }
+            for cid, item in metrics.items()
+        },
+        indent=None,
+    )
+
+
 def train_ranker() -> None:
     rows = _labeled_training_rows()
     scorer = fit_production_scorer(rows)
@@ -162,13 +193,18 @@ def train_ranker() -> None:
             "label_definition": definition,
             "include_311_feature": include_311,
             "include_image_feature": scorer.include_image,
+            "include_gis_feature": scorer.include_gis,
             "n": len(labeled),
             "n_pos": sum(int(row["label"]) for row in labeled),
             "feature_names": scorer.feature_names_,
             "geography": NYC_LABEL,
             "neighborhoods": sorted({str(row.get("neighborhood_id") or "") for row in labeled}),
             "artifact": str(PATHS.model_artifact_path),
-            "note": "Citywide GIS-only ranker. Image/ortho features are omitted when all rows lack crops.",
+            "note": (
+                "Paint/remaking ranker on ortho metrics. Weak label is 311 faded "
+                "marking OR high image-heuristic fade. Crash is not the label. "
+                "Street width is not a ranking feature."
+            ),
         },
     )
 
@@ -178,19 +214,28 @@ def evaluate() -> None:
     report = evaluate_spatial_cv(rows)
     report["generated_at"] = _utc_now()
     report["geography"] = NYC_LABEL
+    definition, _, labeled = attach_labels(rows)
+    audit_rows = seed_audit_rows(labeled)
+    audit = write_audit_exports(audit_rows, PATHS.export_dir)
+    report["audit"] = audit
     write_json(PATHS.eval_json_path, report)
     PATHS.eval_markdown_path.parent.mkdir(parents=True, exist_ok=True)
     PATHS.eval_markdown_path.write_text(_eval_markdown(report), encoding="utf-8")
     store = LocalArtifactStore()
     store.write_export("eval_by_neighborhood.json", json.dumps(report, indent=2).encode("utf-8"))
     store.write_export("eval_by_neighborhood.md", _eval_markdown(report).encode("utf-8"))
+    store.write_export("audit_labels.json", (PATHS.export_dir / "audit_labels.json").read_bytes())
+    store.write_export("audit_labels.csv", (PATHS.export_dir / "audit_labels.csv").read_bytes())
+    store.write_export("audit_eval.json", (PATHS.export_dir / "audit_eval.json").read_bytes())
+    store.write_export("audit_eval.md", (PATHS.export_dir / "audit_eval.md").read_bytes())
+    _ = definition
 
 
 def score_candidates() -> None:
     heuristic = HeuristicCrosswalkScorer(confidence_floor=0.0)
-    enriched = read_json(PATHS.processed_dir / "enriched_candidates.json")
+    enriched = _labeled_training_rows()
     learned = _load_or_train_scorer(enriched)
-    include_complaints = learned.include_311
+    include_complaints = True
     _, _, labeled = attach_labels(enriched)
     model_scores = learned.predict_scores(labeled)
     explanations = learned.explain_rows(labeled, top_k=3)
@@ -200,6 +245,7 @@ def score_candidates() -> None:
         enriched, labeled, model_scores, explanations
     ):
         candidate = candidate_from_dict({**item, **{k: labeled_row.get(k, item.get(k)) for k in item}})
+        image_missing = bool(item.get("image_metrics_missing", True))
         heuristic_result = heuristic.score(
             ScoringInput(
                 id=candidate.id,
@@ -209,33 +255,47 @@ def score_candidates() -> None:
                 occlusion_penalty=candidate.occlusion_penalty,
                 school_zone=candidate.school_zone,
                 pavement_marking_311_count_since_2020=candidate.pavement_marking_311_count_since_2020,
-                image_metrics_missing=bool(item.get("image_metrics_missing", True)),
+                image_metrics_missing=image_missing,
             ),
             include_complaints=include_complaints,
         )
         score_value = float(model_score)
         if not (score_value == score_value) or score_value in (float("inf"), float("-inf")):
             continue
-        reason_tags = list(heuristic_result.reason_tags)
+        merged = {**item, **labeled_row}
+        paint = image_paint_score(merged)
+        merged["image_paint_score"] = None if paint != paint else float(paint)
+        merged["model_score"] = score_value
+        display = remaking_priority(merged, model_score=score_value)
+        if display != display:
+            continue
+        reason_tags = [tag for tag in heuristic_result.reason_tags if tag != "school zone"]
+        if heuristic_result.reason_tags and "partial paint loss" in heuristic_result.reason_tags:
+            pass
         crash_count = int(item.get("pedestrian_crash_count") or 0)
         if crash_count > 0:
             noun = "event" if crash_count == 1 else "events"
-            reason_tags.append(f"{crash_count} ped. crash {noun} nearby")
-        neighborhood_name = str(item.get("neighborhood_name") or "")
+            reason_tags.append(f"crash badge: {crash_count} ped. {noun}")
+        if candidate.school_zone:
+            reason_tags.append("school urgency")
+        neighborhood_name = str(item.get("neighborhood_name") or item.get("neighborhood") or "")
         borough = str(item.get("borough") or borough_from_nta(item.get("neighborhood_id")))
         if neighborhood_name:
             reason_tags.append(neighborhood_name)
-        merged = {**item, **labeled_row}
         scored_records.append(
             {
                 **item,
+                **merged,
                 "label": labeled_row.get("label"),
                 "borough": borough,
-                "model_score": round(score_value, 4),
+                "model_score": round(float(display), 4),
+                "learned_score": round(score_value, 4),
                 "heuristic_score": float(heuristic_result.rank_score),
-                "severity_score": int(round(score_value * 100)),
+                "severity_score": int(round(float(display) * 100)),
                 "confidence_score": heuristic_result.confidence_score,
-                "rank_score": round(score_value, 4),
+                "rank_score": round(float(display), 4),
+                "image_paint_score": None if paint != paint else round(float(paint), 4),
+                "urgency_score": urgency_boost(merged),
                 "reason_tags": reason_tags,
                 "top_features": top_features,
                 "priority_reason": build_model_reason(merged, top_features),
@@ -244,9 +304,9 @@ def score_candidates() -> None:
 
     scored_records.sort(
         key=lambda record: (
-            record["model_score"],
-            record.get("pedestrian_crash_count") or 0,
-            record["heuristic_score"],
+            record["rank_score"],
+            record.get("image_paint_score") or 0.0,
+            record.get("pavement_marking_311_count_since_2020") or 0,
         ),
         reverse=True,
     )
@@ -292,6 +352,13 @@ def export_snapshot() -> None:
                 priority_reason=str(item.get("priority_reason") or ""),
                 pedestrian_crash_count=int(item.get("pedestrian_crash_count") or 0),
                 top_features=list(item.get("top_features") or []),
+                paint_missing_ratio=_optional_metric(item.get("paint_missing_ratio")),
+                stripe_break_ratio=_optional_metric(item.get("stripe_break_ratio")),
+                contrast_score=_optional_metric(item.get("contrast_score")),
+                occlusion_penalty=_optional_metric(item.get("occlusion_penalty")),
+                image_paint_score=_optional_metric(item.get("image_paint_score")),
+                urgency_score=float(item.get("urgency_score") or 0.0),
+                passed_visual_gate=True,
             )
         )
 
@@ -299,7 +366,10 @@ def export_snapshot() -> None:
     learned_auc = (overall.get("learned") or {}).get("roc_auc")
     heuristic_auc = (overall.get("heuristic") or {}).get("roc_auc")
     learned_p5 = (overall.get("learned") or {}).get("precision_at_5")
+    learned_p20 = (overall.get("learned") or {}).get("precision_at_20")
     learned_ap = (overall.get("learned") or {}).get("average_precision")
+    audit = eval_report.get("audit") or {}
+    audit_metrics = audit.get("metrics") or {}
     manifest_path = PATHS.raw_dir / "source_manifest.json"
     source_versions = {
         "imagery": LiveSourceVersions.imagery,
@@ -319,7 +389,8 @@ def export_snapshot() -> None:
         f"{ORTHO_LABEL} (wms/{ORTHO_YEAR}) for {n_with_imagery}/{n_plotted} "
         f"plotted in-need nodes. {ORTHO_UPGRADE_NOTE}"
     )
-    threshold = min((row["model_score"] for row in crosswalk_payload), default=None)
+    gate_values = [row.get("image_paint_score") for row in crosswalk_payload if row.get("image_paint_score") is not None]
+    threshold = min((float(v) for v in gate_values), default=None) if gate_values else None
     geojson_payload = {
         "type": "FeatureCollection",
         "features": [
@@ -339,6 +410,10 @@ def export_snapshot() -> None:
                     "school_zone": row["school_zone"],
                     "pavement_marking_311_count_since_2020": row["pavement_marking_311_count_since_2020"],
                     "pedestrian_crash_count": row["pedestrian_crash_count"],
+                    "image_paint_score": row.get("image_paint_score"),
+                    "paint_missing_ratio": row.get("paint_missing_ratio"),
+                    "stripe_break_ratio": row.get("stripe_break_ratio"),
+                    "contrast_score": row.get("contrast_score"),
                     "priority_reason": row["priority_reason"],
                     "top_features": row["top_features"],
                     "matched_311_complaints": row["matched_311_complaints"],
@@ -362,15 +437,21 @@ def export_snapshot() -> None:
         "plot_max": PLOT_MAX,
         "plot_threshold": threshold,
         "plot_rule": (
-            f"Map shows crossings in need: model score at/above the {PLOT_PERCENTILE:.0f}th "
-            f"percentile (cap {PLOT_MAX}), with a per-borough floor so every borough is visible."
+            f"Hard visual gate: plot only crossings whose image paint score is in the top "
+            f"{100 - IMAGE_GATE_QUANTILE * 100:.0f}% of the imagery-backed set and at least "
+            f"{IMAGE_GATE_FLOOR:.2f}. School and crash boost urgency inside that set only. "
+            f"Cap {PLOT_MAX}, with a per-borough floor among gated rows."
         ),
+        "visual_gate_quantile": IMAGE_GATE_QUANTILE,
+        "visual_gate_floor": IMAGE_GATE_FLOOR,
+        "visual_gate_threshold": threshold,
         "scoring_method": (
-            "sklearn logistic ranker (P(pedestrian crash nearby)); heuristic paint/311 score is the baseline. "
-            "Citywide features are GIS-only — street width, heading spread, school proximity, 311. "
-            "Not a vision detector."
+            "sklearn logistic remaking ranker on ortho paint metrics (paint_missing_ratio, "
+            "stripe_break_ratio, contrast_score, occlusion_penalty). Weak label is nearby "
+            "311 faded/after-repaving OR high image-heuristic fade. Street width and crash "
+            "counts cannot put a good-looking crop in the severe set. Not a vision detector."
         ),
-        "label_definition": eval_report.get("label_definition", "pedestrian_crash_nearby"),
+        "label_definition": eval_report.get("label_definition", LABEL_FADED_MARKING),
         "eval_split": eval_report.get("split", "GroupKFold by neighborhood"),
         "eval_n": eval_report.get("n"),
         "eval_n_pos": eval_report.get("n_pos"),
@@ -378,25 +459,33 @@ def export_snapshot() -> None:
         "eval_heuristic_auc": heuristic_auc,
         "eval_learned_ap": learned_ap,
         "eval_learned_precision_at_5": learned_p5,
+        "eval_learned_precision_at_20": learned_p20,
+        "eval_audit_n": audit.get("n"),
+        "eval_audit_n_pos": audit.get("n_pos"),
+        "eval_audit_precision_at_10": audit_metrics.get("precision_at_10"),
+        "eval_audit_precision_at_20": audit_metrics.get("precision_at_20"),
+        "eval_audit_precision_at_50": audit_metrics.get("precision_at_50"),
+        "eval_audit_provisional": True,
         "eval_by_borough": eval_report.get("by_borough") or [],
-        "include_image_feature": eval_report.get("include_image_feature", False),
-        "include_311_feature": eval_report.get("include_311_feature", True),
+        "include_image_feature": eval_report.get("include_image_feature", True),
+        "include_311_feature": eval_report.get("include_311_feature", False),
         "showcase_top_k": n_plotted,
         **_imagery_meta(n_with_imagery, n_plotted, n_scored),
         "product_claim": (
-            "Citywide NYC inspection-priority map of pedestrian crossing nodes, ranked by a "
-            "learned tabular model vs a paint/311 heuristic. Hover a node for streets, 311, "
-            "ortho crop, and why the model flagged it."
+            "DOT repaint/remaking queue: pedestrian crossings whose markings look "
+            "degraded in 2024 aerial imagery, corroborated by 311 faded-marking "
+            "complaints. School proximity raises urgency inside the paint-bad set. "
+            "Pedestrian crashes are a secondary badge, not the ranking objective."
         ),
         "caveat": (
             "Not a crosswalk detector. Candidates are LION intersection nodes, not painted "
-            "polygons. Citywide scores use GIS features only — 2024 ortho crops are fetched "
-            f"for the plotted in-need set ({n_with_imagery}/{n_plotted}), not for all "
-            f"{n_scored} scored nodes. The map plots {n_plotted} 'in need' nodes (top "
-            f"{PLOT_PERCENTILE:.0f}th percentile, cap {PLOT_MAX}), not every intersection. "
-            "311 Line/Marking complaints mix lane lines with crosswalks. Crash labels are "
-            "noisy / weakly supervised. Metrics use a spatial (neighborhood) split so train "
-            "and test NTAs are disjoint. Treat AUC as directional, not a production SLA."
+            "polygons. Remaking priority is scored on the imagery-backed set "
+            f"({n_scored} crossings with 2024 ortho crops). The map plots {n_plotted} "
+            "nodes that pass a hard visual gate on image paint severity — a wide or "
+            "crashy crossing with good paint metrics is excluded. 311 Line/Marking "
+            "complaints mix lane lines with crosswalks. Audit looks_faded labels are "
+            "provisional (heuristic-seeded plus spot checks). Spatial NTA split; treat "
+            "AUC as directional, not a production SLA."
         ),
     }
 
@@ -432,12 +521,10 @@ def fetch_plot_imagery() -> None:
     if "caveat" in meta:
         meta["caveat"] = (
             "Not a crosswalk detector. Candidates are LION intersection nodes, not painted "
-            "polygons. Citywide scores use GIS features only — 2024 ortho crops are fetched "
-            f"for the plotted in-need set ({n_with_imagery}/{n_plotted}), not for all "
-            f"{n_scored} scored nodes. The map plots {n_plotted} 'in need' nodes, not every "
-            "intersection. 311 Line/Marking complaints mix lane lines with crosswalks. Crash "
-            "labels are noisy / weakly supervised. Metrics use a spatial (neighborhood) split "
-            "so train and test NTAs are disjoint. Treat AUC as directional, not a production SLA."
+            "polygons. Remaking priority is scored on the imagery-backed set "
+            f"({n_scored} crossings with 2024 ortho crops). The map plots {n_plotted} "
+            "nodes that pass a hard visual gate on image paint severity. 311 Line/Marking "
+            "complaints mix lane lines with crosswalks. Audit labels are provisional."
         )
     geojson_path = PATHS.export_dir / "crossings.geojson"
     if geojson_path.exists():
@@ -456,10 +543,23 @@ def fetch_plot_imagery() -> None:
     store.write_export("meta.json", json.dumps(meta, indent=2).encode("utf-8"))
 
 
+def rescore_from_imagery() -> None:
+    """Re-aim the existing imagery-backed snapshot as a paint/remaking queue."""
+    analyze_imagery()
+    train_ranker()
+    evaluate()
+    score_candidates()
+    export_snapshot()
+
+
 def build_all() -> None:
+    if (PATHS.export_dir / "crosswalks.json").exists() and PATHS.web_images_dir.exists():
+        rescore_from_imagery()
+        return
     fetch_sources()
     prepare_candidates()
     enrich_candidates()
+    analyze_imagery()
     train_ranker()
     evaluate()
     score_candidates()
@@ -494,6 +594,16 @@ def _publish_imagery(store: LocalArtifactStore, candidate_id: str, metrics, item
 
 
 def _labeled_training_rows() -> list[dict]:
+    paint_path = PATHS.processed_dir / "paint_training_rows.json"
+    if paint_path.exists():
+        rows = read_json(paint_path)
+        if rows:
+            return rows
+    snapshot = PATHS.export_dir / "crosswalks.json"
+    if snapshot.exists():
+        rows = _attach_metrics(read_json(snapshot), analyze_existing_crops(read_json(snapshot)))
+        if rows:
+            return rows
     enriched_path = PATHS.processed_dir / "enriched_candidates.json"
     if enriched_path.exists():
         rows = read_json(enriched_path)
@@ -504,6 +614,57 @@ def _labeled_training_rows() -> list[dict]:
         if fixture_path.exists():
             return read_json(fixture_path)
     return []
+
+
+def _imagery_universe() -> list[dict]:
+    for path in (
+        PATHS.processed_dir / "paint_training_rows.json",
+        PATHS.export_dir / "crosswalks.json",
+        PATHS.processed_dir / "scored_candidates.json",
+        PATHS.processed_dir / "enriched_candidates.json",
+    ):
+        if path.exists():
+            rows = read_json(path)
+            if rows:
+                return rows
+    return []
+
+
+def _attach_metrics(rows: list[dict], metrics) -> list[dict]:
+    attached: list[dict] = []
+    for row in rows:
+        item = dict(row)
+        if not item.get("neighborhood_name") and item.get("neighborhood"):
+            item["neighborhood_name"] = item.get("neighborhood")
+        found = metrics.get(str(item.get("id") or ""))
+        if found is None:
+            item.setdefault("image_metrics_missing", True)
+            attached.append(item)
+            continue
+        item["image_metrics_missing"] = False
+        item["paint_missing_ratio"] = found.paint_missing_ratio
+        item["stripe_break_ratio"] = found.stripe_break_ratio
+        item["contrast_score"] = found.contrast_score
+        item["occlusion_penalty"] = found.occlusion_penalty
+        item["image_paint_score"] = image_paint_score(item)
+        if found.image_path:
+            item["processed_image_path"] = found.image_path
+        if found.thumbnail_path:
+            item["processed_thumbnail_path"] = found.thumbnail_path
+        attached.append(item)
+    return attached
+
+
+def _optional_metric(value: object) -> float | None:
+    if value is None or value == "":
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    if number != number:
+        return None
+    return number
 
 
 def _load_or_train_scorer(rows: list[dict]) -> LearnedPriorityScorer:
@@ -532,6 +693,7 @@ def _eval_markdown(report: dict) -> str:
         f"- NTAs in split: {report.get('n_neighborhoods', len(report.get('neighborhoods') or []))}",
         f"- 311 used as a feature: {report.get('include_311_feature')}",
         f"- Image/ortho features: {report.get('include_image_feature')}",
+        f"- GIS width/heading features: {report.get('include_gis_feature')}",
         "",
         report.get("caveat") or "",
         "",
@@ -541,6 +703,7 @@ def _eval_markdown(report: dict) -> str:
         "| --- | --- | --- | --- | --- | --- | --- | --- |",
         _metric_row("learned", learned),
         _metric_row("heuristic baseline", heuristic),
+        _metric_row("image paint score", overall.get("image_paint") or {}),
         "",
         "## By borough (out-of-fold rows in that borough)",
         "",
@@ -587,6 +750,23 @@ def _eval_markdown(report: dict) -> str:
                 hp5=_fmt(heuristic_n.get("precision_at_5")),
             )
         )
+    audit = report.get("audit") or {}
+    if audit:
+        metrics = audit.get("metrics") or {}
+        lines.extend(
+            [
+                "",
+                "## Audit vs looks_faded (provisional)",
+                "",
+                audit.get("note") or "",
+                "",
+                f"- n = {audit.get('n')}, looks_faded positives = {audit.get('n_pos')}",
+                f"- precision@10 = {_fmt(metrics.get('precision_at_10'))}",
+                f"- precision@20 = {_fmt(metrics.get('precision_at_20'))}",
+                f"- precision@50 = {_fmt(metrics.get('precision_at_50'))}",
+                "",
+            ]
+        )
     lines.append("")
     return "\n".join(lines)
 
@@ -616,10 +796,10 @@ def _imagery_meta(n_with_imagery: int, n_plotted: int, n_scored: int) -> dict:
         "imagery_upgrade_note": ORTHO_UPGRADE_NOTE,
         "imagery_rule": (
             f"{ORTHO_LABEL} (orthos.its.ny.gov wms/{ORTHO_YEAR}) for the plotted in-need "
-            f"set only ({n_with_imagery}/{n_plotted} nodes have a crop). NYS flew the five "
-            "boroughs in Spring 2024. 2025 MapServer is Hudson Valley / Westchester / etc "
-            f"and is blank over NYC. {ORTHO_UPGRADE_NOTE} NYC open imagery newest citywide "
-            f"layer is also {ORTHO_YEAR}. Not fetched for the {n_scored} scored nodes."
+            f"set ({n_with_imagery}/{n_plotted} plotted nodes have a crop). Paint metrics "
+            f"are computed from those crops for the {n_scored} imagery-backed scored nodes. "
+            "NYS flew the five boroughs in Spring 2024. 2025 MapServer is Hudson Valley / "
+            f"Westchester / etc and is blank over NYC. {ORTHO_UPGRADE_NOTE}"
         ),
     }
 
@@ -641,6 +821,8 @@ def main() -> None:
             "score_candidates",
             "export_snapshot",
             "fetch_plot_imagery",
+            "analyze_imagery",
+            "rescore_from_imagery",
             "build_all",
         ],
     )
@@ -650,11 +832,13 @@ def main() -> None:
         "fetch_sources": fetch_sources,
         "prepare_candidates": prepare_candidates,
         "enrich_candidates": enrich_candidates,
+        "analyze_imagery": analyze_imagery,
         "train_ranker": train_ranker,
         "evaluate": evaluate,
         "score_candidates": score_candidates,
         "export_snapshot": export_snapshot,
         "fetch_plot_imagery": fetch_plot_imagery,
+        "rescore_from_imagery": rescore_from_imagery,
         "build_all": build_all,
     }
     commands[args.command]()
