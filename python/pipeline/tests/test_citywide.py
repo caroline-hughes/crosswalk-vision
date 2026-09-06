@@ -137,6 +137,13 @@ class SnapshotContractTest(unittest.TestCase):
         self.assertTrue({"Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"} <= boroughs)
         self.assertNotIn("Unknown", boroughs)
         self.assertTrue(all("unnamed" not in record["intersection_label"].lower() for record in records))
+        self.assertFalse(
+            any(
+                record["intersection_label"] == "Victory Boulevard & Richmond Avenue"
+                for record in records
+            ),
+            "intact-looking Victory Blvd must not pass the visual paint gate",
+        )
         school_flags = {record["school_zone"] for record in records}
         self.assertEqual(school_flags, {True, False}, "Near-school filter must not be a no-op")
         self.assertGreater(int(meta.get("n_scored") or 0), int(meta.get("n_plotted") or 0))

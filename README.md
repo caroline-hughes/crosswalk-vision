@@ -20,7 +20,7 @@ There is no trained detector in this tree. The sister repo `crosswalk-detection-
 
 New York City, five boroughs. Candidates are **intersection nodes**, not crosswalk polygons. Live `leg_label` is `intersection node`.
 
-The map does **not** plot every scored node. The shipped snapshot scores the **imagery-backed** set (the ~2,000 crossings that already have 2024 ortho crops) and plots only those that pass the visual paint gate (top quintile of `image_paint_score`, floor 0.42), with a per-borough floor *among gated rows*. Pins are colored by **remaking priority within that plotted set** (muted amber → `#FF4F00` → deep vermillion). Filters: borough, near school, has 311, min paint score. Counts live in `data/export/meta.json` (`n_scored` vs `n_plotted`, plus `n_with_imagery`, `visual_gate_*`).
+The map does **not** plot every scored node. The shipped snapshot scores the **imagery-backed** set (2,000 crossings that already have 2024 ortho crops) and plots **344** that pass the visual paint gate (top quintile of `image_paint_score`, floor 0.42; this build’s threshold is 0.4203), with a per-borough floor *among gated rows*. Victory Boulevard & Richmond Avenue (old crash rank ~99, intact continental bars) is excluded. Pins are colored by **remaking priority within that plotted set** (muted amber → `#FF4F00` → deep vermillion). Filters: borough, near school, has 311, min paint score. Counts live in `data/export/meta.json` (`n_scored` vs `n_plotted`, plus `n_with_imagery`, `visual_gate_*`).
 
 ## Sources
 
@@ -57,7 +57,9 @@ The hand-rolled pixel/311 heuristic remains the **baseline**. The displayed badg
 
 Split: **GroupKFold by NTA**. Train and test neighborhoods are disjoint. Citywide NTA tables are huge, so the markdown keeps **borough rolls** plus a sample of the largest NTAs with n≥25. Treat AUC as directional, not a production SLA. Precision@k is the metric that matches a remaking list.
 
-A **provisional audit set** (`data/export/audit_labels.json` + `.csv`) seeds `looks_faded` from the image heuristic plus a few spot checks (Victory Blvd-style intact bars are forced false). `audit_eval.md` reports precision@k of remaking rank vs `looks_faded`. Those labels are not a human-gold set; the CSV is for Caroline to correct.
+A **provisional audit set** (`data/export/audit_labels.json` + `.csv`) seeds `looks_faded` from the image heuristic plus a few spot checks (Victory Blvd-style intact bars are forced false). This build: n=160 (80 faded+), precision@10/@20/@50 = 1.00 vs `looks_faded`. That agreement is expected while labels are heuristic-seeded; it is **not** a human-gold SLA. The CSV is for Caroline to correct.
+
+Spatial CV on the weak 311-or-looks-bad label (n=2000, 1059 pos, GroupKFold by NTA): learned ROC-AUC **0.620** vs heuristic **0.616**. Learned ≈ heuristic is expected — the model is image features predicting a label that includes the image heuristic. Precision@5/@10 on that weak label is 1.00 (top of the list is high image fade). Treat AUC as directional.
 
 ## Pipeline commands
 

@@ -1,0 +1,21 @@
+{
+  "provisional": true,
+  "label": "looks_faded",
+  "n": 160,
+  "n_pos": 80,
+  "n_neighborhoods": 89,
+  "metrics": {
+    "n": 160,
+    "n_pos": 80,
+    "positive_rate": 0.5,
+    "roc_auc": 0.9935937499999999,
+    "average_precision": 0.9933799222079449,
+    "brier": 0.12170330068749999,
+    "precision_at_10": 1.0,
+    "precision_at_20": 1.0,
+    "precision_at_50": 1.0
+  },
+  "note": "Audit labels are provisional: seeded from the image heuristic plus spot checks. Not a human-gold set. Precision@k is agreement of the remaking rank with looks_faded, not crash prediction.",
+  "gate_floor": 0.42,
+  "n_seeded": 160
+}
