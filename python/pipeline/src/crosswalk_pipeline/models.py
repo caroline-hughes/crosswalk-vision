@@ -57,6 +57,13 @@ class ExportRecord:
     priority_reason: str = ""
     pedestrian_crash_count: int = 0
     top_features: List[Dict[str, object]] = field(default_factory=list)
+    paint_missing_ratio: float | None = None
+    stripe_break_ratio: float | None = None
+    contrast_score: float | None = None
+    occlusion_penalty: float | None = None
+    image_paint_score: float | None = None
+    urgency_score: float = 0.0
+    passed_visual_gate: bool = True
 
     def to_dict(self) -> Dict[str, object]:
         return asdict(self)

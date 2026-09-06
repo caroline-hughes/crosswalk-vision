@@ -8,6 +8,7 @@ from sklearn.metrics import average_precision_score, roc_auc_score
 from .features import attach_labels, borough_from_nta, rows_have_image_metrics
 from .heuristic import HeuristicCrosswalkScorer, ScoringInput
 from .learned import LearnedPriorityScorer
+from .paint import LABEL_FADED_MARKING, image_paint_score, remaking_priority
 from .spatial_split import neighborhood_group_kfold, neighborhood_ids
 
 
@@ -17,7 +18,7 @@ def heuristic_ranking_score(row: Mapping[str, object], *, include_complaints: bo
     return float(scored.rank_score)
 
 
-def binary_metrics(y_true: Sequence[int], scores: Sequence[float], ks: tuple[int, ...] = (5, 10)) -> dict:
+def binary_metrics(y_true: Sequence[int], scores: Sequence[float], ks: tuple[int, ...] = (5, 10, 20, 50)) -> dict:
     y = np.asarray(y_true, dtype=int)
     s = np.asarray(scores, dtype=float)
     n = int(y.size)
@@ -65,6 +66,7 @@ def evaluate_spatial_cv(rows: Sequence[Mapping[str, object]]) -> dict:
         [heuristic_ranking_score(row, include_complaints=include_311) for row in labeled],
         dtype=float,
     )
+    image_scores = np.array([image_paint_score(row) for row in labeled], dtype=float)
     oof = np.full(len(labeled), np.nan, dtype=float)
     per_neighborhood: list[dict] = []
 
@@ -74,6 +76,7 @@ def evaluate_spatial_cv(rows: Sequence[Mapping[str, object]]) -> dict:
         scorer = LearnedPriorityScorer(
             include_311=include_311,
             include_image=include_image,
+            include_gis=False,
             label_definition=definition,
         )
         scorer.fit(train_rows)
@@ -100,32 +103,66 @@ def evaluate_spatial_cv(rows: Sequence[Mapping[str, object]]) -> dict:
     finite = np.isfinite(oof)
     overall_learned = binary_metrics(y[finite], oof[finite])
     overall_heuristic = _ranking_only(binary_metrics(y[finite], heuristic_scores[finite]))
+    image_finite = np.isfinite(image_scores)
+    overall_image = _ranking_only(binary_metrics(y[image_finite], image_scores[image_finite]))
     by_neighborhood = _trim_neighborhood_table(per_neighborhood)
     return {
-        "label_definition": definition,
+        "label_definition": definition or LABEL_FADED_MARKING,
         "include_311_feature": include_311,
         "include_image_feature": include_image,
+        "include_gis_feature": False,
         "n": int(y.size),
         "n_pos": int(y.sum()),
         "neighborhoods": unique_groups,
         "n_neighborhoods": len(unique_groups),
         "split": "GroupKFold by neighborhood_id (train/test NTAs are disjoint)",
         "caveat": (
-            "Pedestrian-crash coordinates are noisy and weakly supervised: a nearby crash "
-            "does not prove the crossing paint caused it, and many crossings have no crash "
-            "because of exposure, not because markings are fine. Metrics are reported only "
-            "when both classes are present; otherwise they are null. Citywide ranking is "
-            "GIS-only (no per-intersection ortho); this is a learned tabular ranker, not a "
-            "vision detector."
+            "Weak label is nearby 311 Line/Marking faded/after-repaving OR a high "
+            "image-heuristic fade score. 311 descriptors mix lane lines with crosswalks. "
+            "Pedestrian crashes are not the training label. The map 'in need' set is "
+            "hard-gated on image paint severity so a wide or crashy crossing with good "
+            "paint cannot enter the severe set. This is a sklearn tabular ranker on "
+            "ortho metrics, not a detector."
         ),
         "overall": {
             "learned": overall_learned,
             "heuristic": overall_heuristic,
+            "image_paint": overall_image,
         },
         "by_borough": _metrics_by_borough(labeled, y, oof, heuristic_scores, finite),
         "by_neighborhood": by_neighborhood,
         "neighborhood_table_note": (
             "Full NTA list is large citywide; table keeps NTAs with n>=25, up to 12 largest."
+        ),
+    }
+
+
+def evaluate_audit_agreement(
+    rows: Sequence[Mapping[str, object]],
+    *,
+    ks: tuple[int, ...] = (10, 20, 50),
+) -> dict:
+    """Precision@k of remaking rank vs seeded looks_faded labels."""
+    usable = [dict(row) for row in rows if row.get("looks_faded") is not None]
+    y = np.array([int(bool(row.get("looks_faded"))) for row in usable], dtype=int)
+    scores = np.array(
+        [remaking_priority(row, model_score=row.get("model_score")) for row in usable],
+        dtype=float,
+    )
+    finite = np.isfinite(scores)
+    metrics = binary_metrics(y[finite], scores[finite], ks=ks)
+    ntas = sorted({str(row.get("neighborhood_id") or "") for row in usable})
+    return {
+        "provisional": True,
+        "label": "looks_faded",
+        "n": int(finite.sum()),
+        "n_pos": int(y[finite].sum()) if finite.any() else 0,
+        "n_neighborhoods": len([n for n in ntas if n]),
+        "metrics": metrics,
+        "note": (
+            "Audit labels are provisional: seeded from the image heuristic plus spot "
+            "checks. Not a human-gold set. Precision@k is agreement of the remaking "
+            "rank with looks_faded, not crash prediction."
         ),
     }
 
@@ -136,6 +173,7 @@ def fit_production_scorer(rows: Sequence[Mapping[str, object]]) -> LearnedPriori
     scorer = LearnedPriorityScorer(
         include_311=include_311,
         include_image=include_image,
+        include_gis=False,
         label_definition=definition,
     )
     scorer.fit(labeled)

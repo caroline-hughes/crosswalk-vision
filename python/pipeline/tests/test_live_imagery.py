@@ -44,7 +44,7 @@ class ImageryTargetTest(unittest.TestCase):
         self.assertEqual(ORTHO_LABEL, "Spring 2024 NYS ortho")
         self.assertIn(f"wms/{ORTHO_YEAR}", ORTHO_MAPSERVER_EXPORT_URL)
         self.assertIn("wms/2026", ORTHO_UPGRADE_NOTE)
-        self.assertIn("GIS-only", ORTHO_UPGRADE_NOTE)
+        self.assertIn("paint", ORTHO_UPGRADE_NOTE.lower())
         self.assertNotIn("2026", ORTHO_LABEL)
 
     def test_default_selects_every_plotted_row(self) -> None:
@@ -108,7 +108,7 @@ class SnapshotImageryContractTest(unittest.TestCase):
             self.assertEqual(meta.get("imagery_label"), "Spring 2024 NYS ortho")
             self.assertEqual(int(meta.get("imagery_next_year") or 0), 2026)
             self.assertIn("wms/2026", str(meta.get("imagery_upgrade_note") or ""))
-            self.assertIn("GIS-only", str(meta.get("imagery_upgrade_note") or ""))
+            self.assertIn("paint", str(meta.get("imagery_upgrade_note") or "").lower())
             self.assertNotIn("2026 coming", str(meta.get("imagery_rule") or "").lower())
 
 

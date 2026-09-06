@@ -65,7 +65,7 @@ export default function HomePage() {
               <span className="mark-bars" />
             </span>
             <div className="wordmark">
-              <p className="brand-kicker">five boroughs · inspection priority</p>
+              <p className="brand-kicker">five boroughs · paint / remaking queue</p>
               <h1>NYC Crosswalk Watch</h1>
             </div>
           </div>
@@ -121,7 +121,7 @@ export default function HomePage() {
               onSelect={(record) => setPinned(record)}
             />
             {active ? null : (
-              <p className="map-hint">Hover a crossing the ranker put in need.</p>
+              <p className="map-hint">Hover a crossing whose paint looks degraded in the ortho crop.</p>
             )}
           </>
         ) : null}

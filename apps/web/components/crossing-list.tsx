@@ -42,18 +42,27 @@ export function CrossingList({
                 <hr />
                 <dl className="list-stats">
                   <div>
-                    <dt>P(crash)</dt>
+                    <dt>Paint</dt>
                     <dd>{Math.round(record.model_score * 100)}</dd>
                   </div>
                   <div>
-                    <dt>Heuristic</dt>
-                    <dd>{Math.round(record.heuristic_score)}</dd>
+                    <dt>Fade</dt>
+                    <dd>
+                      {typeof record.image_paint_score === "number"
+                        ? record.image_paint_score.toFixed(2)
+                        : "—"}
+                    </dd>
                   </div>
                   <div>
                     <dt>311</dt>
                     <dd>{record.pavement_marking_311_count_since_2020}</dd>
                   </div>
                 </dl>
+                {record.pedestrian_crash_count > 0 ? (
+                  <p className="crash-badge list-crash">
+                    Crash badge · {record.pedestrian_crash_count}
+                  </p>
+                ) : null}
                 <p className="list-why">{record.priority_reason}</p>
                 <div className="list-actions">
                   <button type="button" className="ghost-btn" onClick={() => onSelect(record)}>

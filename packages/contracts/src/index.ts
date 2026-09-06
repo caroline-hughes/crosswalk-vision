@@ -46,6 +46,13 @@ export interface CrosswalkRecord {
   priority_reason: string;
   pedestrian_crash_count: number;
   top_features: ModelFeatureContribution[];
+  paint_missing_ratio?: number | null;
+  stripe_break_ratio?: number | null;
+  contrast_score?: number | null;
+  occlusion_penalty?: number | null;
+  image_paint_score?: number | null;
+  urgency_score?: number;
+  passed_visual_gate?: boolean;
 }
 
 export interface CrosswalkMeta {
@@ -86,6 +93,15 @@ export interface CrosswalkMeta {
   imagery_rule?: string;
   product_claim: string;
   caveat: string;
+  visual_gate_quantile?: number;
+  visual_gate_floor?: number;
+  visual_gate_threshold?: number | null;
+  eval_audit_n?: number | null;
+  eval_audit_n_pos?: number | null;
+  eval_audit_precision_at_10?: number | null;
+  eval_audit_precision_at_20?: number | null;
+  eval_audit_precision_at_50?: number | null;
+  eval_audit_provisional?: boolean;
 }
 
 export function validateCrosswalkRecords(input: unknown): CrosswalkRecord[] {
@@ -141,7 +157,16 @@ export function validateCrosswalkMeta(input: unknown): CrosswalkMeta {
     imagery_upgrade_note: optionalString(value.imagery_upgrade_note),
     imagery_rule: optionalString(value.imagery_rule),
     product_claim: mustBeString(value.product_claim, "product_claim"),
-    caveat: mustBeString(value.caveat, "caveat")
+    caveat: mustBeString(value.caveat, "caveat"),
+    visual_gate_quantile: optionalNumber(value.visual_gate_quantile),
+    visual_gate_floor: optionalNumber(value.visual_gate_floor),
+    visual_gate_threshold: optionalNumber(value.visual_gate_threshold),
+    eval_audit_n: optionalNumber(value.eval_audit_n),
+    eval_audit_n_pos: optionalNumber(value.eval_audit_n_pos),
+    eval_audit_precision_at_10: optionalNumber(value.eval_audit_precision_at_10),
+    eval_audit_precision_at_20: optionalNumber(value.eval_audit_precision_at_20),
+    eval_audit_precision_at_50: optionalNumber(value.eval_audit_precision_at_50),
+    eval_audit_provisional: typeof value.eval_audit_provisional === "boolean" ? value.eval_audit_provisional : undefined
   };
 }
 
@@ -179,7 +204,14 @@ function validateCrosswalkRecord(input: unknown, index: number): CrosswalkRecord
     borough: typeof value.borough === "string" ? value.borough : "Unknown",
     priority_reason: mustBeString(value.priority_reason, "priority_reason"),
     pedestrian_crash_count: mustBeNumber(value.pedestrian_crash_count, "pedestrian_crash_count"),
-    top_features: mustBeFeatureArray(value.top_features)
+    top_features: mustBeFeatureArray(value.top_features),
+    paint_missing_ratio: optionalNumber(value.paint_missing_ratio),
+    stripe_break_ratio: optionalNumber(value.stripe_break_ratio),
+    contrast_score: optionalNumber(value.contrast_score),
+    occlusion_penalty: optionalNumber(value.occlusion_penalty),
+    image_paint_score: optionalNumber(value.image_paint_score),
+    urgency_score: optionalNumber(value.urgency_score),
+    passed_visual_gate: typeof value.passed_visual_gate === "boolean" ? value.passed_visual_gate : undefined
   };
 }
 

@@ -29,6 +29,11 @@ def _citywide_rows() -> list[dict]:
                 "model_score": 0.9 - (i * 0.01),
                 "heuristic_score": 10 - (i % 7),
                 "pedestrian_crash_count": 1 if i % 3 == 0 else 0,
+                "image_metrics_missing": False,
+                "paint_missing_ratio": 0.72,
+                "stripe_break_ratio": 0.62,
+                "contrast_score": 0.22,
+                "image_paint_score": 0.68,
             }
         )
     return rows
@@ -56,6 +61,19 @@ class CitywideFixtureTest(unittest.TestCase):
 
 
 class PlottableCapTest(unittest.TestCase):
+    def test_select_plottable_excludes_good_paint_crashy_rows(self) -> None:
+        rows = _citywide_rows()
+        rows[0]["id"] = "victory-fine"
+        rows[0]["intersection_label"] = "Victory Boulevard & Richmond Avenue"
+        rows[0]["paint_missing_ratio"] = 0.08
+        rows[0]["stripe_break_ratio"] = 0.05
+        rows[0]["contrast_score"] = 0.84
+        rows[0]["image_paint_score"] = 0.12
+        rows[0]["model_score"] = 0.99
+        rows[0]["pedestrian_crash_count"] = 8
+        plotted = select_plottable(rows)
+        self.assertTrue(all(row["id"] != "victory-fine" for row in plotted))
+
     def test_select_plottable_caps_and_keeps_borough_floor(self) -> None:
         rows = _citywide_rows()
         plotted = select_plottable(rows)
@@ -65,7 +83,7 @@ class PlottableCapTest(unittest.TestCase):
         self.assertEqual(
             boroughs, {"Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"}
         )
-        self.assertGreaterEqual(PLOT_PERCENTILE, 90.0)
+        self.assertGreaterEqual(PLOT_PERCENTILE, 80.0)
 
     def test_spatial_split_still_disjoint_on_citywide_groups(self) -> None:
         rows = _citywide_rows()
@@ -109,7 +127,8 @@ class SnapshotContractTest(unittest.TestCase):
         self.assertIn("caveat", meta)
         self.assertIn("image_url", first)
         self.assertIn("thumbnail_url", first)
-        self.assertIn("GIS", meta["scoring_method"])
+        self.assertIn("paint", meta["scoring_method"].lower())
+        self.assertIn("visual", str(meta.get("plot_rule") or "").lower())
         self.assertNotIn("detector", meta["scoring_method"].lower().replace("not a vision detector", ""))
         self.assertIn("not a vision detector", meta["scoring_method"].lower())
         school_flags = {record["school_zone"] for record in records}

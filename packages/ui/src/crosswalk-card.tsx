@@ -37,10 +37,11 @@ export function CrosswalkCard({ record }: { record: CrosswalkRecord }) {
         {record.priority_reason ? <p className="priority-reason">{record.priority_reason}</p> : null}
 
         <div className="card-meta">
-          <p>Model {record.model_score.toFixed(2)}</p>
-          <p>Heuristic {Math.round(record.heuristic_score)}</p>
-          <p>Crashes {record.pedestrian_crash_count}</p>
+          <p>Paint {record.model_score.toFixed(2)}</p>
           <p>311 Reports {record.pavement_marking_311_count_since_2020}</p>
+          {record.pedestrian_crash_count > 0 ? (
+            <p>Crash badge {record.pedestrian_crash_count}</p>
+          ) : null}
         </div>
 
         <ReasonTagList tags={record.reason_tags} />

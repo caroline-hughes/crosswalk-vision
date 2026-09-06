@@ -28,7 +28,15 @@ function photoHtml(record: CrosswalkRecord): string {
 }
 
 function popupHtml(record: CrosswalkRecord): string {
-  const probability = Math.round(record.model_score * 100);
+  const priority = Math.round(record.model_score * 100);
+  const fade =
+    typeof record.image_paint_score === "number" && Number.isFinite(record.image_paint_score)
+      ? record.image_paint_score.toFixed(2)
+      : "—";
+  const missing =
+    typeof record.paint_missing_ratio === "number" && Number.isFinite(record.paint_missing_ratio)
+      ? record.paint_missing_ratio.toFixed(2)
+      : "—";
   const features = record.top_features
     .slice(0, 3)
     .map((feature) => {
@@ -44,6 +52,10 @@ function popupHtml(record: CrosswalkRecord): string {
       return `<a href="${escapeHtml(complaint.url)}" target="_blank" rel="noreferrer">${escapeHtml(label)} — ${escapeHtml(complaint.descriptor)}</a>`;
     })
     .join("");
+  const crash =
+    record.pedestrian_crash_count > 0
+      ? `<p class="crash-badge">Crash badge · ${record.pedestrian_crash_count} nearby ped. ${record.pedestrian_crash_count === 1 ? "event" : "events"} — not the rank</p>`
+      : "";
   return `
     <article class="hover-card leaflet-hover">
       <span class="tape" aria-hidden="true"></span>
@@ -53,18 +65,19 @@ function popupHtml(record: CrosswalkRecord): string {
           <p class="hover-kicker">${escapeHtml(record.borough)} · ${escapeHtml(record.neighborhood || record.neighborhood_id)}</p>
           <h2>${escapeHtml(record.intersection_label)}</h2>
         </div>
-        <div class="model-badge" title="Learned P(pedestrian crash nearby)">
-          <span>P(crash)</span>
-          <strong>${probability}</strong>
+        <div class="model-badge" title="Paint / remaking priority from ortho metrics">
+          <span>Paint</span>
+          <strong>${priority}</strong>
         </div>
       </header>
       <p class="hover-why">${escapeHtml(record.priority_reason)}</p>
       <dl class="hover-stats">
-        <div><dt>Heuristic</dt><dd>${Math.round(record.heuristic_score)}</dd></div>
-        <div><dt>Crashes</dt><dd>${record.pedestrian_crash_count}</dd></div>
+        <div><dt>Image fade</dt><dd>${fade}</dd></div>
         <div><dt>311</dt><dd>${record.pavement_marking_311_count_since_2020}</dd></div>
+        <div><dt>Missing paint</dt><dd>${missing}</dd></div>
       </dl>
-      ${features ? `<p class="why-label">Why the model flagged this</p><ul class="feature-list">${features}</ul>` : ""}
+      ${crash}
+      ${features ? `<p class="why-label">Why flagged for remaking</p><ul class="feature-list">${features}</ul>` : ""}
       <div class="hover-311">
         <p>311 faded markings since 2020: ${record.pavement_marking_311_count_since_2020}. Mixed lane lines and crosswalks.</p>
         ${complaints}
