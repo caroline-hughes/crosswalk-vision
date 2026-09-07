@@ -566,6 +566,16 @@ def build_all() -> None:
     export_snapshot()
 
 
+def _static_photo_urls(image_url: str, thumbnail_url: str) -> tuple[str, str]:
+    """Point both snapshot fields at the 320px thumb so Vercel Hobby can ship the site."""
+    src = thumbnail_url or image_url
+    if src.endswith(".jpg") and not src.endswith("-thumb.jpg"):
+        src = f"{src[:-4]}-thumb.jpg"
+    elif src.endswith(".png") and not src.endswith("-thumb.png"):
+        src = f"{src[:-4]}-thumb.png"
+    return src, src
+
+
 def _publish_imagery(store: LocalArtifactStore, candidate_id: str, metrics, item: dict) -> tuple[str, str]:
     if metrics is not None:
         full = Path(metrics.image_path)
@@ -576,7 +586,7 @@ def _publish_imagery(store: LocalArtifactStore, candidate_id: str, metrics, item
             if thumb.exists()
             else ""
         )
-        return image_url, thumbnail_url
+        return _static_photo_urls(image_url, thumbnail_url)
 
     processed = item.get("processed_image_path")
     if processed and Path(str(processed)).exists():
@@ -589,8 +599,8 @@ def _publish_imagery(store: LocalArtifactStore, candidate_id: str, metrics, item
             thumbnail_url = store.write_thumbnail(
                 candidate_id, thumb.read_bytes(), ext=thumb.suffix.lstrip(".") or "png"
             )
-        return image_url, thumbnail_url
-    return str(item.get("image_url") or ""), str(item.get("thumbnail_url") or "")
+        return _static_photo_urls(image_url, thumbnail_url)
+    return _static_photo_urls(str(item.get("image_url") or ""), str(item.get("thumbnail_url") or ""))
 
 
 def _labeled_training_rows() -> list[dict]:

@@ -111,6 +111,27 @@ class SnapshotImageryContractTest(unittest.TestCase):
             self.assertIn("paint", str(meta.get("imagery_upgrade_note") or "").lower())
             self.assertNotIn("2026 coming", str(meta.get("imagery_rule") or "").lower())
 
+    def test_static_site_ships_thumbs_only(self) -> None:
+        root = Path(__file__).resolve().parents[3]
+        records = json.loads((root / "data" / "export" / "crosswalks.json").read_text())
+        web_images = root / "apps" / "web" / "public" / "images"
+        self.assertGreater(len(records), 0)
+        for row in records:
+            image_url = row.get("image_url") or ""
+            thumb_url = row.get("thumbnail_url") or ""
+            self.assertTrue(image_url.endswith("-thumb.jpg"), image_url)
+            self.assertEqual(image_url, thumb_url)
+            thumb = web_images / Path(thumb_url).name
+            self.assertTrue(thumb.is_file(), thumb)
+            self.assertGreater(thumb.stat().st_size, 1000)
+        full_on_site = [
+            path for path in web_images.glob("nyc-*.jpg") if not path.name.endswith("-thumb.jpg")
+        ]
+        self.assertEqual(full_on_site, [])
+        shipped = list(web_images.glob("nyc-*-thumb.jpg"))
+        shipped_bytes = sum(path.stat().st_size for path in shipped)
+        self.assertLess(shipped_bytes, 40 * 1024 * 1024)
+
 
 if __name__ == "__main__":
     unittest.main()
