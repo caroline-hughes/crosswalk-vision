@@ -44,7 +44,7 @@ class ImageryTargetTest(unittest.TestCase):
         self.assertEqual(ORTHO_LABEL, "Spring 2024 NYS ortho")
         self.assertIn(f"wms/{ORTHO_YEAR}", ORTHO_MAPSERVER_EXPORT_URL)
         self.assertIn("wms/2026", ORTHO_UPGRADE_NOTE)
-        self.assertIn("GIS-only", ORTHO_UPGRADE_NOTE)
+        self.assertIn("paint", ORTHO_UPGRADE_NOTE.lower())
         self.assertNotIn("2026", ORTHO_LABEL)
 
     def test_default_selects_every_plotted_row(self) -> None:
@@ -108,8 +108,29 @@ class SnapshotImageryContractTest(unittest.TestCase):
             self.assertEqual(meta.get("imagery_label"), "Spring 2024 NYS ortho")
             self.assertEqual(int(meta.get("imagery_next_year") or 0), 2026)
             self.assertIn("wms/2026", str(meta.get("imagery_upgrade_note") or ""))
-            self.assertIn("GIS-only", str(meta.get("imagery_upgrade_note") or ""))
+            self.assertIn("paint", str(meta.get("imagery_upgrade_note") or "").lower())
             self.assertNotIn("2026 coming", str(meta.get("imagery_rule") or "").lower())
+
+    def test_static_site_ships_thumbs_only(self) -> None:
+        root = Path(__file__).resolve().parents[3]
+        records = json.loads((root / "data" / "export" / "crosswalks.json").read_text())
+        web_images = root / "apps" / "web" / "public" / "images"
+        self.assertGreater(len(records), 0)
+        for row in records:
+            image_url = row.get("image_url") or ""
+            thumb_url = row.get("thumbnail_url") or ""
+            self.assertTrue(image_url.endswith("-thumb.jpg"), image_url)
+            self.assertEqual(image_url, thumb_url)
+            thumb = web_images / Path(thumb_url).name
+            self.assertTrue(thumb.is_file(), thumb)
+            self.assertGreater(thumb.stat().st_size, 1000)
+        full_on_site = [
+            path for path in web_images.glob("nyc-*.jpg") if not path.name.endswith("-thumb.jpg")
+        ]
+        self.assertEqual(full_on_site, [])
+        shipped = list(web_images.glob("nyc-*-thumb.jpg"))
+        shipped_bytes = sum(path.stat().st_size for path in shipped)
+        self.assertLess(shipped_bytes, 40 * 1024 * 1024)
 
 
 if __name__ == "__main__":

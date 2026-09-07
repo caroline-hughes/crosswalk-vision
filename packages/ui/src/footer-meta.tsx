@@ -17,7 +17,7 @@ export function FooterMeta({
 
   return (
     <footer className="footer-meta">
-      <span>{totalVisible} crossings in this inspection list</span>
+      <span>{totalVisible} crossings in this remaking queue</span>
       <span>Built {builtAt}</span>
       <span>{meta.pilot_boundary}</span>
       {auc ? <span>{auc} vs heuristic (spatial NTA split)</span> : null}

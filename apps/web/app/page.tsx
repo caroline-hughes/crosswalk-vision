@@ -65,7 +65,7 @@ export default function HomePage() {
               <span className="mark-bars" />
             </span>
             <div className="wordmark">
-              <p className="brand-kicker">five boroughs · inspection priority</p>
+              <p className="brand-kicker">five boroughs · paint / remaking queue</p>
               <h1>NYC Crosswalk Watch</h1>
             </div>
           </div>
@@ -110,18 +110,14 @@ export default function HomePage() {
           <>
             <PriorityMap
               records={filtered}
-              activeId={active?.id ?? null}
+              pinnedId={pinned && filtered.some((record) => record.id === pinned.id) ? pinned.id : null}
               scoreMin={Math.max(0, minScore)}
               scoreMax={maxScore || 1}
-              onHover={(record) => {
-                if (record) {
-                  setHovered(record);
-                }
-              }}
-              onSelect={(record) => setPinned(record)}
+              onHover={setHovered}
+              onSelect={setPinned}
             />
             {active ? null : (
-              <p className="map-hint">Hover a crossing the ranker put in need.</p>
+              <p className="map-hint">Click a pin for streets, 311, and aerial imagery.</p>
             )}
           </>
         ) : null}

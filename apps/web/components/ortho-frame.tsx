@@ -1,8 +1,20 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import type { CrosswalkRecord } from "@crosswalks/contracts";
 import { ORTHO_CAPTION, ORTHO_SCORE_NOTE } from "../lib/imagery";
 
 export function orthoSrc(record: CrosswalkRecord): string {
-  return record.image_url || record.thumbnail_url;
+  return record.thumbnail_url || record.image_url || "";
+}
+
+function OrthoPlaceholder({ label = "Imagery unavailable" }: { label?: string }) {
+  return (
+    <div className="ortho-frame is-empty" aria-hidden="true">
+      <span className="ortho-mark" />
+      <span>{label}</span>
+    </div>
+  );
 }
 
 export function OrthoFrame({
@@ -13,15 +25,17 @@ export function OrthoFrame({
   className?: string;
 }) {
   const src = orthoSrc(record);
+  const [failed, setFailed] = useState(false);
   const classes = ["ortho-block", className].filter(Boolean).join(" ");
 
-  if (!src) {
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
+
+  if (!src || failed) {
     return (
       <div className={`${classes} is-empty`} aria-hidden="true">
-        <div className="ortho-frame is-empty">
-          <span className="ortho-mark" />
-          <span>Ortho unavailable</span>
-        </div>
+        <OrthoPlaceholder />
       </div>
     );
   }
@@ -29,7 +43,12 @@ export function OrthoFrame({
   return (
     <figure className={classes}>
       <div className="ortho-frame">
-        <img src={src} alt={`${record.intersection_label} ${ORTHO_CAPTION}`} loading="lazy" />
+        <img
+          src={src}
+          alt={`${record.intersection_label} ${ORTHO_CAPTION}`}
+          loading="lazy"
+          onError={() => setFailed(true)}
+        />
       </div>
       <figcaption className="ortho-caption">
         <span>{ORTHO_CAPTION}</span>

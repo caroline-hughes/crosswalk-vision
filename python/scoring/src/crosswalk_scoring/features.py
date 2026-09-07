@@ -4,6 +4,8 @@ from typing import Mapping, Sequence
 
 import numpy as np
 
+from .paint import attach_paint_labels
+
 IMAGE_FEATURES: tuple[str, ...] = (
     "paint_missing_ratio",
     "stripe_break_ratio",
@@ -38,14 +40,19 @@ BOROUGH_FROM_NTA_PREFIX: dict[str, str] = {
     "SI": "Staten Island",
 }
 
-# Crash-only labels may use 311 counts as a predictor. Composite labels must not:
-# that would leak the target into the feature matrix.
+# Kept for older crash-label tests. Production ranking no longer uses it.
 MIN_CRASH_POSITIVES = 8
 
 
-def feature_names(*, include_311: bool, include_image: bool = True) -> list[str]:
+def feature_names(
+    *,
+    include_311: bool,
+    include_image: bool = True,
+    include_gis: bool = False,
+) -> list[str]:
     names: list[str] = list(IMAGE_FEATURES) if include_image else []
-    names.extend(GIS_FEATURES)
+    if include_gis:
+        names.extend(GIS_FEATURES)
     if include_311:
         names.append(COMPLAINT_FEATURE)
     return names
@@ -61,17 +68,22 @@ def heading_spread_degrees(row: Mapping[str, object]) -> float:
 
 
 def row_to_vector(
-    row: Mapping[str, object], *, include_311: bool, include_image: bool = True
+    row: Mapping[str, object],
+    *,
+    include_311: bool,
+    include_image: bool = True,
+    include_gis: bool = False,
 ) -> np.ndarray:
     values: list[float] = []
     if include_image:
         for name in IMAGE_FEATURES:
             values.append(_nan_if_missing(row.get(name)))
-    values.append(1.0 if bool(row.get("school_zone")) else 0.0)
-    values.append(_nan_if_missing(row.get("street_width_ft"), empty_zero=True))
-    approach = row.get("approach_street_count")
-    values.append(float(approach) if approach not in (None, "") else 2.0)
-    values.append(heading_spread_degrees(row))
+    if include_gis:
+        values.append(1.0 if bool(row.get("school_zone")) else 0.0)
+        values.append(_nan_if_missing(row.get("street_width_ft"), empty_zero=True))
+        approach = row.get("approach_street_count")
+        values.append(float(approach) if approach not in (None, "") else 2.0)
+        values.append(heading_spread_degrees(row))
     if include_311:
         count = row.get("pavement_marking_311_count_since_2020") or 0
         values.append(float(count))
@@ -79,17 +91,30 @@ def row_to_vector(
 
 
 def rows_to_matrix(
-    rows: Sequence[Mapping[str, object]], *, include_311: bool, include_image: bool = True
+    rows: Sequence[Mapping[str, object]],
+    *,
+    include_311: bool,
+    include_image: bool = True,
+    include_gis: bool = False,
 ) -> np.ndarray:
+    names = feature_names(include_311=include_311, include_image=include_image, include_gis=include_gis)
     if not rows:
-        return np.zeros((0, len(feature_names(include_311=include_311, include_image=include_image))), dtype=float)
+        return np.zeros((0, len(names)), dtype=float)
     return np.vstack(
-        [row_to_vector(row, include_311=include_311, include_image=include_image) for row in rows]
+        [
+            row_to_vector(
+                row,
+                include_311=include_311,
+                include_image=include_image,
+                include_gis=include_gis,
+            )
+            for row in rows
+        ]
     )
 
 
 def rows_have_image_metrics(rows: Sequence[Mapping[str, object]]) -> bool:
-    """True when at least one row has a real ortho-derived feature (not citywide GIS-only)."""
+    """True when at least one row has a real ortho-derived feature."""
     for row in rows:
         if row.get("image_metrics_missing") is True:
             continue
@@ -100,25 +125,13 @@ def rows_have_image_metrics(rows: Sequence[Mapping[str, object]]) -> bool:
 
 
 def choose_label_definition(rows: Sequence[Mapping[str, object]]) -> tuple[str, bool]:
-    crash_positives = sum(1 for row in rows if int(row.get("pedestrian_crash_count") or 0) > 0)
-    if crash_positives >= MIN_CRASH_POSITIVES:
-        return "pedestrian_crash_nearby", True
-    return "crash_or_311_faded_marking", False
+    """Paint/remaking label. 311 is the weak target, so it is not a feature."""
+    _ = rows
+    return "faded_marking_311_or_looks_bad", False
 
 
 def attach_labels(rows: Sequence[Mapping[str, object]]) -> tuple[str, bool, list[dict]]:
-    definition, include_311 = choose_label_definition(rows)
-    labeled: list[dict] = []
-    for row in rows:
-        item = dict(row)
-        crash = int(item.get("pedestrian_crash_count") or 0) > 0
-        complaint = int(item.get("pavement_marking_311_count_since_2020") or 0) > 0
-        if definition == "pedestrian_crash_nearby":
-            item["label"] = int(crash)
-        else:
-            item["label"] = int(crash or complaint)
-        labeled.append(item)
-    return definition, include_311, labeled
+    return attach_paint_labels(rows)
 
 
 def borough_from_nta(nta_id: object, borough: object = "") -> str:

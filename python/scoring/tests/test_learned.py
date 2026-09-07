@@ -33,8 +33,8 @@ class SpatialSplitTest(unittest.TestCase):
 
     def test_group_kfold_does_not_leak_neighborhoods(self) -> None:
         definition, include_311, labeled = attach_labels(_rows())
-        self.assertEqual(definition, "pedestrian_crash_nearby")
-        self.assertTrue(include_311)
+        self.assertEqual(definition, "faded_marking_311_or_looks_bad")
+        self.assertFalse(include_311)
         seen_test = set()
         for train_idx, test_idx in neighborhood_group_kfold(labeled):
             train = [labeled[i] for i in train_idx]
@@ -56,34 +56,38 @@ class LearnedScorerTest(unittest.TestCase):
 
     def test_feature_vector_length_matches_include_311_flag(self) -> None:
         row = _rows()[0]
-        with_311 = row_to_vector(row, include_311=True)
-        without_311 = row_to_vector(row, include_311=False)
+        with_311 = row_to_vector(row, include_311=True, include_gis=True)
+        without_311 = row_to_vector(row, include_311=False, include_gis=True)
         self.assertEqual(with_311.shape, (9,))
         self.assertEqual(without_311.shape, (8,))
         self.assertFalse(math.isnan(float(with_311[-1])))
 
-    def test_composite_label_when_crash_positives_are_scarce(self) -> None:
+    def test_paint_label_uses_311_or_image_fade_not_crash(self) -> None:
         rows = []
         for i in range(12):
             rows.append(
                 {
                     "id": f"x{i}",
                     "neighborhood_id": "MN0101" if i < 6 else "MN0102",
-                    "pedestrian_crash_count": 1 if i == 0 else 0,
+                    "pedestrian_crash_count": 8 if i == 0 else 0,
                     "pavement_marking_311_count_since_2020": 2 if i in (0, 1, 7) else 0,
-                    "paint_missing_ratio": 0.2,
-                    "stripe_break_ratio": 0.1,
-                    "contrast_score": 0.5,
+                    "paint_missing_ratio": 0.8 if i == 3 else 0.1,
+                    "stripe_break_ratio": 0.7 if i == 3 else 0.05,
+                    "contrast_score": 0.2 if i == 3 else 0.8,
                     "occlusion_penalty": 0.0,
+                    "image_metrics_missing": False,
                     "school_zone": False,
-                    "street_width_ft": 40,
-                    "approach_street_count": 2,
+                    "street_width_ft": 80,
+                    "approach_street_count": 4,
                 }
             )
         definition, include_311, labeled = attach_labels(rows)
-        self.assertEqual(definition, "crash_or_311_faded_marking")
+        self.assertEqual(definition, "faded_marking_311_or_looks_bad")
         self.assertFalse(include_311)
-        self.assertEqual(sum(row["label"] for row in labeled), 3)
+        positives = [row for row in labeled if row["label"] == 1]
+        self.assertGreaterEqual(len(positives), 3)
+        crash_only = next(row for row in labeled if row["id"] == "x2")
+        self.assertEqual(crash_only["label"], 0)
 
     def test_gis_only_feature_vector_drops_image_columns(self) -> None:
         row = {
@@ -95,7 +99,7 @@ class LearnedScorerTest(unittest.TestCase):
             "pavement_marking_311_count_since_2020": 4,
             "image_metrics_missing": True,
         }
-        vector = row_to_vector(row, include_311=True, include_image=False)
+        vector = row_to_vector(row, include_311=True, include_image=False, include_gis=True)
         self.assertEqual(vector.shape, (5,))
 
     def test_gis_only_ranker_explains_top_features(self) -> None:
@@ -122,7 +126,7 @@ class LearnedScorerTest(unittest.TestCase):
         from crosswalk_scoring import rows_have_image_metrics
 
         self.assertFalse(rows_have_image_metrics(rows))
-        scorer = LearnedPriorityScorer(include_311=True, include_image=False)
+        scorer = LearnedPriorityScorer(include_311=True, include_image=False, include_gis=True)
         scorer.fit(rows)
         scores = scorer.predict_scores(rows)
         self.assertEqual(len(scores), 20)

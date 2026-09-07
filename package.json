@@ -18,6 +18,8 @@
     "pipeline:score": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli score_candidates",
     "pipeline:export": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli export_snapshot",
     "pipeline:imagery": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli fetch_plot_imagery",
+    "pipeline:analyze": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli analyze_imagery",
+    "pipeline:rescore": "PYTHONPATH=python/pipeline/src:python/scoring/src python3 -m crosswalk_pipeline.cli rescore_from_imagery",
     "web:dev": "npm --workspace @crosswalks/web run dev",
     "web:build": "npm --workspace @crosswalks/web run build"
   },

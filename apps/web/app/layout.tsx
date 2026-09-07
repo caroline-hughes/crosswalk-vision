@@ -23,9 +23,9 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NYC Crosswalk Watch — inspection priority map",
+  title: "NYC Crosswalk Watch — paint / remaking queue",
   description:
-    "Citywide NYC map of pedestrian crossing nodes ranked by a learned tabular model versus a paint/311 heuristic. Spatial NTA evaluation, weak crash labels, not a detector.",
+    "DOT repaint/remaking queue: NYC pedestrian crossings whose markings look degraded in aerial imagery, corroborated by 311 faded-marking complaints. School raises urgency. Crash is a badge, not the rank. Not a detector.",
   icons: {
     icon: "/favicon.svg"
   }

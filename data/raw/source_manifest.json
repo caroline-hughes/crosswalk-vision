@@ -6,7 +6,7 @@
     "imagery": {
       "name": "Spring 2024 NYS Orthoimagery (plotted in-need set only)",
       "url": "https://orthos.its.ny.gov/arcgis/rest/services/wms/2024/MapServer",
-      "note": "NYS ortho crops for the plotted in-need map set (~2k nodes). Fetch wms/2024 until wms/2026 (or equivalent NYC coverage) is live; then prefer 2026. UI cards do not stamp the year. Score is GIS-only, not from the photo."
+      "note": "NYS ortho crops for the imagery-backed set (~2k nodes). Fetch wms/2024 until wms/2026 (or equivalent NYC coverage) is live; then prefer 2026. UI cards do not stamp the year. Paint metrics are computed from the crop; a visual gate keeps only faded-looking crossings."
     },
     "lion": {
       "name": "NYC LION Street Base Map (intersection nodes, five boroughs)",

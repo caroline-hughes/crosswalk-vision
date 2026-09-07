@@ -527,6 +527,21 @@ button, input, select {
   object-fit: cover;
 }
 
+.ortho-fallback {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  padding: 18px 12px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .ortho-frame.is-empty {
   display: grid;
   place-items: center;
@@ -611,6 +626,22 @@ button, input, select {
   margin: 8px 0;
   font-size: 14px;
   line-height: 1.4;
+}
+
+.crash-badge {
+  margin: 0 0 8px;
+  padding: 4px 7px;
+  width: fit-content;
+  border: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.list-crash {
+  margin: 0 16px 4px;
 }
 
 .hover-stats {

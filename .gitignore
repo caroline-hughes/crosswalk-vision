@@ -13,5 +13,10 @@ data/processed/*.duckdb
 data/processed/candidates.json
 data/processed/enriched_candidates.json
 data/processed/scored_candidates.json
+data/processed/paint_training_rows.json
+data/processed/image_metrics.json
 data/processed/images/nyc-*
 data/export/images/nyc-*
+# Full 640px crops exceed Vercel Hobby's 100 MB static upload. Thumbs ship.
+apps/web/public/images/nyc-*.jpg
+!apps/web/public/images/nyc-*-thumb.jpg
